@@ -56,7 +56,7 @@ class Product extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['ACCESS_GROUP', 'STORE_ID', 'PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
+           // [['ACCESS_GROUP', 'STORE_ID', 'PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
             [['UNIT_ID', 'INDUSTRY_ID', 'STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['PRODUCT_SIZE', 'STOCK_LEVEL'], 'number'],
             [['CREATE_AT', 'UPDATE_AT'], 'safe'],
@@ -105,10 +105,13 @@ class Product extends \yii\db\ActiveRecord
 	
 	public function fields()
 	{
-		return [
-            'GROUP_NM'=>function($model){
-				return $this->groupNm;
-			},	
+		return [            
+			'GROUP_ID'=>function($model){
+				return $model->GROUP_ID;
+			},
+			'GROUP_NM'=>function($model){
+				return $model->groupNm;
+			}, 			
             'PRODUCT_ID'=>function($model){
 				return $model->PRODUCT_ID;
 			},	
@@ -116,9 +119,76 @@ class Product extends \yii\db\ActiveRecord
 				return $model->PRODUCT_QR;
 			},	
             'PRODUCT_NM'=>function($model){
-				return $model->PRODUCT_NM;
+				if($model->PRODUCT_NM){
+					return $model->PRODUCT_NM;
+				}else{
+					return 'none';
+				}	
+			},	            
+            'PRODUCT_WARNA'=>function($model){
+				if($model->PRODUCT_WARNA){
+					return $model->PRODUCT_WARNA;
+				}else{
+					return 'none';
+				}	
 			},	
-            'CURRENT_STOCK'=>function($model){
+            'PRODUCT_SIZE'=>function($model){
+				if($model->PRODUCT_SIZE){
+					return $model->PRODUCT_SIZE;
+				}else{
+					return 0;
+				}		
+			},	
+            'PRODUCT_SIZE_UNIT'=>function($model){
+				if($model->PRODUCT_SIZE_UNIT){
+					return $model->PRODUCT_SIZE_UNIT;
+				}else{
+					return 'none';
+				}	
+			},	
+            'PRODUCT_HEADLINE'=>function($model){
+				return $model->PRODUCT_HEADLINE;
+			},	
+            'UNIT_NM'=>function($model){
+				//$model-UNIT_ID
+				return 'on progress';
+			},	
+            'STOCK_LEVEL'=>function($model){
+				if($model->STOCK_LEVEL){
+					$model->STOCK_LEVEL;
+				}else{
+					return 0;
+				}					
+			},	
+            'INDUSTRY_ID'=>function($model){
+				if($model->INDUSTRY_ID){
+					return $model->INDUSTRY_ID;
+				}else{
+					return 'none';
+				}				
+			},	
+             'INDUSTRY_NM'=>function($model){
+				if($model->INDUSTRY_ID){
+					return $model->INDUSTRY_NM;
+				}else{
+					return 'none';
+				}				
+			},	
+            'INDUSTRY_GRP_NM'=>function($model){				
+				if($model->INDUSTRY_ID){
+					return $model->INDUSTRY_GRP_NM;
+				}else{
+					return 'none';
+				}
+			},	
+            'STATUS'=>function($model){
+				$rslt=$model->STATUS;
+				return $rslt;//==0?'disable':'enable';
+			},	
+            'DCRP_DETIL'=>function($model){
+				return $model->DCRP_DETIL;
+			},
+			'CURRENT_STOCK'=>function($model){
 				return 'on progress';
 			},	
             'HARGA_JUAL'=>function($model){
@@ -126,41 +196,10 @@ class Product extends \yii\db\ActiveRecord
 			},	 
 			'DISCOUNT'=>function($model){
 				return 'on progress';
-			},	
-            'PRODUCT_WARNA'=>function($model){
-				return $model->PRODUCT_WARNA;
-			},	
-            'PRODUCT_SIZE'=>function($model){
-				return $model->PRODUCT_SIZE;
-			},	
-            'PRODUCT_SIZE_UNIT'=>function($model){
-				return $model->PRODUCT_SIZE_UNIT;
-			},	
-            'PRODUCT_HEADLINE'=>function($model){
-				return $model->PRODUCT_HEADLINE;
-			},	
-            'UNIT_NM'=>function($model){
+			},
+			'PROMO'=>function($model){
 				return 'on progress';
 			},	
-            'STOCK_LEVEL'=>function($model){
-				return $model->STOCK_LEVEL;
-			},	
-            'INDUSTRY_ID'=>function($model){
-				return $model->INDUSTRY_ID;
-			},	
-             'INDUSTRY_NM'=>function($model){
-				return $model->INDUSTRY_NM;
-			},	
-            'INDUSTRY_GRP_NM'=>function($model){
-				return $model->INDUSTRY_GRP_NM;
-			},	
-            'STATUS'=>function($model){
-				$rslt=$model->STATUS;
-				return $rslt==0?'disable':'enable';
-			},	
-            'DCRP_DETIL'=>function($model){
-				return $model->DCRP_DETIL;
-			}
         ];		
 	}
 	
@@ -173,7 +212,7 @@ class Product extends \yii\db\ActiveRecord
 		if ($rslt){
 			return $rslt;
 		}else{
-			return "None";
+			return "none";
 		}; 
 	}
 }
