@@ -45,7 +45,7 @@ class ProductGroup extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['ACCESS_GROUP', 'STORE_ID', 'GROUP_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
+           // [['ACCESS_GROUP', 'STORE_ID', 'GROUP_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
             [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['CREATE_AT', 'UPDATE_AT'], 'safe'],
             [['NOTE'], 'string'],
@@ -78,4 +78,36 @@ class ProductGroup extends \yii\db\ActiveRecord
             'MONTH_AT' => 'Month  At',
         ];
     }
+	
+	public function fields()
+	{
+		return [			
+			'ACCESS_GROUP'=>function($model){
+				return $model->ACCESS_GROUP;
+			},
+			'STORE_ID'=>function($model){
+				return $model->STORE_ID;
+			},
+			'GROUP_ID'=>function($model){
+				return $model->GROUP_ID;
+			},
+			'GROUP_NM'=>function($model){				
+				if($model->GROUP_NM){
+					return $model->GROUP_NM;
+				}else{
+					return 'none';
+				}
+			},
+			'STATUS'=>function($model){
+				return $model->STATUS;
+			},					
+			'NOTE'=>function($model){
+				if($model->NOTE){
+					return $model->NOTE;
+				}else{
+					return 'none';
+				}
+			}
+		];
+	}
 }

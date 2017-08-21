@@ -109,8 +109,8 @@ class Product extends \yii\db\ActiveRecord
 			'GROUP_ID'=>function($model){
 				return $model->GROUP_ID;
 			},
-			'GROUP_NM'=>function($model){
-				return $model->groupNm;
+			'GROUP_NM'=>function(){
+				return $this->groupNm;
 			}, 			
             'PRODUCT_ID'=>function($model){
 				return $model->PRODUCT_ID;

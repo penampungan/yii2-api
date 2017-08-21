@@ -122,14 +122,14 @@ class ProductController extends ActiveController
 		//Releatiship (check by date)
         //-harga;-Discount;-stock;-Promo
 		
-		if($metode=='VIEW'){
+		if($metode=='GET'){
 			/**
 			  * @author 	: ptrnov  <piter@lukison.com>
 			  * @since 		: 1.2
 			  * Subject		: ALL PRODUCT PER-STORE ATAU ONE PRODUCT (Select Key).
 			  * Metode		: POST (VIEW)
 			  * URL			: http://production.kontrolgampang.com/master/products
-			  * Body Param	: METHODE=VIEW & PRODUCT_ID(key) & STORE_ID(Key)
+			  * Body Param	: METHODE=GET & PRODUCT_ID(key) & STORE_ID(Key)
 			  *				: PRODUCT_ID='' maka semua prodak pada STORE_ID di tampilkan.
 			  *				: PRODUCT_ID<>'' maka yang di tampilkan satu product.
 			 */
@@ -210,7 +210,7 @@ class ProductController extends ActiveController
 		* Metode		: PUT (UPDATE)
 		* URL			: http://production.kontrolgampang.com/master/products
 		* Body Param	: PRODUCT_ID(Primary Key), GROUP_ID(key),UNIT_ID(Key),INDUSTRY_ID(key)
-		* PROPERTY		: PRODUCT_NM,PRODUCT_QR,PRODUCT_WARNA,PRODUCT_SIZE,PRODUCT_SIZE_UNIT,PRODUCT_HEADLINE,STOCK_LEVEL
+		* PROPERTY		: PRODUCT_NM,PRODUCT_QR,PRODUCT_WARNA,PRODUCT_SIZE,PRODUCT_SIZE_UNIT,PRODUCT_HEADLINE,STOCK_LEVEL,STATUS
 		* SUPPORT		: http://production.kontrolgampang.com/master/product-groups (GROUP_ID)
 		*				  http://production.kontrolgampang.com/master/product-units	 (UNIT_ID)
 		*				  http://production.kontrolgampang.com/master/product-industris (INDUSTRY_ID)
@@ -236,6 +236,7 @@ class ProductController extends ActiveController
 		$prdLevelStock	= isset($paramsBody['STOCK_LEVEL'])!=''?$paramsBody['STOCK_LEVEL']:'';
 		//Industri
 		$prdIndustriId	= isset($paramsBody['INDUSTRY_ID'])!=''?$paramsBody['INDUSTRY_ID']:'';
+		$stt			= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
 		//Releatiship (check by date)
         //-harga;-Discount;-stock;-Promo
 		if($productID<>''){
@@ -251,6 +252,7 @@ class ProductController extends ActiveController
 				 if ($prdGrp<>''){$modelEdit->GROUP_ID=$prdGrp;};
 				 if ($prdUnitJual<>''){$modelEdit->UNIT_ID=$prdUnitJual;};
 				 if ($prdIndustriId<>''){$modelEdit->INDUSTRY_ID=$prdIndustriId;};
+				 if ($stt<>''){$modelEdit->STATUS=$stt;};
 				 if($modelEdit->save()){
 					$modelView=Product::find()->where(['PRODUCT_ID'=>$productID])->one();
 					return array('LIST_PRODUCT'=>$modelView);
