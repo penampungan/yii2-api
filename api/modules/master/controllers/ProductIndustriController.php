@@ -103,7 +103,7 @@ class ProductIndustriController extends ActiveController
 		$metode			= isset($paramsBody['METHODE'])!=''?$paramsBody['METHODE']:'';		
 		//KEY
 		$industriId		= isset($paramsBody['INDUSTRY_ID'])!=''?$paramsBody['INDUSTRY_ID']:'';
-		$industriGrpId	= isset($paramsBody['INDUSTRY_GRP'])!=''?$paramsBody['INDUSTRY_GRP']:'';
+		$industriGrpId	= isset($paramsBody['INDUSTRY_GRP_ID'])!=''?$paramsBody['INDUSTRY_GRP_ID']:'';
 		//PROPERTY
 		$industriNm		= isset($paramsBody['INDUSTRY_NM'])!=''?$paramsBody['INDUSTRY_NM']:'';
 		
@@ -122,8 +122,8 @@ class ProductIndustriController extends ActiveController
 			if($industriGrpId<>''){
 				if($industriId<>''){				
 					//Model Per-INDUSTRI
-					$modelCnt= Industri::find()->where(['INDUSTRY_GRP'=>$industriGrpId,'INDUSTRY_ID'=>$industriId])->count();
-					$model= Industri::find()->where(['INDUSTRY_GRP'=>$industriGrpId,'INDUSTRY_ID'=>$industriId])->one();				
+					$modelCnt= Industri::find()->where(['INDUSTRY_GRP_ID'=>$industriGrpId,'INDUSTRY_ID'=>$industriId])->count();
+					$model= Industri::find()->where(['INDUSTRY_GRP_ID'=>$industriGrpId,'INDUSTRY_ID'=>$industriId])->one();				
 					if($modelCnt){
 						return array('LIST_INDUSTRI'=>$model);
 					}else{
@@ -132,8 +132,8 @@ class ProductIndustriController extends ActiveController
 				}else{
 					//Model All INDUSTRI
 					//Model
-					$modelCnt= Industri::find()->where(['INDUSTRY_GRP'=>$industriGrpId])->count();
-					$model= Industri::find()->where(['INDUSTRY_GRP'=>$industriGrpId])->all();		
+					$modelCnt= Industri::find()->where(['INDUSTRY_GRP_ID'=>$industriGrpId])->count();
+					$model= Industri::find()->where(['INDUSTRY_GRP_ID'=>$industriGrpId])->all();		
 					
 					if($modelCnt){			
 						return array('LIST_INDUSTRI'=>$model);
@@ -171,14 +171,14 @@ class ProductIndustriController extends ActiveController
 			* Subject		: ALL INDUSTRI PRODUCT.
 			* Metode		: POST (CREATE)
 			* URL			: http://production.kontrolgampang.com/master/product-industris
-			* Body Param	: METHODE=POST & NDUSTRY_ID(key Master) OR INDUSTRY_GRP(key)
+			* Body Param	: METHODE=POST & NDUSTRY_ID(key Master) OR INDUSTRY_GRP_ID(key)
 			* PROPERTY		: INDUSTRY_NM
 			* SUPPORT 		: http://production.kontrolgampang.com/master/product-industri-groups
 			*/
 			$modelNew = new Industri();
 			$modelNew->CREATE_AT=date('Y-m-d H:i:s');
 			if ($industriNm<>''){$modelNew->INDUSTRY_NM=strtoupper($industriNm);};
-			if ($industriGrpId<>''){$modelNew->INDUSTRY_GRP=strtoupper($industriGrpId);};
+			if ($industriGrpId<>''){$modelNew->INDUSTRY_GRP_ID=strtoupper($industriGrpId);};
 			if($modelNew->save()){
 				return array('LIST_INDUSTRI'=>$modelNew);
 			}else{

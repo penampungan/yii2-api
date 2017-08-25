@@ -8,7 +8,7 @@ use api\modules\master\models\IndustriGroup;
  * This is the model class for table "industri".
  *
  * @property integer $INDUSTRY_ID
- * @property integer $INDUSTRY_GRP
+ * @property integer $INDUSTRY_GRP_ID
  * @property string $INDUSTRY_NM
  * @property string $CREATE_BY
  * @property string $CREATE_AT
@@ -40,7 +40,7 @@ class Industri extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['INDUSTRY_GRP', 'STATUS'], 'integer'],
+            [['INDUSTRY_GRP_ID', 'STATUS'], 'integer'],
             [['CREATE_AT', 'UPDATE_AT'], 'safe'],
             [['INDUSTRY_NM'], 'string', 'max' => 255],
             [['CREATE_BY', 'UPDATE_BY'], 'string', 'max' => 50],
@@ -54,7 +54,7 @@ class Industri extends \yii\db\ActiveRecord
     {
         return [
             'INDUSTRY_ID' => 'Industry  ID',
-            'INDUSTRY_GRP' => 'Industry  Grp',
+            'INDUSTRY_GRP_ID' => 'Industry  Grp',
             'INDUSTRY_NM' => 'Industry  Nm',
             'CREATE_BY' => 'Create  By',
             'CREATE_AT' => 'Create  At',
@@ -76,8 +76,8 @@ class Industri extends \yii\db\ActiveRecord
 					return 'none';
 				}
 			},
-			'INDUSTRY_GRP'=>function($model){
-				return $model->INDUSTRY_GRP;
+			'INDUSTRY_GRP_ID'=>function($model){
+				return $model->INDUSTRY_GRP_ID;
 			},
 			'INDUSTRY_GRP_NM'=>function($model){
 				return $model->industriGroupTbl->INDUSTRY_GRP_NM;
@@ -94,6 +94,6 @@ class Industri extends \yii\db\ActiveRecord
 	 * Ingat: jangan di join di model Search lagi.
 	*/
 	public function getIndustriGroupTbl(){
-		return $this->hasOne(IndustriGroup::className(), ['INDUSTRY_GRP' => 'INDUSTRY_GRP']);
+		return $this->hasOne(IndustriGroup::className(), ['INDUSTRY_GRP_ID' => 'INDUSTRY_GRP_ID']);
 	}
 }

@@ -24,7 +24,7 @@ use api\modules\master\models\IndustriGroup;
   * @since 		: 1.2
   * Subject		: PRODUCT INDUSTRI GROUP ALL APP.
   * URL			: http://production.kontrolgampang.com/master/productindustri-groups
-  * Body Param	: INDUSTRY_GRP(key Master)
+  * Body Param	: INDUSTRY_GRP_ID(key Master)
  */
 class ProductIndustriGroupController extends ActiveController
 {	
@@ -102,7 +102,7 @@ class ProductIndustriGroupController extends ActiveController
 		$paramsBody 	= Yii::$app->request->bodyParams;
 		$metode			= isset($paramsBody['METHODE'])!=''?$paramsBody['METHODE']:'';		
 		//KEY
-		$industriGrpId	= isset($paramsBody['INDUSTRY_GRP'])!=''?$paramsBody['INDUSTRY_GRP']:'';
+		$industriGrpId	= isset($paramsBody['INDUSTRY_GRP_ID'])!=''?$paramsBody['INDUSTRY_GRP_ID']:'';
 		//PROPERTY
 		$industriGrpNm	= isset($paramsBody['INDUSTRY_GRP_NM'])!=''?$paramsBody['INDUSTRY_GRP_NM']:'';
 		
@@ -113,17 +113,17 @@ class ProductIndustriGroupController extends ActiveController
 			  * Subject		: ALL INDUSTRI GROUP.
 			  * Metode		: POST (VIEW)
 			  * URL			: http://production.kontrolgampang.com/master/product-industri-groups
-			  * Body Param	: METHODE=GET & INDUSTRY_GRP(key Master)
-			  *				  INDUSTRY_GRP=='' THEN SHOW ALL INDUSTRI GROUP
-			  *				  INDUSTRY_GRP<>'' THEN SHOW INDUSTRI  GROUP WHERE INDUSTRY_GRP
+			  * Body Param	: METHODE=GET & INDUSTRY_GRP_ID(key Master)
+			  *				  INDUSTRY_GRP_ID=='' THEN SHOW ALL INDUSTRI GROUP
+			  *				  INDUSTRY_GRP_ID<>'' THEN SHOW INDUSTRI  GROUP WHERE INDUSTRY_GRP_ID
 			 */
 			if($industriGrpId<>''){				
 				//Model Per-INDUSTRI GROUP
-				$modelCnt= IndustriGroup::find()->where(['INDUSTRY_GRP'=>$industriGrpId])->count();
-				$model= IndustriGroup::find()->where(['INDUSTRY_GRP'=>$industriGrpId])->one();		
+				$modelCnt= IndustriGroup::find()->where(['INDUSTRY_GRP_ID'=>$industriGrpId])->count();
+				$model= IndustriGroup::find()->where(['INDUSTRY_GRP_ID'=>$industriGrpId])->one();		
 				
 				if($modelCnt){
-					return array('LIST_INDUSTRI-GROUP'=>$model);
+					return array('LIST_INDUSTRI_GROUP'=>$model);
 				}else{
 					return array('result'=>'data-empty');
 				}		
@@ -134,7 +134,7 @@ class ProductIndustriGroupController extends ActiveController
 				$model= IndustriGroup::find()->all();		
 				
 				if($modelCnt){			
-					return array('LIST_INDUSTRI-GROUP'=>$model);
+					return array('LIST_INDUSTRI_GROUP'=>$model);
 				}else{
 					return array('result'=>'data-empty');
 				}		
@@ -154,7 +154,7 @@ class ProductIndustriGroupController extends ActiveController
 			$modelNew->CREATE_AT=date('Y-m-d H:i:s');
 			if ($industriGrpNm<>''){$modelNew->INDUSTRY_GRP_NM=strtoupper($industriGrpNm);};
 			if($modelNew->save()){
-				return array('LIST_INDUSTRI-GROUP'=>$modelNew);
+				return array('LIST_INDUSTRI_GROUP'=>$modelNew);
 			}else{
 				return array('result'=>$modelNew->errors);
 			}

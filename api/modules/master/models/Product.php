@@ -4,6 +4,7 @@ namespace api\modules\master\models;
 
 use Yii;
 use api\modules\master\models\ProductGroup;
+use api\modules\master\models\ProductHarga;
 /**
  * This is the model class for table "product".
  *
@@ -57,9 +58,9 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
            // [['ACCESS_GROUP', 'STORE_ID', 'PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
-            [['UNIT_ID', 'INDUSTRY_ID', 'STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
+            [['UNIT_ID', 'INDUSTRY_ID','INDUSTRY_GRP_ID', 'STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['PRODUCT_SIZE', 'STOCK_LEVEL'], 'number'],
-            [['CREATE_AT', 'UPDATE_AT'], 'safe'],
+            [['CREATE_AT', 'UPDATE_AT','CURRENT_PRICE'], 'safe'],
             [['DCRP_DETIL'], 'string'],
             [['ACCESS_GROUP'], 'string', 'max' => 15],
             [['STORE_ID'], 'string', 'max' => 20],
@@ -89,8 +90,10 @@ class Product extends \yii\db\ActiveRecord
             'PRODUCT_HEADLINE' => 'Product  Headline',
             'UNIT_ID' => 'Unit  ID',
             'STOCK_LEVEL' => 'Stock  Level',
+            'CURRENT_PRICE' => 'Harga Jual',
             'INDUSTRY_ID' => 'Industry  ID',
             'INDUSTRY_NM' => 'Industry  Nm',
+            'INDUSTRY_GRP_ID' => 'Industry  Grp.ID',
             'INDUSTRY_GRP_NM' => 'Industry  Grp  Nm',
             'CREATE_BY' => 'Create  By',
             'CREATE_AT' => 'Create  At',
@@ -174,7 +177,10 @@ class Product extends \yii\db\ActiveRecord
 					return 'none';
 				}				
 			},	
-            'INDUSTRY_GRP_NM'=>function($model){				
+            'INDUSTRY_GRP_ID'=>function($model){				
+				return $model->INDUSTRY_GRP_ID;
+			},	 
+			'INDUSTRY_GRP_NM'=>function($model){				
 				if($model->INDUSTRY_ID){
 					return $model->INDUSTRY_GRP_NM;
 				}else{
@@ -191,8 +197,15 @@ class Product extends \yii\db\ActiveRecord
 			'CURRENT_STOCK'=>function($model){
 				return 'on progress';
 			},	
-            'HARGA_JUAL'=>function($model){
-				return 'on progress';
+            'CURRENT_PRICE'=>function($model){
+				return $this->productHargaTbl;
+				/*Default Harga & Formula Harga*/
+				// $harga=$this->productHargaTbl;
+				// if ($harga<>0){
+					// return $harga;
+				// }else{
+					// return $model->CURRENT_PRICE!=''?$model->CURRENT_PRICE:'0';		
+				// }
 			},	 
 			'DISCOUNT'=>function($model){
 				return 'on progress';
@@ -203,10 +216,10 @@ class Product extends \yii\db\ActiveRecord
         ];		
 	}
 	
+	//Join to Group Table
 	public function getProductGroupTbl(){
 		return $this->hasOne(ProductGroup::className(), ['GROUP_ID' => 'GROUP_ID']);
-	}
-	
+	}	
 	public function getGroupNm(){
 		$rslt = $this->productGroupTbl['GROUP_NM'];
 		if ($rslt){
@@ -215,4 +228,28 @@ class Product extends \yii\db\ActiveRecord
 			return "none";
 		}; 
 	}
+	
+	/*
+	 * CURRENT PRICE 
+	 * Join to Table Harga where PRODUCT_ID, (current_date PERIODE_TGL1 AND PERIODE_TGL2)
+	*/
+	public function getProductHargaTbl(){
+		//Check Table Harga where PRODUCT_ID,PERIODE_TGL1 AND PERIODE_TGL2 to current_date
+		$modalHarga= ProductHarga::find()->where("
+			PRODUCT_ID='".$this->PRODUCT_ID."' AND 
+			('".date('Y-m-d')."' BETWEEN PERIODE_TGL1 AND PERIODE_TGL2)
+		")->one();
+		
+		if($modalHarga){
+			//Jika ditemukan data pada table harga, maka harga tersebut di simpan pada table "product->CURRENT_PRICE"
+			$modalProduct = Product::find()->where(['PRODUCT_ID' =>$this->PRODUCT_ID])->one();
+			$modalProduct->CURRENT_PRICE=$modalHarga->HARGA_JUAL;
+			$modalProduct->save();
+			return  $modalHarga->HARGA_JUAL;
+		}else{
+			//Jika Tidak ditemukan perubahan data pada table harga, seting default CURRENT_PRICE
+			//return  0;
+			return $this->CURRENT_PRICE!=''?$this->CURRENT_PRICE:'0';	
+		}
+	}	
 }

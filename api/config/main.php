@@ -111,10 +111,10 @@ return [
 						'master/product-industri',							
 						'master/product-industri-group',							
 						'master/product-stocks',							
-						'master/product-discounts',							
-						'master/product-hargas',							
-						'master/product-promos',							
-						'master/product-images'							
+						'master/product-discount',							
+						'master/product-harga',							
+						'master/product-promo',							
+						'master/product-image'							
 					],
 					'patterns' => [
 						'PUT' => 'update',

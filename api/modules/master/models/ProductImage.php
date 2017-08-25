@@ -5,24 +5,28 @@ namespace api\modules\master\models;
 use Yii;
 
 /**
- * This is the model class for table "industri_group".
+ * This is the model class for table "product_image".
  *
- * @property integer $INDUSTRY_GRP_ID
- * @property string $INDUSTRY_GRP_NM
+ * @property string $ID
+ * @property string $PRODUCT_ID
+ * @property string $PRODUCT_IMAGE
  * @property string $CREATE_BY
  * @property string $CREATE_AT
  * @property string $UPDATE_BY
  * @property string $UPDATE_AT
  * @property integer $STATUS
+ * @property string $DCRP_DETIL
+ * @property integer $YEAR_AT
+ * @property integer $MONTH_AT
  */
-class IndustriGroup extends \yii\db\ActiveRecord
+class ProductImage extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'industri_group';
+        return 'product_image';
     }
 
     /**
@@ -39,9 +43,11 @@ class IndustriGroup extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
+            [['PRODUCT_IMAGE', 'DCRP_DETIL'], 'string'],
             [['CREATE_AT', 'UPDATE_AT'], 'safe'],
-            [['STATUS'], 'integer'],
-            [['INDUSTRY_GRP_NM'], 'string', 'max' => 255],
+            [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
+            [['PRODUCT_ID'], 'string', 'max' => 35],
             [['CREATE_BY', 'UPDATE_BY'], 'string', 'max' => 50],
         ];
     }
@@ -52,31 +58,41 @@ class IndustriGroup extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'INDUSTRY_GRP_ID' => 'Industry  Grp',
-            'INDUSTRY_GRP_NM' => 'Industry  Grp  Nm',
+            'ID' => 'ID',
+            'PRODUCT_ID' => 'Product  ID',
+            'PRODUCT_IMAGE' => 'Product  Image',
             'CREATE_BY' => 'Create  By',
             'CREATE_AT' => 'Create  At',
             'UPDATE_BY' => 'Update  By',
             'UPDATE_AT' => 'Update  At',
             'STATUS' => 'Status',
+            'DCRP_DETIL' => 'Dcrp  Detil',
+            'YEAR_AT' => 'Year  At',
+            'MONTH_AT' => 'Month  At',
         ];
     }
 	
 	public function fields()
 	{
 		return [			
-			'INDUSTRY_GRP_ID'=>function($model){
-				return $model->INDUSTRY_GRP_ID;
+			'ID'=>function($model){
+				return $model->ID;
 			},
-			'INDUSTRY_GRP_NM'=>function($model){
-				if($model->INDUSTRY_GRP_NM){
-					return $model->INDUSTRY_GRP_NM;
-				}else{
-					return 'none';
-				}
+			'PRODUCT_ID'=>function($model){
+				return $model->PRODUCT_ID;
+			},
+			'PRODUCT_IMAGE'=>function($model){
+				return $model->PRODUCT_IMAGE;
 			},
 			'STATUS'=>function($model){
 				return $model->STATUS;
+			},
+			'DCRP_DETIL'=>function($model){
+				if($model->DCRP_DETIL){
+					return $model->DCRP_DETIL;
+				}else{
+					return 'none';
+				}
 			}
 		];
 	}
