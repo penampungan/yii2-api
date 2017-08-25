@@ -144,13 +144,11 @@ return [
 				[
                         'class' => 'yii\rest\UrlRule',
                         'controller' =>[
-							'transaksi/penjualan-header',
-							'transaksi/penjualan-detail',
-							'transaksi/penjualan-closing',
-							'transaksi/penjualan-closing-bukti'
+							'transaksi/trans-openclose',
+							'transaksi/trans-storan'
 						],
 						'patterns' => [
-							'PUT,PATCH {id}' => 'update',
+							'PUT,PATCH' => 'update',
 							'DELETE {id}' => 'delete',
 							'GET,HEAD {id}' => 'view',
 							'POST' => 'create',

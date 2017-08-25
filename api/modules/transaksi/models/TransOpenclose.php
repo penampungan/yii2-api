@@ -3,32 +3,12 @@
 namespace api\modules\transaksi\models;
 
 use Yii;
+use api\modules\transaksi\models\TransStoran;
 
-/**
- * This is the model class for table "trans_openclose".
- *
- * @property string $ID
- * @property string $ACCESS_GROUP
- * @property string $STORE_ID
- * @property string $ACCESS_ID
- * @property string $OPENCLOSE_ID
- * @property string $TGLWAKTU
- * @property string $CASHINDRAWER
- * @property string $ADDCASH
- * @property string $SELLCASH
- * @property string $TOTALCASH
- * @property string $TOTALCASH_ACTUAL
- * @property string $CREATE_BY
- * @property string $CREATE_AT
- * @property string $UPDATE_BY
- * @property string $UPDATE_AT
- * @property integer $STATUS
- * @property string $DCRP_DETIL
- * @property integer $YEAR_AT
- * @property integer $MONTH_AT
- */
 class TransOpenclose extends \yii\db\ActiveRecord
 {
+	const SCENARIO_CREATE = 'create';
+	const SCENARIO_UPDATE = 'update';
     /**
      * @inheritdoc
      */
@@ -51,14 +31,15 @@ class TransOpenclose extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['STORE_ID', 'ACCESS_ID', 'OPENCLOSE_ID', 'TGLWAKTU', 'YEAR_AT', 'MONTH_AT'], 'required'],
-            [['TGLWAKTU', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
+            [['STORE_ID','ACCESS_ID','TGL_OPEN','CASHINDRAWER'], 'required','on'=>self::SCENARIO_CREATE],
+            [['OPENCLOSE_ID','TGL_CLOSE','SELLCASH','TOTALCASH_ACTUAL','STATUS'], 'required','on'=>self::SCENARIO_UPDATE],
+            [['TGL_OPEN','TGL_CLOSE', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
             [['CASHINDRAWER', 'ADDCASH', 'SELLCASH', 'TOTALCASH', 'TOTALCASH_ACTUAL'], 'number'],
             [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['DCRP_DETIL'], 'string'],
             [['ACCESS_GROUP', 'ACCESS_ID'], 'string', 'max' => 15],
             [['STORE_ID'], 'string', 'max' => 20],
-            [['OPENCLOSE_ID', 'CREATE_BY', 'UPDATE_BY'], 'string', 'max' => 50],
+            [['OPENCLOSE_ID', 'CREATE_BY', 'UPDATE_BY'], 'string', 'max' => 255],
         ];
     }
 
@@ -73,7 +54,8 @@ class TransOpenclose extends \yii\db\ActiveRecord
             'STORE_ID' => 'Store  ID',
             'ACCESS_ID' => 'Access  ID',
             'OPENCLOSE_ID' => 'Openclose  ID',
-            'TGLWAKTU' => 'Tglwaktu',
+            'TGL_OPEN' => 'TGL_OPEN',
+            'TGL_CLOSE' => 'TGL_CLOSE',
             'CASHINDRAWER' => 'Cashindrawer',
             'ADDCASH' => 'Addcash',
             'SELLCASH' => 'Sellcash',
@@ -93,9 +75,9 @@ class TransOpenclose extends \yii\db\ActiveRecord
 	public function fields()
 	{
 		return [			
-			'ID'=>function($model){
-				return $model->ID;
-			},
+			// 'ID'=>function($model){
+				// return $model->ID;
+			// },
 			'ACCESS_GROUP'=>function($model){
 				return $model->ACCESS_GROUP;
 			},
@@ -108,8 +90,11 @@ class TransOpenclose extends \yii\db\ActiveRecord
 			'OPENCLOSE_ID'=>function($model){
 				return $model->OPENCLOSE_ID;
 			},
-			'TGLWAKTU'=>function($model){
-				return $model->TGLWAKTU;
+			'TGL_OPEN'=>function($model){
+				return $model->TGL_OPEN;
+			},					
+			'TGL_CLOSE'=>function($model){
+				return $model->TGL_CLOSE;
 			},					
 			'CASHINDRAWER'=>function($model){
 				return $model->CASHINDRAWER;
@@ -135,7 +120,14 @@ class TransOpenclose extends \yii\db\ActiveRecord
 				}else{
 					return 'none';
 				}
+			},
+			'STORAN'=>function(){
+				return $this->storanTbl;
 			}
 		];
 	}
+	
+	public function getStoranTbl(){
+		return $this->hasOne(TransStoran::className(), ['OPENCLOSE_ID' => 'OPENCLOSE_ID']);
+	}	
 }

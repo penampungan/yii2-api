@@ -193,6 +193,9 @@ class MerchantController extends ActiveController
 		$merchantToken	= isset($paramsBody['MERCHANT_TOKEN'])!=''?$paramsBody['MERCHANT_TOKEN']:'';
 		$merchantUrl	= isset($paramsBody['MERCHANT_URL'])!=''?$paramsBody['MERCHANT_URL']:'';
 		$modelMerchant= StoreMerchant::find()->where(['MERCHANT_ID'=>$merchantId])->one();
+		//==STATUS== [0=Disable;1=Enable;3=Disable]
+		$stt			= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
+
 		if($modelMerchant){
 			//$modelMerchant->BANK_NM='ok zone1';
 			if ($typePayId!=''){$modelMerchant->TYPE_PAY_ID=$typePayId;};
@@ -201,6 +204,7 @@ class MerchantController extends ActiveController
 		    if ($merchantNo!=''){$modelMerchant->MERCHANT_NO=$merchantNo;};
 			if ($merchantToken!=''){$modelMerchant->MERCHANT_TOKEN=$merchantToken;};
 			if ($merchantUrl!=''){$modelMerchant->MERCHANT_URL=$merchantUrl;};
+			if ($stt!=''){$modelMerchant->STATUS=$stt;};
 			if($modelMerchant->save()){
 				$modelView=StoreMerchant::find()->where(['MERCHANT_ID'=>$merchantId])->one();				
 				return array('MERCHANT'=>$modelView);

@@ -3,30 +3,10 @@
 namespace api\modules\transaksi\models;
 
 use Yii;
-
-/**
- * This is the model class for table "trans_storan".
- *
- * @property string $ID
- * @property string $ACCESS_GROUP
- * @property string $STORE_ID
- * @property string $ACCESS_ID
- * @property string $OPENCLOSE_ID
- * @property string $TGLWAKTU
- * @property string $TOTALCASH
- * @property string $NOMINAL_STORAN
- * @property string $SISA_STORAN
- * @property string $CREATE_BY
- * @property string $CREATE_AT
- * @property string $UPDATE_BY
- * @property string $UPDATE_AT
- * @property integer $STATUS
- * @property string $DCRP_DETIL
- * @property integer $YEAR_AT
- * @property integer $MONTH_AT
- */
+use api\modules\transaksi\models\TransStoranImage;
 class TransStoran extends \yii\db\ActiveRecord
 {
+	const SCENARIO_UPDATE = 'update';
     /**
      * @inheritdoc
      */
@@ -49,8 +29,8 @@ class TransStoran extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['OPENCLOSE_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
-            [['TGLWAKTU', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
+            [['OPENCLOSE_ID','TGL_STORAN','NOMINAL_STORAN','BANK_NM','BANK_NO'], 'required','on'=>self::SCENARIO_UPDATE],
+            [['TGL_STORAN', 'CREATE_AT', 'UPDATE_AT','BANK_NM','BANK_NO'], 'safe'],
             [['TOTALCASH', 'NOMINAL_STORAN', 'SISA_STORAN'], 'number'],
             [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['DCRP_DETIL'], 'string'],
@@ -71,10 +51,12 @@ class TransStoran extends \yii\db\ActiveRecord
             'STORE_ID' => 'Store  ID',
             'ACCESS_ID' => 'Access  ID',
             'OPENCLOSE_ID' => 'Openclose  ID',
-            'TGLWAKTU' => 'Tglwaktu',
+            'TGL_STORAN' => 'TGL_STORAN',
             'TOTALCASH' => 'Totalcash',
             'NOMINAL_STORAN' => 'Nominal  Storan',
             'SISA_STORAN' => 'Sisa  Storan',
+            'BANK_NM' => 'Bank',
+            'BANK_NO' => 'Bank.No',
             'CREATE_BY' => 'Create  By',
             'CREATE_AT' => 'Create  At',
             'UPDATE_BY' => 'Update  By',
@@ -89,9 +71,9 @@ class TransStoran extends \yii\db\ActiveRecord
 	public function fields()
 	{
 		return [			
-			'ID'=>function($model){
-				return $model->ID;
-			},
+			// 'ID'=>function($model){
+				// return $model->ID;
+			// },
 			'ACCESS_GROUP'=>function($model){
 				return $model->ACCESS_GROUP;
 			},
@@ -104,8 +86,8 @@ class TransStoran extends \yii\db\ActiveRecord
 			'OPENCLOSE_ID'=>function($model){
 				return $model->OPENCLOSE_ID;
 			},
-			'TGLWAKTU'=>function($model){
-				return $model->TGLWAKTU;
+			'TGL_STORAN'=>function($model){
+				return $model->TGL_STORAN;
 			},					
 			'TOTALCASH'=>function($model){
 				return $model->TOTALCASH;
@@ -116,6 +98,15 @@ class TransStoran extends \yii\db\ActiveRecord
 			'SISA_STORAN'=>function($model){
 				return $model->SISA_STORAN;
 			},
+			'BANK_NM'=>function($model){
+				return $model->BANK_NM;
+			},
+			'BANK_NO'=>function($model){
+				return $model->BANK_NO;
+			},
+			'CREATE_AT'=>function($model){
+				return $model->CREATE_AT;
+			},
 			'STATUS'=>function($model){
 				return $model->STATUS;
 			},					
@@ -125,7 +116,14 @@ class TransStoran extends \yii\db\ActiveRecord
 				}else{
 					return 'none';
 				}
-			}
+			},
+			'STORAN_IMAGE'=>function(){
+				return $this->storanImageTbl->STORAN_IMAGE;
+			},
 		];
+	}
+	
+	public function getStoranImageTbl(){
+		return $this->hasOne(TransStoranImage::className(), ['OPENCLOSE_ID' => 'OPENCLOSE_ID']);
 	}
 }

@@ -189,6 +189,9 @@ class StoreController extends ActiveController
 		$provinsiID				= isset($paramsBody['PROVINCE_ID'])!=''?$paramsBody['PROVINCE_ID']:'';
 		$kotaId					= isset($paramsBody['CITY_ID'])!=''?$paramsBody['CITY_ID']:'';
 		
+		//==STATUS== [0=Disable;1=Enable;3=Disable]
+		$stt					= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
+		
 		if($storeId){
 			$modelStore= Store::find()->where(['STORE_ID'=>$storeId])->one();
 			//$model->scenario = 'createuserapi';
@@ -199,6 +202,7 @@ class StoreController extends ActiveController
 			if ($fax!=''){$modelStore->FAX =$fax;};
 			if ($provinsiID!=''){$modelStore->PROVINCE_ID=$provinsiID;};
 			if ($kotaId!=''){$modelStore->CITY_ID=$kotaId;};
+			if ($stt!=''){$modelStore->STATUS=$stt;};
 			if ($modelStore->save()){
 				return array('store'=>$modelStore);
 			}else{

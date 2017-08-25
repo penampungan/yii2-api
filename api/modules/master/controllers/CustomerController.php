@@ -175,16 +175,18 @@ class CustomerController extends ActiveController
 		$nama			= isset($paramsBody['NAME'])!=''?$paramsBody['NAME']:'';
 		$email			= isset($paramsBody['EMAIL'])!=''?$paramsBody['EMAIL']:'';
 		$phone			= isset($paramsBody['PHONE'])!=''?$paramsBody['PHONE']:'';
-		$status			= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
 		$dcript			= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['DCRP_DETIL']:'';
 		
+		//==STATUS== [0=Disable;1=Enable;3=Disable]
+		$stt			= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
+		//if ($stt!=''){$modelCustomer->STATUS=$stt;};
 		$modelCustomer= Customer::find()->where(['CUSTOMER_ID'=>$customerId])->one();
 		if($modelCustomer){
 			//$modelMerchant->BANK_NM='ok zone1';
 			if ($nama!=''){$modelCustomer->NAME=$nama;};
 			if ($email!=''){$modelCustomer->EMAIL=$email;};
 			if ($phone!=''){$modelCustomer->PHONE=$phone;};
-		    if ($status!=''){$modelCustomer->STATUS=$status;};
+		    if ($stt!=''){$modelCustomer->STATUS=$stt;};
 			if ($dcript!=''){$modelCustomer->DCRP_DETIL=$dcript;};
 			if($modelCustomer->save()){
 				$modelView=Customer::find()->where(['CUSTOMER_ID'=>$customerId])->one();				
