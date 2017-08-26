@@ -151,6 +151,7 @@ class TransPenjualanHeaderController extends ActiveController
 			* URL			: http://production.kontrolgampang.com/transaksi/trans-penjualan-heades
 			* Body Param	: METHODE=GET & TRANS_ID(Master Key) & OFLINE_ID(Master key) & STORE_ID(key) 
 			*                 AND ACCESS_ID(key) & OR TRANS_DATE(Filter)
+			*				: IF MERCHANT_ID=0 [CASH MANUAL] ELSE PEYMENT ONLINE
 			*/
 			$modelNew = new TransPenjualanHeader();
 			$modelNew->scenario = "create";

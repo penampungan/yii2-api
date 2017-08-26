@@ -4,33 +4,10 @@ namespace api\modules\transaksi\models;
 
 use Yii;
 
-/**
- * This is the model class for table "trans_penjualan_detail".
- *
- * @property string $ID
- * @property string $ACCESS_GROUP
- * @property string $STORE_ID
- * @property string $ACCESS_ID
- * @property string $TRANS_ID
- * @property string $TRANS_DATE
- * @property string $PRODUCT_ID
- * @property string $PRODUCT_NM
- * @property double $PRODUCT_QTY
- * @property integer $UNIT_ID
- * @property string $UNIT_NM
- * @property string $HARGA_JUAL
- * @property string $DISCOUNT
- * @property string $PROMO
- * @property string $CREATE_AT
- * @property string $UPDATE_BY
- * @property string $UPDATE_AT
- * @property integer $STATUS
- * @property string $DCRP_DETIL
- * @property integer $YEAR_AT
- * @property integer $MONTH_AT
- */
 class TransPenjualanDetail extends \yii\db\ActiveRecord
 {
+	const SCENARIO_CREATE = 'create'; //add Details Product BY TRANS_ID,OFLINE_ID
+	const SCENARIO_UPDATE = 'update'; 
     /**
      * @inheritdoc
      */
@@ -53,8 +30,9 @@ class TransPenjualanDetail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['STORE_ID', 'ACCESS_ID', 'TRANS_ID', 'TRANS_DATE', 'PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
-            [['TRANS_DATE', 'CREATE_AT', 'UPDATE_AT','OFLINE_ID'], 'safe'],
+            //[['STORE_ID', 'ACCESS_ID', 'TRANS_ID', 'TRANS_DATE', 'PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
+			[['STORE_ID','TRANS_ID','OFLINE_ID'], 'required','on'=>self::SCENARIO_CREATE],
+            [['TRANS_DATE', 'CREATE_AT', 'UPDATE_AT','OFLINE_ID','GOLONGAN'], 'safe'],
             [['PRODUCT_QTY', 'HARGA_JUAL', 'DISCOUNT'], 'number'],
             [['UNIT_ID', 'STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['DCRP_DETIL'], 'string'],
@@ -77,6 +55,7 @@ class TransPenjualanDetail extends \yii\db\ActiveRecord
             'ACCESS_GROUP' => 'Access  Group',
             'STORE_ID' => 'Store  ID',
             'ACCESS_ID' => 'Access  ID',
+            'GOLONGAN' => 'Golongan ID',
             'TRANS_ID' => 'Trans  ID',
             'OFLINE_ID' => 'Ofline ID',
             'TRANS_DATE' => 'Trans  Date',
@@ -115,6 +94,9 @@ class TransPenjualanDetail extends \yii\db\ActiveRecord
 			},
 			'ACCESS_ID'=>function($model){
 				return $model->ACCESS_ID;
+			},
+			'GOLONGAN'=>function($model){
+				return $model->GOLONGAN;
 			},
 			'TRANS_ID'=>function($model){
 				return $model->TRANS_ID;
