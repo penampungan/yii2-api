@@ -54,7 +54,7 @@ class TransPenjualanDetail extends \yii\db\ActiveRecord
     {
         return [
             [['STORE_ID', 'ACCESS_ID', 'TRANS_ID', 'TRANS_DATE', 'PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
-            [['TRANS_DATE', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
+            [['TRANS_DATE', 'CREATE_AT', 'UPDATE_AT','OFLINE_ID'], 'safe'],
             [['PRODUCT_QTY', 'HARGA_JUAL', 'DISCOUNT'], 'number'],
             [['UNIT_ID', 'STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['DCRP_DETIL'], 'string'],
@@ -62,6 +62,7 @@ class TransPenjualanDetail extends \yii\db\ActiveRecord
             [['STORE_ID'], 'string', 'max' => 20],
             [['TRANS_ID', 'UNIT_NM', 'PROMO', 'UPDATE_BY'], 'string', 'max' => 50],
             [['PRODUCT_ID'], 'string', 'max' => 35],
+            [['PRODUCT_PROVIDER','PRODUCT_PROVIDER_NO','PRODUCT_PROVIDER_NM','OFLINE_ID'], 'string', 'max' => 255],
             [['PRODUCT_NM'], 'string', 'max' => 100],
         ];
     }
@@ -77,9 +78,13 @@ class TransPenjualanDetail extends \yii\db\ActiveRecord
             'STORE_ID' => 'Store  ID',
             'ACCESS_ID' => 'Access  ID',
             'TRANS_ID' => 'Trans  ID',
+            'OFLINE_ID' => 'Ofline ID',
             'TRANS_DATE' => 'Trans  Date',
             'PRODUCT_ID' => 'Product  ID',
             'PRODUCT_NM' => 'Product  Nm',
+            'PRODUCT_PROVIDER' => 'Provider',
+            'PRODUCT_PROVIDER_NO' => 'Provider No',
+            'PRODUCT_PROVIDER_NM' => 'Provicer Nm',
             'PRODUCT_QTY' => 'Product  Qty',
             'UNIT_ID' => 'Unit  ID',
             'UNIT_NM' => 'Unit  Nm',
@@ -114,6 +119,9 @@ class TransPenjualanDetail extends \yii\db\ActiveRecord
 			'TRANS_ID'=>function($model){
 				return $model->TRANS_ID;
 			},
+			'OFLINE_ID'=>function($model){
+				return $model->OFLINE_ID;
+			},
 			'TRANS_DATE'=>function($model){
 				return $model->TRANS_DATE;
 			},					
@@ -122,6 +130,15 @@ class TransPenjualanDetail extends \yii\db\ActiveRecord
 			},
 			'PRODUCT_NM'=>function($model){
 				return $model->PRODUCT_NM;
+			},
+			'PRODUCT_PROVIDER'=>function($model){
+				return $model->PRODUCT_PROVIDER;
+			},
+			'PRODUCT_PROVIDER_NO'=>function($model){
+				return $model->PRODUCT_PROVIDER_NO;
+			},
+			'PRODUCT_PROVIDER_NM'=>function($model){
+				return $model->PRODUCT_PROVIDER_NM;
 			},
 			'PRODUCT_QTY'=>function($model){
 				return $model->PRODUCT_QTY;
