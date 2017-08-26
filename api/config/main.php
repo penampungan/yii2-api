@@ -145,7 +145,9 @@ return [
                         'class' => 'yii\rest\UrlRule',
                         'controller' =>[
 							'transaksi/trans-openclose',
-							'transaksi/trans-storan'
+							'transaksi/trans-storan',
+							'transaksi/trans-penjualan-header',
+							'transaksi/trans-penjualan-detail'
 						],
 						'patterns' => [
 							'PUT,PATCH' => 'update',

@@ -4,39 +4,10 @@ namespace api\modules\transaksi\models;
 
 use Yii;
 
-/**
- * This is the model class for table "trans_penjualan_header".
- *
- * @property string $ID
- * @property string $ACCESS_GROUP
- * @property string $STORE_ID
- * @property string $ACCESS_ID
- * @property string $TRANS_ID
- * @property string $TRANS_DATE
- * @property double $TOTAL_PRODUCT
- * @property string $SUB_TOTAL_HARGA
- * @property string $PPN
- * @property string $TOTAL_HARGA
- * @property integer $TYPE_PAY_ID
- * @property string $TYPE_PAY_NM
- * @property integer $BANK_ID
- * @property string $BANK_NM
- * @property string $MERCHANT_NM
- * @property string $MERCHANT_NO
- * @property string $CONSUMER_NM
- * @property string $CONSUMER_EMAIL
- * @property string $CONSUMER_PHONE
- * @property string $CREATE_AT
- * @property string $UPDATE_BY
- * @property string $UPDATE_AT
- * @property integer $STATUS
- * @property string $DCRP_DETIL
- * @property integer $YEAR_AT
- * @property integer $MONTH_AT
- */
 class TransPenjualanHeader extends \yii\db\ActiveRecord
 {
-	const SCENARIO_CREATE = 'create';
+	const SCENARIO_CREATE = 'create'; //STATUS=0
+	const SCENARIO_UPDATE = 'update'; //CHECK COUNT 'TOTAL_PRODUC' jika sama send 'Email/sms' => STATUS=1 (complete)
     /**
      * @inheritdoc
      */
@@ -59,14 +30,15 @@ class TransPenjualanHeader extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['STORE_ID','ACCESS_ID','TRANS_DATE'], 'required','on'=>self::SCENARIO_CREATE],
-			[['TRANS_DATE', 'CREATE_AT', 'UPDATE_AT','MERCHANT_ID'], 'safe'],
+            [['STORE_ID','ACCESS_ID','TRANS_DATE','OFLINE_ID'], 'required','on'=>self::SCENARIO_CREATE],
+			[['TRANS_ID','TOTAL_PRODUCT'], 'required','on'=>self::SCENARIO_UPDATE],
+			[['TRANS_DATE', 'CREATE_AT', 'UPDATE_AT','MERCHANT_ID','TRANS_ID'], 'safe'],
             [['TOTAL_PRODUCT', 'SUB_TOTAL_HARGA', 'PPN', 'TOTAL_HARGA'], 'number'],
             [['TYPE_PAY_ID', 'BANK_ID', 'STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['DCRP_DETIL'], 'string'],
             [['ACCESS_GROUP', 'ACCESS_ID'], 'string', 'max' => 15],
             [['STORE_ID'], 'string', 'max' => 20],
-            [['TRANS_ID', 'UPDATE_BY'], 'string', 'max' => 50],
+            [['UPDATE_BY'], 'string', 'max' => 50],
             [['TYPE_PAY_NM', 'BANK_NM', 'CONSUMER_PHONE'], 'string', 'max' => 150],
             [['MERCHANT_NM', 'MERCHANT_NO','OFLINE_ID'], 'string', 'max' => 255],
             [['CONSUMER_NM'], 'string', 'max' => 100],
@@ -114,9 +86,9 @@ class TransPenjualanHeader extends \yii\db\ActiveRecord
 	public function fields()
 	{
 		return [			
-			'ID'=>function($model){
-				return $model->ID;
-			},
+			// 'ID'=>function($model){
+				// return $model->ID;
+			// },
 			'ACCESS_GROUP'=>function($model){
 				return $model->ACCESS_GROUP;
 			},
