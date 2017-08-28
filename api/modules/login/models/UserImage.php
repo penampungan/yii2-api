@@ -21,6 +21,8 @@ use Yii;
  */
 class UserImage extends \yii\db\ActiveRecord
 {
+	const SCENARIO_CREATE = 'create';
+	const SCENARIO_UPDATE = 'update';
     /**
      * @inheritdoc
      */
@@ -43,7 +45,8 @@ class UserImage extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['ACCESS_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
+			[['ACCESS_ID','ACCESS_IMAGE'], 'required','on'=>self::SCENARIO_CREATE],
+			[['ACCESS_ID','ACCESS_IMAGE'], 'required','on'=>self::SCENARIO_UPDATE],
             [['ACCESS_IMAGE', 'DCRP_DETIL'], 'string'],
             [['CREATE_AT', 'UPDATE_AT'], 'safe'],
             [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
@@ -79,10 +82,7 @@ class UserImage extends \yii\db\ActiveRecord
 			},
 			'ACCESS_ID'=>function($model){
 				return $model->ACCESS_ID;
-			},
-			'ACCESS_IMAGE'=>function($model){
-				return $model->ACCESS_IMAGE;
-			},
+			},			
 			'STATUS'=>function($model){
 				return $model->STATUS;
 			},
@@ -92,7 +92,10 @@ class UserImage extends \yii\db\ActiveRecord
 				}else{
 					return 'none';
 				}
-			}
+			},
+			'ACCESS_IMAGE'=>function($model){
+				return $model->ACCESS_IMAGE;
+			},
 		];
 	}
 }

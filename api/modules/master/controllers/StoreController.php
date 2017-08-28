@@ -104,25 +104,35 @@ class StoreController extends ActiveController
 		  * @author 	: ptrnov  <piter@lukison.com>
 		  * @since 		: 1.2
 		  * Subject		: ADD STORE
-		  * Metode		: POST (CREATE)
+		  * Metode		: POST(POST)View / POST(GET) View.
 		  * URL			: http://production.kontrolgampang.com/master/stores
-		  * Body Param	: ACCESS_GROUP (key) & STORE_NM & ALAMAT & PIC & TLP & FAX & PROVINCE_ID & CITY_ID.
-		  * Support Api	: http://production.kontrolgampang.com/master/kotas 
-		  *				  http://production.kontrolgampang.com/master/provinsis
+		  * Body Param	: METHODE=POST/GET & ACCESS_GROUP (key),PROVINCE_ID(key), INDUSTRY_ID(key), INDUSTRY_GRP_ID(key)
+		  * Result 		: STORE_ID (Auto Generate).
+		  * Properties	: STORE_NM, ALAMAT,PIC,TLP,FAX,PROVINCE_NM,CITY_NAME,INDUSTRY_NM,INDUSTRY_GRP_NM
+		  * Support Api	: http://production.kontrolgampang.com/master/kotas 					(All Master)
+		  *				  http://production.kontrolgampang.com/master/provinsis					(All Master)
+		  *				  http://production.kontrolgampang.com/master/product-industris			(All Master)
+		  *				  http://production.kontrolgampang.com/master/product-industri-groups	(All Master)
 		*/ 
 		$paramsBody 			= Yii::$app->request->bodyParams;
 		$metode					= isset($paramsBody['METHODE'])!=''?$paramsBody['METHODE']:'';
 		$storeID				= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';
-		
+		//PROPERTY
 		$accessGroup			= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';
 		$storeNm				= isset($paramsBody['STORE_NM'])!=''?$paramsBody['STORE_NM']:'';
 		$alamat					= isset($paramsBody['ALAMAT'])!=''?$paramsBody['ALAMAT']:'';
 		$pic					= isset($paramsBody['PIC'])!=''?$paramsBody['PIC']:'';
 		$tlp					= isset($paramsBody['TLP'])!=''?$paramsBody['TLP']:'';
 		$fax					= isset($paramsBody['FAX'])!=''?$paramsBody['FAX']:'';
+		//LOCATION
 		$provinsiID				= isset($paramsBody['PROVINCE_ID'])!=''?$paramsBody['PROVINCE_ID']:'';
 		$kotaId					= isset($paramsBody['CITY_ID'])!=''?$paramsBody['CITY_ID']:'';
-		
+		//INDUSTRY
+		$industriId				= isset($paramsBody['INDUSTRY_ID'])!=''?$paramsBody['INDUSTRY_ID']:'';
+		$industriNm				= isset($paramsBody['INDUSTRY_NM'])!=''?$paramsBody['INDUSTRY_NM']:'';
+		$industriGrpId			= isset($paramsBody['INDUSTRY_GRP_ID'])!=''?$paramsBody['INDUSTRY_GRP_ID']:'';
+		$industriGrpNm			= isset($paramsBody['INDUSTRY_GRP_NM'])!=''?$paramsBody['INDUSTRY_GRP_NM']:'';
+				
 		if($metode=='POST'){
 			if($accessGroup){
 				$cntOwner= UserLogin::find()->where(['ACCESS_GROUP'=>$accessGroup])->count();
@@ -138,6 +148,10 @@ class StoreController extends ActiveController
 					if ($fax!=''){$modelStore->FAX =$fax;};
 					if ($provinsiID!=''){$modelStore->PROVINCE_ID=$provinsiID;};
 					if ($kotaId!=''){$modelStore->CITY_ID=$kotaId;};
+					if ($industriId!=''){$modelStore->INDUSTRY_ID=$industriId;};
+					if ($industriNm!=''){$modelStore->INDUSTRY_NM=$industriNm;};
+					if ($industriGrpId!=''){$modelStore->INDUSTRY_GRP_ID=$industriGrpId;};
+					if ($industriGrpNm!=''){$modelStore->INDUSTRY_GRP_NM=$industriGrpNm;};					
 					if ($modelStore->save()){
 						$rsltMax=Store::find()->where(['ACCESS_GROUP'=>$accessGroup])->max(STORE_ID);
 						$modelView=Store::find()->where(['STORE_ID'=>$rsltMax])->one();
@@ -170,14 +184,17 @@ class StoreController extends ActiveController
 	public function actionUpdate()
     {        	
 		/**
-		  * @author 	: ptrnov  <piter@lukison.com>
-		  * @since 		: 1.2
-		  * Metode		: PUT (UPDATE)
-		  * Subject		: UPDATE PROPERTY STORE
-		  * URL			: http://production.kontrolgampang.com/master/stores
-		  * Body Param	: STORE_ID (key) & STORE_NM & ALAMAT & PIC & TLP & FAX & PROVINCE_ID & CITY_ID.
-		  * Support Api	: http://production.kontrolgampang.com/master/kotas 
-		  *				  http://production.kontrolgampang.com/master/provinsis
+		* @author 	: ptrnov  <piter@lukison.com>
+		* @since 		: 1.2
+		* Metode		: PUT (UPDATE)
+		* Subject		: UPDATE PROPERTY STORE
+		* URL			: http://production.kontrolgampang.com/master/stores
+		* Body Param	: STORE_ID (key)
+		* Properties	: STORE_NM, ALAMAT,PIC,TLP,FAX,PROVINCE_NM,CITY_NAME,INDUSTRY_NM,INDUSTRY_GRP_NM
+		* Support Api	: http://production.kontrolgampang.com/master/kotas 					(All Master)
+		*				  http://production.kontrolgampang.com/master/provinsis					(All Master)
+		*				  http://production.kontrolgampang.com/master/product-industris			(All Master)
+		*				  http://production.kontrolgampang.com/master/product-industri-groups	(All Master)
 		*/ 
 		$paramsBody 			= Yii::$app->request->bodyParams;
 		$storeId				= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';
@@ -186,8 +203,14 @@ class StoreController extends ActiveController
 		$pic					= isset($paramsBody['PIC'])!=''?$paramsBody['PIC']:'';
 		$tlp					= isset($paramsBody['TLP'])!=''?$paramsBody['TLP']:'';
 		$fax					= isset($paramsBody['FAX'])!=''?$paramsBody['FAX']:'';
+		//LOCATION
 		$provinsiID				= isset($paramsBody['PROVINCE_ID'])!=''?$paramsBody['PROVINCE_ID']:'';
 		$kotaId					= isset($paramsBody['CITY_ID'])!=''?$paramsBody['CITY_ID']:'';
+		//INDUSTRY
+		$industriId				= isset($paramsBody['INDUSTRY_ID'])!=''?$paramsBody['INDUSTRY_ID']:'';
+		$industriNm				= isset($paramsBody['INDUSTRY_NM'])!=''?$paramsBody['INDUSTRY_NM']:'';
+		$industriGrpId			= isset($paramsBody['INDUSTRY_GRP_ID'])!=''?$paramsBody['INDUSTRY_GRP_ID']:'';
+		$industriGrpNm			= isset($paramsBody['INDUSTRY_GRP_NM'])!=''?$paramsBody['INDUSTRY_GRP_NM']:'';
 		
 		//==STATUS== [0=Disable;1=Enable;3=Disable]
 		$stt					= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
@@ -202,6 +225,10 @@ class StoreController extends ActiveController
 			if ($fax!=''){$modelStore->FAX =$fax;};
 			if ($provinsiID!=''){$modelStore->PROVINCE_ID=$provinsiID;};
 			if ($kotaId!=''){$modelStore->CITY_ID=$kotaId;};
+			if ($industriId!=''){$modelStore->INDUSTRY_ID=$industriId;};
+			if ($industriNm!=''){$modelStore->INDUSTRY_NM=$industriNm;};
+			if ($industriGrpId!=''){$modelStore->INDUSTRY_GRP_ID=$industriGrpId;};
+			if ($industriGrpNm!=''){$modelStore->INDUSTRY_GRP_NM=$industriGrpNm;};				
 			if ($stt!=''){$modelStore->STATUS=$stt;};
 			if ($modelStore->save()){
 				return array('store'=>$modelStore);

@@ -34,6 +34,8 @@ use Yii;
  */
 class Karyawan extends \yii\db\ActiveRecord
 {
+	const SCENARIO_CREATE = 'create';
+	const SCENARIO_UPDATE = 'update';
     /**
      * @inheritdoc
      */
@@ -56,7 +58,9 @@ class Karyawan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['STORE_ID', 'KARYAWAN_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
+			[['STORE_ID','NAMA_DPN'], 'required','on'=>self::SCENARIO_CREATE],
+			[['KARYAWAN_ID'], 'required','on'=>self::SCENARIO_UPDATE],
+            //[['STORE_ID', 'KARYAWAN_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
             [['TGL_LAHIR', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
             [['ALAMAT', 'DCRP_DETIL'], 'string'],
             [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
@@ -107,6 +111,12 @@ class Karyawan extends \yii\db\ActiveRecord
 	public function fields()
 	{
 		return [			
+			'ACCESS_GROUP'=>function($model){
+				return $model->ACCESS_GROUP;
+			},
+			'STORE_ID'=>function($model){
+				return $model->STORE_ID;
+			},
 			'KARYAWAN_ID'=>function($model){
 				return $model->KARYAWAN_ID;
 			},

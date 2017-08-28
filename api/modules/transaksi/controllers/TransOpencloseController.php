@@ -114,15 +114,26 @@ class TransOpencloseController extends ActiveController
 			*				: STORE_ID='' All data Open/Closing per-STORE_ID.
 			*				: STORE_ID<>'' data Open/Closing per-OPENCLOSE_ID.
 			*/
-			if($store_id<>''){				
-				//Model Openclose BY STORE_ID
-				$modelCnt= TransOpenclose::find()->where(['STORE_ID'=>$store_id])->count();
-				$model= TransOpenclose::find()->where(['STORE_ID'=>$store_id])->all();		
-				if($modelCnt){
-					return array('LIST_OPENCLOSE'=>$model);
+			if($store_id<>''){
+				if($tglOpen<>''){					
+					//Model Openclose BY STORE_ID
+					$modelCnt= TransOpenclose::find()->where(['STORE_ID'=>$store_id])->andWhere(['like','TGL_OPEN',date('Y-m-d', strtotime($tglOpen))])->count();
+					$model= TransOpenclose::find()->where(['STORE_ID'=>$store_id])->andWhere(['like','TGL_OPEN',date('Y-m-d', strtotime($tglOpen))])->all();		
+					if($modelCnt){
+						return array('LIST_OPENCLOSE'=>$model);
+					}else{
+						return array('result'=>'data-empty');
+					};
 				}else{
-					return array('result'=>'data-empty');
-				};		 
+					//Model Openclose BY STORE_ID
+					$modelCnt= TransOpenclose::find()->where(['STORE_ID'=>$store_id])->count();
+					$model= TransOpenclose::find()->where(['STORE_ID'=>$store_id])->all();		
+					if($modelCnt){
+						return array('LIST_OPENCLOSE'=>$model);
+					}else{
+						return array('result'=>'data-empty');
+					};
+				}
 			}else{
 				//Model Openclose BY OPENCLOSE_ID
 				$modelCnt= TransOpenclose::find()->where(['OPENCLOSE_ID'=>$opencloseID])->count();

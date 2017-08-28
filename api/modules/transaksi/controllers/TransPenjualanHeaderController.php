@@ -99,7 +99,18 @@ class TransPenjualanHeaderController extends ActiveController
 		$transHeaderKey2	= isset($paramsBody['OFLINE_ID'])!=''?$paramsBody['OFLINE_ID']:'';
 		$tglTrans			= isset($paramsBody['TRANS_DATE'])!=''?$paramsBody['TRANS_DATE']:'';
 		$accessId			= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
-		
+		//==PROPERTIES===
+		$ttlProduct			= isset($paramsBody['TOTAL_PRODUCT'])!=''?$paramsBody['TOTAL_PRODUCT']:'';
+		$totalHarga			= isset($paramsBody['TOTAL_HARGA'])!=''?$paramsBody['TOTAL_HARGA']:'';
+		$subTotalHarga		= isset($paramsBody['SUB_TOTAL_HARGA'])!=''?$paramsBody['SUB_TOTAL_HARGA']:'';
+		$ppnPajak			= isset($paramsBody['PPN'])!=''?$paramsBody['PPN']:'';		
+		$cunsumerId			= isset($paramsBody['CONSUMER_ID'])!=''?$paramsBody['CONSUMER_ID']:'';
+		$cunsumerNm			= isset($paramsBody['CONSUMER_NM'])!=''?$paramsBody['CONSUMER_NM']:'';
+		$cunsumerEmail		= isset($paramsBody['CONSUMER_EMAIL'])!=''?$paramsBody['CONSUMER_EMAIL']:'';
+		$cunsumerPhone		= isset($paramsBody['CONSUMER_PHONE'])!=''?$paramsBody['CONSUMER_PHONE']:'';
+		$note				= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['DCRP_DETIL']:'';
+		$merchantId			= isset($paramsBody['MERCHANT_ID'])!=''?$paramsBody['MERCHANT_ID']:'';
+		$stt				= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
 		if($metode=='GET'){
 			/**
 			* @author 		: ptrnov  <piter@lukison.com>
@@ -115,9 +126,9 @@ class TransPenjualanHeaderController extends ActiveController
 			*/
 			if($store_id<>''){				
 				//MODEL TARNS HEADER BY STORE_ID
-				if($tglCreate<>''){	
-					$modelCnt= TransPenjualanHeader::find()->where(['STORE_ID'=>$store_id])->andWhere(['like','CREATE_AT',$tglCreate])->count();
-					$model= TransPenjualanHeader::find()->where(['STORE_ID'=>$store_id])->andWhere(['like','CREATE_AT',$tglCreate])->all();		
+				if($tglTrans<>''){	
+					$modelCnt= TransPenjualanHeader::find()->where(['STORE_ID'=>$store_id])->andWhere(['like','TRANS_DATE',$tglTrans])->count();
+					$model= TransPenjualanHeader::find()->where(['STORE_ID'=>$store_id])->andWhere(['like','TRANS_DATE',$tglTrans])->all();		
 					if($modelCnt){
 						return array('LIST_TRANS_HEADER'=>$model);
 					}else{
@@ -152,16 +163,28 @@ class TransPenjualanHeaderController extends ActiveController
 			* Body Param	: METHODE=GET & TRANS_ID(Master Key) & OFLINE_ID(Master key) & STORE_ID(key) 
 			*                 AND ACCESS_ID(key) & OR TRANS_DATE(Filter)
 			*				: IF MERCHANT_ID=0 [CASH MANUAL] ELSE PEYMENT ONLINE
+			* PROPERTIES	: TOTAL_PRODUCT,SUB_TOTAL_HARGA,PPN,TOTAL_HARGA,CONSUMER_ID,CONSUMER_NM,CONSUMER_EMAIL,CONSUMER_PHONE,DCRP_DETIL,
+			*				  MERCHANT_ID [TYPE_PAY_ID,TYPE_PAY_NM,BANK_ID,BANK_NM,MERCHANT_NM,MERCHANT_NO]->inquery
 			*/
 			$modelNew = new TransPenjualanHeader();
 			$modelNew->scenario = "create";
-			//==KEY=
+			//==KEY=			
 			if ($store_id<>''){$modelNew->STORE_ID=$store_id;};
 			if ($transHeaderKey2<>''){$modelNew->OFLINE_ID=$transHeaderKey2;};
-			if ($tglTrans<>''){$modelNew->TRANS_DATE=$tglTrans;};
-			if ($accessId<>''){$modelNew->ACCESS_ID=$accessId;};
-			//==PROPERTIES=
-			if ($store_id<>''){$modelNew->STORE_ID=$store_id;};
+			if ($tglTrans<>''){$modelNew->TRANS_DATE=date('Y-m-d H:i:s', strtotime($tglTrans));};
+			if ($accessId<>''){$modelNew->ACCESS_ID=$accessId;};			
+			//==PROPERTIES=			
+			if ($ttlProduct<>''){$modelNew->TOTAL_PRODUCT=$ttlProduct;};
+			if ($totalHarga<>''){$modelNew->TOTAL_HARGA=$totalHarga;};
+			if ($subTotalHarga<>''){$modelNew->SUB_TOTAL_HARGA=$subTotalHarga;};
+			if ($ppnPajak<>''){$modelNew->PPN=$ppnPajak;};
+			if ($cunsumerId<>''){$modelNew->CONSUMER_ID=$cunsumerId;};
+			if ($cunsumerNm<>''){$modelNew->CONSUMER_NM=$cunsumerNm;};
+			if ($cunsumerEmail<>''){$modelNew->CONSUMER_EMAIL=$cunsumerEmail;};
+			if ($cunsumerPhone<>''){$modelNew->CONSUMER_PHONE=$cunsumerPhone;};
+			if ($note<>''){$modelNew->DCRP_DETIL=$note;};
+			if ($merchantId<>''){$modelNew->MERCHANT_ID=$merchantId;};
+			if ($stt<>''){$modelNew->STATUS=$stt;};			
 			if($modelNew->save()){
 				$modelView=TransPenjualanHeader::find()->where(['OFLINE_ID'=>$transHeaderKey2])->orderBy(['ID' => SORT_DESC])->limit(1)->one();
 				return array('LIST_TRANS_HEADER'=>$modelView);
@@ -180,7 +203,7 @@ class TransPenjualanHeaderController extends ActiveController
 		* Metode		: PUT (UPDATE)
 		* URL			: http://production.kontrolgampang.com/transaksi/trans-penjualan-heades
 		* Body Param	: TRANS_ID(Master Key) & OFLINE_ID(Master key)
-		* PROPERTIES	: TOTAL_PRODUCT,SUB_TOTAL_HARGA,PPN,TOTAL_HARGA,CONSUMER_NM,CONSUMER_EMAIL,CONSUMER_PHONE,DCRP_DETIL,
+		* PROPERTIES	: TOTAL_PRODUCT,SUB_TOTAL_HARGA,PPN,TOTAL_HARGA,CONSUMER_ID,CONSUMER_NM,CONSUMER_EMAIL,CONSUMER_PHONE,DCRP_DETIL,
 		*				  MERCHANT_ID [TYPE_PAY_ID,TYPE_PAY_NM,BANK_ID,BANK_NM,MERCHANT_NM,MERCHANT_NO]->inquery
 		*/
 		$paramsBody 	= Yii::$app->request->bodyParams;	
@@ -189,27 +212,32 @@ class TransPenjualanHeaderController extends ActiveController
 		$transHeaderKey2	= isset($paramsBody['OFLINE_ID'])!=''?$paramsBody['OFLINE_ID']:'';
 		//==PROPERTIES===
 		$ttlProduct			= isset($paramsBody['TOTAL_PRODUCT'])!=''?$paramsBody['TOTAL_PRODUCT']:'';
-		$subTotalHarga		= isset($paramsBody['SUB_TOTAL_HARGA'])!=''?$paramsBody['SUB_TOTAL_HARGA']:'';
-		$ppnPajak			= isset($paramsBody['PPN'])!=''?$paramsBody['PPN']:'';
 		$totalHarga			= isset($paramsBody['TOTAL_HARGA'])!=''?$paramsBody['TOTAL_HARGA']:'';
+		$subTotalHarga		= isset($paramsBody['SUB_TOTAL_HARGA'])!=''?$paramsBody['SUB_TOTAL_HARGA']:'';
+		$ppnPajak			= isset($paramsBody['PPN'])!=''?$paramsBody['PPN']:'';		
+		$cunsumerId			= isset($paramsBody['CONSUMER_ID'])!=''?$paramsBody['CONSUMER_ID']:'';
 		$cunsumerNm			= isset($paramsBody['CONSUMER_NM'])!=''?$paramsBody['CONSUMER_NM']:'';
 		$cunsumerEmail		= isset($paramsBody['CONSUMER_EMAIL'])!=''?$paramsBody['CONSUMER_EMAIL']:'';
 		$cunsumerPhone		= isset($paramsBody['CONSUMER_PHONE'])!=''?$paramsBody['CONSUMER_PHONE']:'';
 		$note				= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['DCRP_DETIL']:'';
 		$merchantId			= isset($paramsBody['MERCHANT_ID'])!=''?$paramsBody['MERCHANT_ID']:'';
+		$stt				= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
 		
 		$modelEdit=TransPenjualanHeader::find()->where(['TRANS_ID'=>$transHeaderKey1])->one();
 		if($modelEdit){
 			//==REQUIRED=
 			if ($ttlProduct<>''){$modelEdit->TOTAL_PRODUCT=$ttlProduct;};
-			//==PROPERTIES=
-			if ($ttlProduct<>''){$modelEdit->PPN=$ttlProduct;};
-			if ($ttlProduct<>''){$modelEdit->TOTAL_HARGA=$ttlProduct;};
-			if ($ttlProduct<>''){$modelEdit->CONSUMER_NM=$ttlProduct;};
-			if ($ttlProduct<>''){$modelEdit->CONSUMER_EMAIL=$ttlProduct;};
-			if ($ttlProduct<>''){$modelEdit->CONSUMER_PHONE=$ttlProduct;};
-			if ($ttlProduct<>''){$modelEdit->DCRP_DETIL=$ttlProduct;};
-			if ($ttlProduct<>''){$modelEdit->MERCHANT_ID=$ttlProduct;};			
+			//==PROPERTIES=			
+			if ($totalHarga<>''){$modelEdit->TOTAL_HARGA=$totalHarga;};
+			if ($subTotalHarga<>''){$modelEdit->SUB_TOTAL_HARGA=$subTotalHarga;};
+			if ($ppnPajak<>''){$modelEdit->PPN=$ppnPajak;};
+			if ($cunsumerId<>''){$modelEdit->CONSUMER_ID=$cunsumerId;};
+			if ($cunsumerNm<>''){$modelEdit->CONSUMER_NM=$cunsumerNm;};
+			if ($cunsumerEmail<>''){$modelEdit->CONSUMER_EMAIL=$cunsumerEmail;};
+			if ($cunsumerPhone<>''){$modelEdit->CONSUMER_PHONE=$cunsumerPhone;};
+			if ($note<>''){$modelEdit->DCRP_DETIL=$note;};
+			if ($merchantId<>''){$modelEdit->MERCHANT_ID=$merchantId;};	
+			if ($stt<>''){$modelEdit->STATUS=$stt;};			
 			$modelEdit->scenario = "update";
 			if($modelEdit->save()){
 				$modelView=TransPenjualanHeader::find()->where(['TRANS_ID'=>$transHeaderKey1])->all();

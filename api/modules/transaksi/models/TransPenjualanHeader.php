@@ -32,7 +32,7 @@ class TransPenjualanHeader extends \yii\db\ActiveRecord
         return [
             [['STORE_ID','ACCESS_ID','TRANS_DATE','OFLINE_ID'], 'required','on'=>self::SCENARIO_CREATE],
 			[['TRANS_ID','TOTAL_PRODUCT'], 'required','on'=>self::SCENARIO_UPDATE],
-			[['TRANS_DATE', 'CREATE_AT', 'UPDATE_AT','MERCHANT_ID','TRANS_ID'], 'safe'],
+			[['TRANS_DATE', 'CREATE_AT', 'UPDATE_AT','MERCHANT_ID','TRANS_ID','CONSUMER_ID'], 'safe'],
             [['TOTAL_PRODUCT', 'SUB_TOTAL_HARGA', 'PPN', 'TOTAL_HARGA'], 'number'],
             [['TYPE_PAY_ID', 'BANK_ID', 'STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['DCRP_DETIL'], 'string'],
@@ -70,6 +70,7 @@ class TransPenjualanHeader extends \yii\db\ActiveRecord
             'MERCHANT_ID' => 'Store Merchant',
             'MERCHANT_NM' => 'Merchant  Nm',
             'MERCHANT_NO' => 'Merchant  No',
+            'CONSUMER_ID' => 'Consumer  Id',
             'CONSUMER_NM' => 'Consumer  Nm',
             'CONSUMER_EMAIL' => 'Consumer  Email',
             'CONSUMER_PHONE' => 'Consumer  Phone',
@@ -139,6 +140,9 @@ class TransPenjualanHeader extends \yii\db\ActiveRecord
 			},
 			'MERCHANT_NO'=>function($model){
 				return $model->MERCHANT_NO;
+			},
+			'CONSUMER_ID'=>function($model){
+				return $model->CONSUMER_ID;
 			},
 			'CONSUMER_NM'=>function($model){
 				return $model->CONSUMER_NM;

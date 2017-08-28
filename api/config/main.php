@@ -80,6 +80,7 @@ return [
 						'login/user-login',
 						'login/user-link',
 						'login/user-profile',
+						'login/user-image',
 						'login/user-operational',
 						'login/user-permission',
 						'login/user-modul'
@@ -129,21 +130,6 @@ return [
 				[
                         'class' => 'yii\rest\UrlRule',
                         'controller' =>[
-							'master/product-store',
-						],
-						'patterns' => [
-							'PUT,PATCH {id}' => 'update',
-							'DELETE {id}' => 'delete',
-							'GET,HEAD {id}' => 'view',
-							'POST' => 'create',
-							'GET,HEAD' => 'index',
-							'{id}' => 'options',
-							'' => 'options',
-						]
-                ],
-				[
-                        'class' => 'yii\rest\UrlRule',
-                        'controller' =>[
 							'transaksi/trans-openclose',
 							'transaksi/trans-storan',
 							'transaksi/trans-penjualan-header',
@@ -158,19 +144,15 @@ return [
 							'{id}' => 'options',
 							'' => 'options',
 						]
-                        //'extraPatterns' => ['GET search' => 'search'],
-
-                        //'except' => ['view', 'create', 'update'],
                 ],
 				[
                         'class' => 'yii\rest\UrlRule',
                         'controller' =>[
-							'hirs/employe-data',
-							'hirs/employe-image',
-							'hirs/employe-absensi'
+							'hirs/karyawan',
+							'hirs/absensi'
 						],
 						'patterns' => [
-							'PUT,PATCH {id}' => 'update',
+							'PUT,PATCH' => 'update',
 							'DELETE {id}' => 'delete',
 							'GET,HEAD {id}' => 'view',
 							'POST' => 'create',
@@ -178,29 +160,7 @@ return [
 							'{id}' => 'options',
 							'' => 'options',
 						]
-                        //'extraPatterns' => ['GET search' => 'search'],
-
-                        //'except' => ['view', 'create', 'update'],
                 ],
-				/* [
-					'class' => 'yii\rest\UrlRule',
-                    'controller' =>
-                    [   //ptr,.nov penting buat API
-							'login/user',
-							'login/password',
-							'login/signature',
-							'login/profile',
-							'login/user-token',
-							'master/store',
-								
-					],
-
-                    //Ini dibutuhkan jika ID primary key bukan digital dalam bentuk regex
-                    'tokens' =>
-                    [
-                      '{id}' => '<id:\\w+>',
-                    ],
-                ] */
             ],
         ],
 		// 'db' => [

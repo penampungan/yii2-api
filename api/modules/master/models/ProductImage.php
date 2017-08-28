@@ -4,23 +4,10 @@ namespace api\modules\master\models;
 
 use Yii;
 
-/**
- * This is the model class for table "product_image".
- *
- * @property string $ID
- * @property string $PRODUCT_ID
- * @property string $PRODUCT_IMAGE
- * @property string $CREATE_BY
- * @property string $CREATE_AT
- * @property string $UPDATE_BY
- * @property string $UPDATE_AT
- * @property integer $STATUS
- * @property string $DCRP_DETIL
- * @property integer $YEAR_AT
- * @property integer $MONTH_AT
- */
 class ProductImage extends \yii\db\ActiveRecord
 {
+	const SCENARIO_CREATE = 'create';
+	const SCENARIO_UPDATE = 'update';
     /**
      * @inheritdoc
      */
@@ -43,10 +30,13 @@ class ProductImage extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
+			[['PRODUCT_ID','PRODUCT_IMAGE'], 'required','on'=>self::SCENARIO_CREATE],
+			[['PRODUCT_ID','PRODUCT_IMAGE'], 'required','on'=>self::SCENARIO_UPDATE],
             [['PRODUCT_IMAGE', 'DCRP_DETIL'], 'string'],
             [['CREATE_AT', 'UPDATE_AT'], 'safe'],
             [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
+			[['ACCESS_GROUP'], 'string', 'max' => 15],
+			[['STORE_ID'], 'string', 'max' => 20],
             [['PRODUCT_ID'], 'string', 'max' => 35],
             [['CREATE_BY', 'UPDATE_BY'], 'string', 'max' => 50],
         ];
@@ -59,6 +49,8 @@ class ProductImage extends \yii\db\ActiveRecord
     {
         return [
             'ID' => 'ID',
+			'ACCESS_GROUP' => 'Access  Group',
+            'STORE_ID' => 'Store  ID',
             'PRODUCT_ID' => 'Product  ID',
             'PRODUCT_IMAGE' => 'Product  Image',
             'CREATE_BY' => 'Create  By',
@@ -75,15 +67,18 @@ class ProductImage extends \yii\db\ActiveRecord
 	public function fields()
 	{
 		return [			
-			'ID'=>function($model){
-				return $model->ID;
+			// 'ID'=>function($model){
+				// return $model->ID;
+			// },
+			'ACCESS_GROUP'=>function($model){
+				return $model->ACCESS_GROUP;
+			},
+			'STORE_ID'=>function($model){
+				return $model->STORE_ID;
 			},
 			'PRODUCT_ID'=>function($model){
 				return $model->PRODUCT_ID;
-			},
-			'PRODUCT_IMAGE'=>function($model){
-				return $model->PRODUCT_IMAGE;
-			},
+			},			
 			'STATUS'=>function($model){
 				return $model->STATUS;
 			},
@@ -93,7 +88,10 @@ class ProductImage extends \yii\db\ActiveRecord
 				}else{
 					return 'none';
 				}
-			}
+			},
+			'PRODUCT_IMAGE'=>function($model){
+				return $model->PRODUCT_IMAGE;
+			},
 		];
 	}
 }

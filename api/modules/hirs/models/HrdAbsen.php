@@ -3,28 +3,12 @@
 namespace api\modules\hirs\models;
 
 use Yii;
+use api\modules\hirs\models\HrdAbsenImg;
 
-/**
- * This is the model class for table "hrd_absen".
- *
- * @property string $ID
- * @property string $ABSEN_ID
- * @property string $ACCESS_GROUP
- * @property string $STORE_ID
- * @property string $KARYAWAN_ID
- * @property string $TGL
- * @property string $WAKTU
- * @property string $CREATE_BY
- * @property string $CREATE_AT
- * @property string $UPDATE_BY
- * @property string $UPDATE_AT
- * @property integer $STATUS
- * @property string $DCRP_DETIL
- * @property integer $YEAR_AT
- * @property integer $MONTH_AT
- */
 class HrdAbsen extends \yii\db\ActiveRecord
 {
+	const SCENARIO_CREATE = 'create';
+	const SCENARIO_UPDATE = 'update';
     /**
      * @inheritdoc
      */
@@ -47,9 +31,9 @@ class HrdAbsen extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['ABSEN_ID', 'STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
-            [['STORE_ID', 'KARYAWAN_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
-            [['TGL', 'WAKTU', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
+			[['STORE_ID','KARYAWAN_ID','TGL','WAKTU','OFLINE_ID'], 'required','on'=>self::SCENARIO_CREATE],
+			[['ABSEN_ID','KARYAWAN_ID'], 'required','on'=>self::SCENARIO_UPDATE],
+            [['TGL', 'WAKTU', 'CREATE_AT', 'UPDATE_AT','OFLINE_ID'], 'safe'],
             [['DCRP_DETIL'], 'string'],
             [['ACCESS_GROUP'], 'string', 'max' => 15],
             [['STORE_ID'], 'string', 'max' => 25],
@@ -66,6 +50,7 @@ class HrdAbsen extends \yii\db\ActiveRecord
         return [
             'ID' => 'ID',
             'ABSEN_ID' => 'Absen  ID',
+            'OFLINE_ID' => 'Ofline  ID',
             'ACCESS_GROUP' => 'Access  Group',
             'STORE_ID' => 'Store  ID',
             'KARYAWAN_ID' => 'Karyawan  ID',
@@ -85,11 +70,14 @@ class HrdAbsen extends \yii\db\ActiveRecord
 	public function fields()
 	{
 		return [			
-			'ID'=>function($model){
-				return $model->ID;
-			},
+			// 'ID'=>function($model){
+				// return $model->ID;
+			// },
 			'ABSEN_ID'=>function($model){
 				return $model->ABSEN_ID;
+			},
+			'OFLINE_ID'=>function($model){
+				return $model->OFLINE_ID;
 			},
 			'ACCESS_GROUP'=>function($model){
 				return $model->ACCESS_GROUP;
@@ -115,7 +103,16 @@ class HrdAbsen extends \yii\db\ActiveRecord
 				}else{
 					return 'none';
 				}
-			}	
+			},
+			'ABSEN_IMAGE'=>function(){
+				return $this->absenImageTbl->ABSEN_IMAGE;
+			},			
 		];
 	}
+	
+	public function getAbsenImageTbl(){
+		return $this->hasOne(HrdAbsenImg::className(), ['ABSEN_ID' => 'ABSEN_ID','KARYAWAN_ID'=>'KARYAWAN_ID']);
+		// $modelImage=HrdAbsenImg::find()->where(['KARYAWAN_ID'=>$this->KARYAWAN_ID,'ABSEN_ID'=>$this->ABSEN_ID])->one();
+		// return $modelImage;
+	}	
 }
