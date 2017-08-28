@@ -199,13 +199,6 @@ class Product extends \yii\db\ActiveRecord
 			},	
             'CURRENT_PRICE'=>function($model){
 				return $this->productHargaTbl;
-				/*Default Harga & Formula Harga*/
-				// $harga=$this->productHargaTbl;
-				// if ($harga<>0){
-					// return $harga;
-				// }else{
-					// return $model->CURRENT_PRICE!=''?$model->CURRENT_PRICE:'0';		
-				// }
 			},	 
 			'DISCOUNT'=>function($model){
 				return 'on progress';
