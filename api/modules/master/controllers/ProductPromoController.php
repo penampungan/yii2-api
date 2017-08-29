@@ -16,20 +16,18 @@ use yii\web\Response;
 use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
 
-use api\modules\master\models\ProductHarga;
-
+use api\modules\master\models\ProductPromo;
 
 /**
   * @author 	: ptrnov  <piter@lukison.com>
   * @since 		: 1.2
-  * Subject		: PRODUCT HARGA PER-STORE.
-  * URL			: http://production.kontrolgampang.com/master/product-hargas
-  * Body Param	: STORE_ID(key Master),PRODUCT_ID(key Master)
+  * Subject		: PRODUCT PROMO.
+  * URL			: http://production.kontrolgampang.com/master/product-promos
  */
-class ProductHargaController extends ActiveController
+class ProductPromoController extends ActiveController
 {	
 
-    public $modelClass = 'api\modules\login\models\ProductHarga';
+    public $modelClass = 'api\modules\login\models\ProductPromo';
 
 	/**
      * Behaviors
@@ -109,38 +107,39 @@ class ProductHargaController extends ActiveController
 		$prdtgl1		= isset($paramsBody['PERIODE_TGL1'])!=''?$paramsBody['PERIODE_TGL1']:'';
 		$prdtgl2		= isset($paramsBody['PERIODE_TGL2'])!=''?$paramsBody['PERIODE_TGL2']:'';
 		$prdjam			= isset($paramsBody['START_TIME'])!=''?$paramsBody['START_TIME']:'';
-		$prdhargaJual	= isset($paramsBody['HARGA_JUAL'])!=''?$paramsBody['HARGA_JUAL']:'';
+		$prdPromo		= isset($paramsBody['PROMO'])!=''?$paramsBody['PROMO']:'';
 		$prdNote		= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['DCRP_DETIL']:'';
 		
 		if($metode=='GET'){
 			/**
 			* @author 		: ptrnov  <piter@lukison.com>
 			* @since 		: 1.2
-			* Subject		: PRODUCT HARGA PER-STORE.
-			* Metode		: POST (VIEW)
-			* URL			: http://production.kontrolgampang.com/master/product-hargas
+			* Subject		: PRODUCT PROMO.
+			* Metode		: POST (VIEW) 
+			* URL			: http://production.kontrolgampang.com/master/product-promos
 			* Body Param	: METHODE=GET & STORE_ID(key Master),PRODUCT_ID(key Master)
 			*				: STORE_ID='' maka semua prodak harga pada STORE_ID di tampilkan.
 			*				: PRODUCT_ID<>'' maka yang di tampilkan satu product id.
+			*				  In Product Controller Show Value PROMO by (PERIODE_TGL1 Between PERIODE_TGL2)
 			*/
 			if($store_id<>''){	
 				if($productId<>''){			
 					//Model Produck harga Per-Product
-					$modelCnt= ProductHarga::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId])->count();
-					$model= ProductHarga::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,])->all();				
+					$modelCnt= ProductPromo::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId])->count();
+					$model= ProductPromo::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,])->all();				
 					if($modelCnt){
-						//return array('LIST_PRODUCT_HARGA'=>$model);
-						return array('LIST_PRODUCT_HARGA'=>ArrayHelper::index($model, null, 'STORE_ID'));
+						//return array('LIST_PRODUCT_PROMO'=>$model);
+						return array('LIST_PRODUCT_PROMO'=>$model);
 					}else{
 						return array('result'=>'data-empty');
 					}						
 				}else{
 					//Model Produck harga Per-Product
-					$modelCnt= ProductHarga::find()->where(['STORE_ID'=>$store_id])->count();
-					$model= ProductHarga::find()->where(['STORE_ID'=>$store_id])->all();				
+					$modelCnt= ProductPromo::find()->where(['STORE_ID'=>$store_id])->count();
+					$model= ProductPromo::find()->where(['STORE_ID'=>$store_id])->all();				
 					if($modelCnt){
-						//return array('LIST_PRODUCT_HARGA'=>$model);
-						return array('LIST_PRODUCT_HARGA'=>ArrayHelper::index($model, null, 'STORE_ID'));
+						//return array('LIST_PRODUCT_PROMO'=>$model);
+						return array('LIST_PRODUCT_PROMO'=>ArrayHelper::index($model, null, 'STORE_ID'));
 					}else{
 						return array('result'=>'data-empty');
 					}
@@ -152,25 +151,27 @@ class ProductHargaController extends ActiveController
 			/**
 			* @author 		: ptrnov  <piter@lukison.com>
 			* @since 		: 1.2
-			* Subject		: PRODUCT HARGA PER-STORE.
+			* Subject		: PRODUCT PROMO.
 			* Metode		: POST (POST)
-			* URL			: http://production.kontrolgampang.com/master/product-hargas
+			* URL			: http://production.kontrolgampang.com/master/product-promos
 			* Body Param	: METHODE=POST & STORE_ID(key Master),PRODUCT_ID(key Master)
-			* PROPERTIES	: PERIODE_TGL1,PERIODE_TGL2,START_TIME,HARGA_JUAL
+			* PROPERTIES	: PERIODE_TGL1,PERIODE_TGL2,START_TIME,PROMO
 			*/
 			if($store_id<>''){
 				if($productId<>''){
-					$modelNew = new ProductHarga();
+					$modelNew = new ProductPromo();
+					$modelNew->scenario='create';
 					$modelNew->PRODUCT_ID=$productId;
 					if ($prdtgl1<>''){$modelNew->PERIODE_TGL1=date("Y-m-d", strtotime($prdtgl1));}; 
 					if ($prdtgl2<>''){$modelNew->PERIODE_TGL2=date("Y-m-d", strtotime($prdtgl2));};
 					if ($prdjam<>''){$modelNew->START_TIME=$prdjam;};
-					if ($prdhargaJual<>''){$modelNew->HARGA_JUAL=$prdhargaJual;};
+					if ($prdPromo<>''){$modelNew->PROMO=$prdPromo;};
 					if ($prdNote<>''){$modelNew->DCRP_DETIL=$prdNote;};
 					if($modelNew->save()){
-						$rsltMax=ProductHarga::find()->where(['PRODUCT_ID'=>$productId])->max(ID);
-						$modelView=ProductHarga::find()->where(['ID'=>$rsltMax])->one();
-						return array('LIST_PRODUCT_HARGA'=>$modelView);
+						//$modelView=ProductPromo::find()->where(['PRODUCT_ID'=>$productId])->all();
+						$rsltMax=ProductPromo::find()->where(['PRODUCT_ID'=>$productId])->max(ID);
+						$modelView=ProductPromo::find()->where(['ID'=>$rsltMax])->one();
+						return array('LIST_PRODUCT_PROMO'=>$modelView);
 					}else{
 						return array('result'=>$modelNew->errors);
 					}
@@ -190,11 +191,11 @@ class ProductHargaController extends ActiveController
 		/**
 		* @author 		: ptrnov  <piter@lukison.com>
 		* @since 		: 1.2
-		* Subject		: PRODUCT HARGA PER-STORE.
+		* Subject		: PRODUCT PROMO.
 		* Metode		: PUT (UPDATE)
-		* URL			: http://production.kontrolgampang.com/master/product-hargas
+		* URL			: http://production.kontrolgampang.com/master/product-promos
 		* Body Param	: PRODUCT_ID(key Master),ID(key Master)
-		* PROPERTIES	: PERIODE_TGL1,PERIODE_TGL2,START_TIME,HARGA_JUAL
+		* PROPERTIES	: PERIODE_TGL1,PERIODE_TGL2,START_TIME,DISCOUNT
 		*/
 		$paramsBody 	= Yii::$app->request->bodyParams;
 		//KEY MASTER		
@@ -204,21 +205,21 @@ class ProductHargaController extends ActiveController
 		$prdtgl1		= isset($paramsBody['PERIODE_TGL1'])!=''?$paramsBody['PERIODE_TGL1']:'';
 		$prdtgl2		= isset($paramsBody['PERIODE_TGL2'])!=''?$paramsBody['PERIODE_TGL2']:'';
 		$prdjam			= isset($paramsBody['START_TIME'])!=''?$paramsBody['START_TIME']:'';
-		$prdhargaJual	= isset($paramsBody['HARGA_JUAL'])!=''?$paramsBody['HARGA_JUAL']:'';
+		$prdPromo		= isset($paramsBody['PROMO'])!=''?$paramsBody['PROMO']:'';
 		$prdNote		= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['DCRP_DETIL']:'';
 		$stt			= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
 	
-		$modelEdit = ProductHarga::find()->where(['PRODUCT_ID'=>$productId,'id'=>$id])->one();
+		$modelEdit = ProductPromo::find()->where(['PRODUCT_ID'=>$productId,'ID'=>$id])->one();
 		if($modelEdit){
 			if ($prdtgl1<>''){$modelEdit->PERIODE_TGL1=date("Y-m-d", strtotime($prdtgl1));}; 
 			if ($prdtgl2<>''){$modelEdit->PERIODE_TGL2=date("Y-m-d", strtotime($prdtgl2));};
 			if ($prdjam<>''){$modelEdit->START_TIME=$prdjam;};
-			if ($prdhargaJual<>''){$modelEdit->HARGA_JUAL=$prdhargaJual;};
+			if ($prdPromo<>''){$modelEdit->PROMO=$prdPromo;};
 			if ($prdNote<>''){$modelEdit->DCRP_DETIL=$prdNote;};
 			if ($stt<>''){$modelEdit->STATUS=$stt;};				 
 			if($modelEdit->save()){
-				$modelView=ProductHarga::find()->where(['PRODUCT_ID'=>$productId,'id'=>$id])->one();
-				return array('LIST_PRODUCT_HARGA'=>$modelView);
+				$modelView=ProductPromo::find()->where(['PRODUCT_ID'=>$productId,'ID'=>$id])->one();
+				return array('LIST_PRODUCT_PROMO'=>$modelView);
 			}else{
 				return array('result'=>$modelEdit->errors);
 			}

@@ -5,6 +5,9 @@ namespace api\modules\master\models;
 use Yii;
 use api\modules\master\models\ProductGroup;
 use api\modules\master\models\ProductHarga;
+use api\modules\master\models\ProductDiscount;
+use api\modules\master\models\ProductPromo;
+use api\modules\master\models\ProductStock;
 /**
  * This is the model class for table "product".
  *
@@ -195,16 +198,17 @@ class Product extends \yii\db\ActiveRecord
 				return $model->DCRP_DETIL;
 			},
 			'CURRENT_STOCK'=>function($model){
-				return 'on progress';
+				//return $model->CURRENT_STOCK;
+				return $this->productStockTbl;
 			},	
             'CURRENT_PRICE'=>function($model){
 				return $this->productHargaTbl;
 			},	 
-			'DISCOUNT'=>function($model){
-				return 'on progress';
+			'CURRENT_DISCOUNT'=>function($model){
+				return $this->productDicountTbl;
 			},
-			'PROMO'=>function($model){
-				return 'on progress';
+			'CURRENT_PROMO'=>function($model){
+				return $this->productPromoTbl;
 			},	
         ];		
 	}
@@ -243,6 +247,55 @@ class Product extends \yii\db\ActiveRecord
 			//Jika Tidak ditemukan perubahan data pada table harga, seting default CURRENT_PRICE
 			//return  0;
 			return $this->CURRENT_PRICE!=''?$this->CURRENT_PRICE:'0';	
+		}
+	}	
+	
+	/*
+	 * CURRENT DISCOUNT 
+	 * Join to Table Discount where PRODUCT_ID, (current_date PERIODE_TGL1 AND PERIODE_TGL2)
+	*/
+	public function getProductDicountTbl(){
+		//Check Table Discount where PRODUCT_ID,PERIODE_TGL1 AND PERIODE_TGL2 to current_date
+		$modalDiscount= ProductDiscount::find()->where("
+			PRODUCT_ID='".$this->PRODUCT_ID."' AND 
+			('".date('Y-m-d')."' BETWEEN PERIODE_TGL1 AND PERIODE_TGL2)
+		")->one();		
+		if($modalDiscount){			
+			return  $modalDiscount->DISCOUNT;
+		}else{
+			return  "0.00";	
+		}
+	}	
+	
+	/*
+	 * CURRENT PROMO 
+	 * Join to Table Promo where PRODUCT_ID, (current_date PERIODE_TGL1 AND PERIODE_TGL2)
+	*/
+	public function getProductPromoTbl(){
+		//Check Table Discount where PRODUCT_ID,PERIODE_TGL1 AND PERIODE_TGL2 to current_date
+		$modalPromo= ProductPromo::find()->where("
+			PRODUCT_ID='".$this->PRODUCT_ID."' AND 
+			('".date('Y-m-d')."' BETWEEN PERIODE_TGL1 AND PERIODE_TGL2)
+		")->one();
+		if($modalPromo){			
+			return  $modalPromo->PROMO;
+		}else{
+			return  "";	
+		}
+	}	
+	
+	/*
+	 * CURRENT STOCK 
+	 * Join to Table Stock where PRODUCT_ID, (current_date PERIODE_TGL1 AND PERIODE_TGL2)
+	*/
+	public function getProductStockTbl(){
+		$modalStock= ProductStock::find()->where("
+			PRODUCT_ID='".$this->PRODUCT_ID."' AND INPUT_DATE='".date('Y-m-d')."'
+		")->one();
+		if($modalStock){			
+			return  $modalStock->INPUT_STOCK;
+		}else{
+			return  0;	
 		}
 	}	
 }

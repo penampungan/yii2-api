@@ -70,6 +70,9 @@ class ProductDiscount extends \yii\db\ActiveRecord
 	public function fields()
 	{
 		return [			
+			'ID'=>function($model){
+				return $model->ID;
+			},
 			'ACCESS_GROUP'=>function($model){
 				return $model->ACCESS_GROUP;
 			},

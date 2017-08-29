@@ -111,7 +111,7 @@ return [
 						'master/product-unit-group',							
 						'master/product-industri',							
 						'master/product-industri-group',							
-						'master/product-stocks',							
+						'master/product-stock',							
 						'master/product-discount',							
 						'master/product-harga',							
 						'master/product-promo',							

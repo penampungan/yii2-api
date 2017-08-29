@@ -31,7 +31,6 @@ class ProductStock extends \yii\db\ActiveRecord
     {
         return [
 			[['PRODUCT_ID','INPUT_DATE','INPUT_TIME','INPUT_STOCK'], 'required','on'=>self::SCENARIO_CREATE],
-            [['PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
             [['LAST_STOCK', 'INPUT_STOCK', 'CURRENT_STOCK', 'SISA_STOCK'], 'number'],
             [['INPUT_DATE', 'INPUT_TIME', 'CURRENT_DATE', 'CURRENT_TIME', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
             [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
@@ -75,7 +74,9 @@ class ProductStock extends \yii\db\ActiveRecord
 	public function fields()
 	{
 		return [			
-			'ACCESS_GROUP'=>function($model){
+			'ID'=>function($model){
+				return $model->ID;
+			},'ACCESS_GROUP'=>function($model){
 				return $model->ACCESS_GROUP;
 			},
 			'STORE_ID'=>function($model){
