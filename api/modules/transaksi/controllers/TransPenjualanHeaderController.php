@@ -99,6 +99,7 @@ class TransPenjualanHeaderController extends ActiveController
 		$transHeaderKey2	= isset($paramsBody['OFLINE_ID'])!=''?$paramsBody['OFLINE_ID']:'';
 		$tglTrans			= isset($paramsBody['TRANS_DATE'])!=''?$paramsBody['TRANS_DATE']:'';
 		$accessId			= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$opencloseId		= isset($paramsBody['OPENCLOSE_ID'])!=''?$paramsBody['OPENCLOSE_ID']:'';
 		//==PROPERTIES===
 		$ttlProduct			= isset($paramsBody['TOTAL_PRODUCT'])!=''?$paramsBody['TOTAL_PRODUCT']:'';
 		$totalHarga			= isset($paramsBody['TOTAL_HARGA'])!=''?$paramsBody['TOTAL_HARGA']:'';
@@ -118,7 +119,7 @@ class TransPenjualanHeaderController extends ActiveController
 			* Subject		: TRANSAKSI HEADER.
 			* Metode		: POST (VIEW)
 			* URL			: http://production.kontrolgampang.com/transaksi/trans-penjualan-heades
-			* Body Param	: METHODE=GET & TRANS_ID(Master Key) OR  OFLINE_ID(Master key) OR  STORE_ID(key) OR CREATE_AT(Filter)
+			* Body Param	: METHODE=GET & TRANS_ID(Master Key) OR  OFLINE_ID(Master key) OR  STORE_ID(key) OR CREATE_AT(Filter) & OPENCLOSE_ID
 			*				: STORE_ID='' All Transaksi Header and Detail.  				    (LIST ALL)
 			*				: STORE_ID<>''Transaksi Header and Detail By TRANS_ID or OFLINE_ID. (SINGLE DATA)
 			*				: CREATE_AT<>'' Filter By date.
@@ -169,6 +170,7 @@ class TransPenjualanHeaderController extends ActiveController
 			$modelNew = new TransPenjualanHeader();
 			$modelNew->scenario = "create";
 			//==KEY=			
+			if ($opencloseId<>''){$modelNew->OPENCLOSE_ID=$opencloseId;};
 			if ($store_id<>''){$modelNew->STORE_ID=$store_id;};
 			if ($transHeaderKey2<>''){$modelNew->OFLINE_ID=$transHeaderKey2;};
 			if ($tglTrans<>''){$modelNew->TRANS_DATE=date('Y-m-d H:i:s', strtotime($tglTrans));};
@@ -202,7 +204,7 @@ class TransPenjualanHeaderController extends ActiveController
 		* Subject		: TRANSAKSI HEADER.
 		* Metode		: PUT (UPDATE)
 		* URL			: http://production.kontrolgampang.com/transaksi/trans-penjualan-heades
-		* Body Param	: TRANS_ID(Master Key) & OFLINE_ID(Master key)
+		* Body Param	: TRANS_ID(Master Key) & OFLINE_ID(Master key) & OPENCLOSE_ID
 		* PROPERTIES	: TOTAL_PRODUCT,SUB_TOTAL_HARGA,PPN,TOTAL_HARGA,CONSUMER_ID,CONSUMER_NM,CONSUMER_EMAIL,CONSUMER_PHONE,DCRP_DETIL,
 		*				  MERCHANT_ID [TYPE_PAY_ID,TYPE_PAY_NM,BANK_ID,BANK_NM,MERCHANT_NM,MERCHANT_NO]->inquery
 		*/
@@ -210,6 +212,7 @@ class TransPenjualanHeaderController extends ActiveController
 		//==KEY==
 		$transHeaderKey1	= isset($paramsBody['TRANS_ID'])!=''?$paramsBody['TRANS_ID']:'';
 		$transHeaderKey2	= isset($paramsBody['OFLINE_ID'])!=''?$paramsBody['OFLINE_ID']:'';
+		$opencloseId		= isset($paramsBody['OPENCLOSE_ID'])!=''?$paramsBody['OPENCLOSE_ID']:'';
 		//==PROPERTIES===
 		$ttlProduct			= isset($paramsBody['TOTAL_PRODUCT'])!=''?$paramsBody['TOTAL_PRODUCT']:'';
 		$totalHarga			= isset($paramsBody['TOTAL_HARGA'])!=''?$paramsBody['TOTAL_HARGA']:'';
@@ -226,6 +229,7 @@ class TransPenjualanHeaderController extends ActiveController
 		$modelEdit=TransPenjualanHeader::find()->where(['TRANS_ID'=>$transHeaderKey1])->one();
 		if($modelEdit){
 			//==REQUIRED=
+			if ($opencloseId<>''){$modelEdit->OPENCLOSE_ID=$opencloseId;};
 			if ($ttlProduct<>''){$modelEdit->TOTAL_PRODUCT=$ttlProduct;};
 			//==PROPERTIES=			
 			if ($totalHarga<>''){$modelEdit->TOTAL_HARGA=$totalHarga;};

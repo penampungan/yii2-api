@@ -32,7 +32,7 @@ class TransPenjualanHeader extends \yii\db\ActiveRecord
         return [
             [['STORE_ID','ACCESS_ID','TRANS_DATE','OFLINE_ID'], 'required','on'=>self::SCENARIO_CREATE],
 			[['TRANS_ID','TOTAL_PRODUCT'], 'required','on'=>self::SCENARIO_UPDATE],
-			[['TRANS_DATE', 'CREATE_AT', 'UPDATE_AT','MERCHANT_ID','TRANS_ID','CONSUMER_ID'], 'safe'],
+			[['TRANS_DATE', 'CREATE_AT', 'UPDATE_AT','MERCHANT_ID','TRANS_ID','CONSUMER_ID','OPENCLOSE_ID'], 'safe'],
             [['TOTAL_PRODUCT', 'SUB_TOTAL_HARGA', 'PPN', 'TOTAL_HARGA'], 'number'],
             [['TYPE_PAY_ID', 'BANK_ID', 'STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['DCRP_DETIL'], 'string'],
@@ -58,6 +58,7 @@ class TransPenjualanHeader extends \yii\db\ActiveRecord
             'ACCESS_ID' => 'Access  ID',
             'TRANS_ID' => 'Trans  ID',
             'OFLINE_ID' => 'Ofline ID',
+            'OPENCLOSE_ID' => 'Openclose ID',
             'TRANS_DATE' => 'Trans  Date',
             'TOTAL_PRODUCT' => 'Total  Product',
             'SUB_TOTAL_HARGA' => 'Sub  Total  Harga',
@@ -104,6 +105,9 @@ class TransPenjualanHeader extends \yii\db\ActiveRecord
 			},
 			'OFLINE_ID'=>function($model){
 				return $model->OFLINE_ID;
+			},
+			'OPENCLOSE_ID'=>function($model){
+				return $model->OPENCLOSE_ID;
 			},
 			'TRANS_DATE'=>function($model){
 				return $model->TRANS_DATE;

@@ -98,6 +98,7 @@ class TransStoranController extends ActiveController
 		$opencloseID	= isset($paramsBody['OPENCLOSE_ID'])!=''?$paramsBody['OPENCLOSE_ID']:'';
 		$store_id		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';
 		$tglCreate		= isset($paramsBody['CREATE_AT'])!=''?$paramsBody['CREATE_AT']:'';
+		$tglStoran		= isset($paramsBody['TGL_STORAN'])!=''?$paramsBody['TGL_STORAN']:'';
 		
 		if($metode=='GET'){
 			/**
@@ -114,9 +115,9 @@ class TransStoranController extends ActiveController
 			*/
 			if($store_id<>''){				
 				//MODEL STORAN BY STORE_ID
-				if($tglCreate<>''){	
-					$modelCnt= TransStoran::find()->where(['STORE_ID'=>$store_id])->andWhere(['like','CREATE_AT',$tglCreate])->count();
-					$model= TransStoran::find()->where(['STORE_ID'=>$store_id])->andWhere(['like','CREATE_AT',$tglCreate])->all();		
+				if($tglStoran<>''){	
+					$modelCnt= TransStoran::find()->where(['STORE_ID'=>$store_id])->andWhere(['like','TGL_STORAN',date('Y-m-d', strtotime($tglStoran))])->count();
+					$model= TransStoran::find()->where(['STORE_ID'=>$store_id])->andWhere(['like','TGL_STORAN',date('Y-m-d', strtotime($tglStoran))])->all();		
 					if($modelCnt){
 						return array('LIST_STORAN'=>$model);
 					}else{

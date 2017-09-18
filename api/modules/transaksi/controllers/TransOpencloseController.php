@@ -102,6 +102,7 @@ class TransOpencloseController extends ActiveController
 		
 		//PROPERTY
 		$caseInPeti		= isset($paramsBody['CASHINDRAWER'])!=''?$paramsBody['CASHINDRAWER']:'';
+		$caseAdd		= isset($paramsBody['ADDCASH'])!=''?$paramsBody['ADDCASH']:'';
 		
 		if($metode=='GET'){
 			/**
@@ -161,6 +162,7 @@ class TransOpencloseController extends ActiveController
 			if ($acsID<>''){$modelNew->ACCESS_ID=$acsID;};
 			if ($tglOpen<>''){$modelNew->TGL_OPEN=date('Y-m-d H:i:s', strtotime($tglOpen));};
 			if ($caseInPeti<>''){$modelNew->CASHINDRAWER=$caseInPeti;};
+			if ($caseAdd<>''){$modelNew->ADDCASH=$caseAdd;};
 			if ($stt<>''){$modelNew->STATUS=$stt;};
 			if($modelNew->save()){
 				$modelView=TransOpenclose::find()->where(['STORE_ID'=>$store_id])->orderBy(['ID' => SORT_DESC])->limit(1)->one();
