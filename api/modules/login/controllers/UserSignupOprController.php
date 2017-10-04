@@ -138,11 +138,14 @@ class UserSignupOprController extends ActiveController
 							$modelStore= Store::find()->where(['STORE_ID'=>$storeId])->one();
 							//penambahan array pada store->ACCESS_ID [user penguna store];
 							$modelStore->ACCESS_ID=$modelStore->ACCESS_ID.','.$modelUser->ACCESS_ID;
+							// $modelStore->save();
+							// return array('result'=>$modelStore->errors);
 							if($modelStore->save()){
 								return array('result'=>$modelUser->attributes);								
 							}else{
 								return array('result'=>'Unregister-User-Store');
-							}					
+								//return array('result'=>$modelStore->attributes);
+							}	 		
 						}else{
 							return array('result'=>$model->errors);
 						} 					

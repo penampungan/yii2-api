@@ -61,9 +61,9 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
            // [['ACCESS_GROUP', 'STORE_ID', 'PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
-            [['UNIT_ID', 'INDUSTRY_ID','INDUSTRY_GRP_ID', 'STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
+            [['UNIT_ID', 'STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['PRODUCT_SIZE', 'STOCK_LEVEL'], 'number'],
-            [['CREATE_AT', 'UPDATE_AT','CURRENT_PRICE'], 'safe'],
+            [['CREATE_AT', 'UPDATE_AT','CURRENT_PRICE','INDUSTRY_ID','INDUSTRY_GRP_ID',], 'safe'],
             [['DCRP_DETIL'], 'string'],
             [['ACCESS_GROUP'], 'string', 'max' => 15],
             [['STORE_ID'], 'string', 'max' => 20],

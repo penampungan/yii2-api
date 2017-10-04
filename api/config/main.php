@@ -49,6 +49,9 @@ return [
 		'statusCode' =>[
             'class'=>'common\components\StatusCode',
         ],
+		'rpt' => [
+            'class' =>'common\components\Reporting'
+        ],
         // 'errorHandler' => [
             // 'errorAction' => 'site/error',
         // ],
@@ -115,7 +118,8 @@ return [
 						'master/product-discount',							
 						'master/product-harga',							
 						'master/product-promo',							
-						'master/product-image'							
+						'master/product-image',							
+						'master/polling'							
 					],
 					'patterns' => [
 						'PUT' => 'update',
@@ -133,7 +137,9 @@ return [
 							'transaksi/trans-openclose',
 							'transaksi/trans-storan',
 							'transaksi/trans-penjualan-header',
-							'transaksi/trans-penjualan-detail'
+							'transaksi/trans-penjualan-detail',
+							'transaksi/trans-rpt1',
+							'transaksi/trans-rpt-test'
 						],
 						'patterns' => [
 							'PUT,PATCH' => 'update',

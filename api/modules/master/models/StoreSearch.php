@@ -19,6 +19,7 @@ class StoreSearch extends Store
     {
         return [
             [['ID', 'PROVINCE_ID', 'CITY_ID', 'STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
+			 [['INDUSTRY_ID','INDUSTRY_NM','INDUSTRY_GRP_ID','INDUSTRY_GRP_NM'], 'string'],
             [['ACCESS_GROUP', 'STORE_ID', 'STORE_NM', 'ACCESS_ID', 'UUID', 'PLAYER_ID', 'DATE_START', 'DATE_END', 'PROVINCE_NM', 'CITY_NAME', 'ALAMAT', 'PIC', 'TLP', 'FAX', 'CREATE_BY', 'CREATE_AT', 'UPDATE_BY', 'UPDATE_AT', 'DCRP_DETIL'], 'safe'],
         ];
     }

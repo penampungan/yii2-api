@@ -124,6 +124,9 @@ return [
 		'gv' => [
             'class' =>'common\components\GridviewCustomize'
         ],
+        'rpt' => [
+            'class' =>'common\components\Reporting'
+        ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [

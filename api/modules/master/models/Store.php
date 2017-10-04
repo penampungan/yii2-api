@@ -64,7 +64,7 @@ class Store extends \yii\db\ActiveRecord
         return [
             //[['STORE_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
             [['ACCESS_ID', 'UUID', 'PLAYER_ID', 'ALAMAT', 'DCRP_DETIL'], 'string'],
-            [['INDUSTRY_ID','INDUSTRY_NM','INDUSTRY_GRP_ID'.'INDUSTRY_GRP_NM'], 'string'],
+            [['INDUSTRY_ID','INDUSTRY_NM','INDUSTRY_GRP_ID','INDUSTRY_GRP_NM'], 'safe'],
             [['DATE_START', 'DATE_END', 'CREATE_AT', 'UPDATE_AT','PPN'], 'safe'],
             [['PROVINCE_ID', 'CITY_ID', 'STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['ACCESS_GROUP'], 'string', 'max' => 15],
