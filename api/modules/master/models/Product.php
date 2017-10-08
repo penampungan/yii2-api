@@ -8,6 +8,8 @@ use api\modules\master\models\ProductHarga;
 use api\modules\master\models\ProductDiscount;
 use api\modules\master\models\ProductPromo;
 use api\modules\master\models\ProductStock;
+use api\modules\master\models\ProductUnit;
+
 /**
  * This is the model class for table "product".
  *
@@ -61,11 +63,11 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
            // [['ACCESS_GROUP', 'STORE_ID', 'PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
-            [['UNIT_ID', 'STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
+            [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['PRODUCT_SIZE', 'STOCK_LEVEL'], 'number'],
-            [['CREATE_AT', 'UPDATE_AT','CURRENT_PRICE','INDUSTRY_ID','INDUSTRY_GRP_ID',], 'safe'],
+            [['CREATE_AT', 'UPDATE_AT','CURRENT_PRICE','INDUSTRY_ID','INDUSTRY_GRP_ID','CURRENT_STOCK'], 'safe'],
             [['DCRP_DETIL'], 'string'],
-            [['ACCESS_GROUP'], 'string', 'max' => 15],
+            [['ACCESS_GROUP','UNIT_ID'], 'string', 'max' => 15],
             [['STORE_ID'], 'string', 'max' => 20],
             [['PRODUCT_ID'], 'string', 'max' => 35],
             [['PRODUCT_QR', 'PRODUCT_NM', 'PRODUCT_HEADLINE','GROUP_ID'], 'string', 'max' => 100],
@@ -93,6 +95,7 @@ class Product extends \yii\db\ActiveRecord
             'PRODUCT_HEADLINE' => 'Product  Headline',
             'UNIT_ID' => 'Unit  ID',
             'STOCK_LEVEL' => 'Stock  Level',
+			'CURRENT_STOCK'=>'CURRENT_STOCK',
             'CURRENT_PRICE' => 'Harga Jual',
             'INDUSTRY_ID' => 'Industry  ID',
             'INDUSTRY_NM' => 'Industry  Nm',
@@ -154,14 +157,16 @@ class Product extends \yii\db\ActiveRecord
 			},	
             'PRODUCT_HEADLINE'=>function($model){
 				return $model->PRODUCT_HEADLINE;
-			},	
+			},
+			'UNIT_ID'=>function($model){
+				return $model->UNIT_ID;
+			},			
             'UNIT_NM'=>function($model){
-				//$model-UNIT_ID
-				return 'on progress';
+				return $this->unitNm;
 			},	
             'STOCK_LEVEL'=>function($model){
 				if($model->STOCK_LEVEL){
-					$model->STOCK_LEVEL;
+					return $model->STOCK_LEVEL;
 				}else{
 					return 0;
 				}					
@@ -198,8 +203,8 @@ class Product extends \yii\db\ActiveRecord
 				return $model->DCRP_DETIL;
 			},
 			'CURRENT_STOCK'=>function($model){
-				//return $model->CURRENT_STOCK;
-				return $this->productStockTbl;
+				return $model->CURRENT_STOCK;
+				// return $this->productStockTbl;
 			},	
             'CURRENT_PRICE'=>function($model){
 				return $this->productHargaTbl;
@@ -225,6 +230,19 @@ class Product extends \yii\db\ActiveRecord
 			return "none";
 		}; 
 	}
+	
+	public function getProductUnitTbl(){
+		return $this->hasOne(ProductUnit::className(), ['UNIT_ID' => 'UNIT_ID']);
+	}	
+	public function getUnitNm(){
+		$rslt = $this->productUnitTbl['UNIT_NM'];
+		if ($rslt){
+			return $rslt;
+		}else{
+			return "none";
+		}; 
+	}
+	
 	
 	/*
 	 * CURRENT PRICE 
@@ -293,7 +311,7 @@ class Product extends \yii\db\ActiveRecord
 			PRODUCT_ID='".$this->PRODUCT_ID."' AND INPUT_DATE='".date('Y-m-d')."'
 		")->one();
 		if($modalStock){			
-			return  $modalStock->INPUT_STOCK;
+			return  $modalStock->SISA_STOCK;
 		}else{
 			return  0;	
 		}

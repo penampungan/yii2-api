@@ -15,6 +15,7 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
+use api\modules\login\models\User;
 
 use api\modules\master\models\SyncPoling;
 
@@ -115,9 +116,26 @@ class PollingController extends ActiveController
 		$paramsHeader	= Yii::$app->request->headers;
 		$accessGroup	= $params['ACCESS_GROUP']!=''?$params['ACCESS_GROUP']:$paramsHeader['ACCESS_GROUP'];	
 		$storeId		= $params['STORE_ID']!=''?$params['STORE_ID']:$paramsHeader['STORE_ID'];
-			
+		$accessId		= $params['ACCESS_ID']!=''?$params['ACCESS_ID']:$paramsHeader['ACCESS_ID'];
+		$tblNm			= $params['NM_TABLE']!=''?$params['NM_TABLE']:$paramsHeader['NM_TABLE'];
+		$validationTbl  = str_replace("","",ucwords($tblNm));
 		//VALIDATION STORE
-		$modelView= SyncPoling::find()->where(['ACCESS_GROUP'=>$accessGroup,'STORE_ID'=>$storeId])->all();
+		// if ($tblNm){
+			// $modelView= SyncPoling::find()->where(['NM_TABLE'=>$validationTbl,'ACCESS_GROUP'=>$accessGroup,'STORE_ID'=>$storeId])->andWhere('STT_OPS<>1 OR STT_OWNER<>1')->all();
+		// }else{
+			// $modelView= SyncPoling::find()->where(['ACCESS_GROUP'=>$accessGroup,'STORE_ID'=>$storeId])->andWhere('STT_OPS<>1 OR STT_OWNER<>1')->all();
+		// }
+		$userModel=User::find()->where(['ACCESS_ID'=>$accessId])->one();
+		$lvl=$userModel->ACCESS_LEVEL;
+		IF($lvl=='OWNER'){
+			$modelView= SyncPoling::find()->where(['ACCESS_GROUP'=>$accessGroup,'STORE_ID'=>$storeId,'STT_OWNER'=>0])->all();
+		}elseif($lvl=='OPS'){
+			$modelView= SyncPoling::find()->where(['ACCESS_GROUP'=>$accessGroup,'STORE_ID'=>$storeId,'STT_OPS'=>0])->all();
+		}
+		// else{
+			// $modelView=[];
+		// } 
+		
 		return $modelView;
 		//return array($modelView->count());		
 		/* if ($modelView->count()){

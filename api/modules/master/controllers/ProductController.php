@@ -17,8 +17,8 @@ use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
 
 use api\modules\master\models\Product;
-
-
+use api\modules\master\models\SyncPoling;
+use api\modules\login\models\User;
 /**
   * @author 	: ptrnov  <piter@lukison.com>
   * @since 		: 1.2
@@ -123,6 +123,11 @@ class ProductController extends ActiveController
 		//Releatiship (check by date)
         //-harga;-Discount;-stock;-Promo
 		
+		//POLING SYNC nedded ACCESS_ID
+		$accessID=isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$tblPooling=isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		
+		
 		if($metode=='GET'){
 			/**
 			  * @author 	: ptrnov  <piter@lukison.com>
@@ -134,16 +139,41 @@ class ProductController extends ActiveController
 			  *				: PRODUCT_ID='' maka semua prodak pada STORE_ID di tampilkan.
 			  *				: PRODUCT_ID<>'' maka yang di tampilkan satu product.
 			 */
-			if($productID<>''){				
-				//Model Per-Product
-				$modelCnt= Product::find()->where(['PRODUCT_ID'=>$productID])->count();
-				$model= Product::find()->where(['PRODUCT_ID'=>$productID])->one();		
-				
-				if($modelCnt){
+			if($productID<>''){		
+				if($productID<>''){
+					$userModel=User::find()->where(['ACCESS_ID'=>$accessID])->one();
+					$lvl=$userModel->ACCESS_LEVEL;
+					if($lvl=='OWNER'){
+						if ($tblPooling=='TBL_PRODUCT'){
+							$sqlStr="UPDATE sync_pooling SET STT_OWNER=1,CREATE_BY='".$accessID."' WHERE NM_TABLE='TBL_PRODUCT' AND STORE_ID='".$store_id."' AND PRIMARIKEY_VAL='".$productID."'";
+						}elseif($tblPooling=='TBL_STOCK'){
+							$sqlStr="UPDATE sync_pooling SET STT_OWNER=1,CREATE_BY='".$accessID."' WHERE NM_TABLE='TBL_STOCK' AND PRIMARIKEY_VAL LIKE '".$productID."%'";
+						}
+					}elseif($lvl=='OPS'){
+						if ($tblPooling='TBL_PRODUCT'){
+							$sqlStr="UPDATE sync_pooling SET STT_OPS=1,CREATE_BY='".$accessID."' WHERE NM_TABLE='TBL_PRODUCT' AND STORE_ID='".$store_id."' AND PRIMARIKEY_VAL='".$productID."'";
+							//$sqlStr="UPDATE sync_pooling SET STT_OPS=1,CREATE_BY='".$accessID."' WHERE STORE_ID='".$store_id."'";
+						}elseif($tblPooling='TBL_STOCK'){
+							$sqlStr="UPDATE sync_pooling SET STT_OPS=1,CREATE_BY='".$accessID."' WHERE NM_TABLE='TBL_STOCK' AND PRIMARIKEY_VAL LIKE '".$productID."%'";
+						}
+					}//else{
+						// $sqlStr="UPDATE sync_pooling SET STT_OPS=1,STT_OWNER=1,CREATE_BY='".$accessID."' WHERE NM_TABLE='TBL_STOCK' AND PRIMARIKEY_VAL LIKE'".$productID."%'";
+					//}		
+					Yii::$app->production_api->createCommand($sqlStr)->execute();
+					//RETURN
+					$model= Product::find()->where(['PRODUCT_ID'=>$productID])->one();
 					return array('LIST_PRODUCT'=>$model);
 				}else{
-					return array('result'=>'data-empty');
-				}		
+					//Model Per-Product
+					$modelCnt= Product::find()->where(['PRODUCT_ID'=>$productID])->count();
+					$model= Product::find()->where(['PRODUCT_ID'=>$productID])->one();		
+					
+					if($modelCnt){
+						return array('LIST_PRODUCT'=>$model);
+					}else{
+						return array('result'=>'data-empty');
+					}
+				}
 			}else{
 				//Model All Product per-STORE
 				//Model

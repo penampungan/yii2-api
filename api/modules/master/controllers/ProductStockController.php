@@ -127,14 +127,21 @@ class ProductStockController extends ActiveController
 			*				: PRODUCT_ID<>'' maka yang di tampilkan satu product id.
 			*/
 			if($store_id<>''){	
-				if($productId<>''){			
+				if($productId<>''){	
 					$modelCnt= ProductStock::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId])->count();
-					$model= ProductStock::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,])->all();				
 					if($modelCnt){
-						return array('LIST_PRODUCT_STOCK'=>$model);
+						if ($id){
+							$model= ProductStock::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,'ID'=>$id])->one();				
+							return array('LIST_PRODUCT_STOCK'=>$model);							
+						}else{						
+							$model= ProductStock::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,])->all();				
+							return array('LIST_PRODUCT_STOCK'=>$model);
+						
+						}
 					}else{
 						return array('result'=>'data-empty');
-					}						
+					}	
+											
 				}else{
 					//Model Produck harga Per-Product
 					$modelCnt= ProductStock::find()->where(['STORE_ID'=>$store_id])->count();
