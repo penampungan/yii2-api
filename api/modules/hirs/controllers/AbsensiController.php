@@ -109,6 +109,8 @@ class AbsensiController extends ActiveController
 		$note			= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['DCRP_DETIL']:'';
 		//TABLE IMAGE
 		$absenImage		= isset($paramsBody['ABSEN_IMAGE'])!=''?$paramsBody['ABSEN_IMAGE']:'';
+		$latitude		= isset($paramsBody['LATITUDE'])!=''?$paramsBody['LATITUDE']:'';
+		$longitude		= isset($paramsBody['LONGITUDE'])!=''?$paramsBody['LONGITUDE']:'';
 		
 		if($metode=='GET'){
 			/**
@@ -216,6 +218,8 @@ class AbsensiController extends ActiveController
 			if ($karyawanID<>''){$modelNew->KARYAWAN_ID=$karyawanID;};			
 			if ($tgl<>''){$modelNew->TGL=date('Y-m-d', strtotime($tgl));};
 			if ($waktu<>''){$modelNew->WAKTU=date('H:i:s', strtotime($waktu));};
+			if ($latitude<>''){$modelNew->LATITUDE=$latitude;};
+			if ($longitude<>''){$modelNew->LONGITUDE=$longitude;};
 			if ($stt<>''){$modelNew->STATUS=$stt;};
 			if ($note<>''){$modelNew->DCRP_DETIL=$note;};
 			
@@ -261,7 +265,8 @@ class AbsensiController extends ActiveController
 		$absenImage		= isset($paramsBody['ABSEN_IMAGE'])!=''?$paramsBody['ABSEN_IMAGE']:'';
 		
 		$modelEdit=HrdAbsen::find()->where(['ABSEN_ID'=>$absenId,'KARYAWAN_ID'=>$karyawanID])->one();
-					
+		$latitude		= isset($paramsBody['LATITUDE'])!=''?$paramsBody['LATITUDE']:'';
+		$longitude		= isset($paramsBody['LONGITUDE'])!=''?$paramsBody['LONGITUDE']:'';			
 		
 		if($modelEdit){			
 			//if ($store_id<>''){$modelEdit->STORE_ID=$store_id;};
@@ -269,6 +274,8 @@ class AbsensiController extends ActiveController
 			if ($oflineID<>''){$modelEdit->OFLINE_ID=$oflineID;};
 			if ($tgl<>''){$modelEdit->TGL=date('Y-m-d', strtotime($tgl));};
 			if ($waktu<>''){$modelEdit->WAKTU=date('H:i:s', strtotime($waktu));};
+			if ($latitude<>''){$modelNew->LATITUDE=$latitude;};
+			if ($longitude<>''){$modelNew->LONGITUDE=$longitude;};
 			if ($stt<>''){$modelEdit->STATUS=$stt;};
 			if ($note<>''){$modelEdit->DCRP_DETIL=$note;};
 			$modelEdit->scenario = "update";

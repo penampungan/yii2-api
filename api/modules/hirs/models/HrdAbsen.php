@@ -31,9 +31,10 @@ class HrdAbsen extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-			[['STORE_ID','KARYAWAN_ID','TGL','WAKTU','OFLINE_ID'], 'required','on'=>self::SCENARIO_CREATE],
+			//[['STORE_ID','KARYAWAN_ID','TGL','WAKTU','OFLINE_ID'], 'required','on'=>self::SCENARIO_CREATE],
+			[['STORE_ID','KARYAWAN_ID','TGL','WAKTU'], 'required','on'=>self::SCENARIO_CREATE],
 			[['ABSEN_ID','KARYAWAN_ID'], 'required','on'=>self::SCENARIO_UPDATE],
-            [['TGL', 'WAKTU', 'CREATE_AT', 'UPDATE_AT','OFLINE_ID'], 'safe'],
+            [['TGL', 'WAKTU', 'CREATE_AT', 'UPDATE_AT','OFLINE_ID','LATITUDE','LONGITUDE'], 'safe'],
             [['DCRP_DETIL'], 'string'],
             [['ACCESS_GROUP'], 'string', 'max' => 15],
             [['STORE_ID'], 'string', 'max' => 25],
@@ -94,6 +95,12 @@ class HrdAbsen extends \yii\db\ActiveRecord
 			'WAKTU'=>function($model){
 				return $model->WAKTU;
 			},
+			'LATITUDE'=>function($model){
+				return $model->LATITUDE;
+			},					
+			'LONGITUDE'=>function($model){
+				return $model->LONGITUDE;
+			},					
 			'STATUS'=>function($model){
 				return $model->STATUS;
 			},					

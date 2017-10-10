@@ -120,6 +120,7 @@ class ProductController extends ActiveController
 		//Industri
 		$prdIndustriId	= isset($paramsBody['INDUSTRY_ID'])!=''?$paramsBody['INDUSTRY_ID']:'';
 		$crnStock		= isset($paramsBody['CURRENT_STOCK'])!=''?$paramsBody['CURRENT_STOCK']:'';
+		$crnPrice		= isset($paramsBody['CURRENT_PRICE'])!=''?$paramsBody['CURRENT_PRICE']:'';
 		//Releatiship (check by date)
         //-harga;-Discount;-stock;-Promo
 		
@@ -218,6 +219,7 @@ class ProductController extends ActiveController
 				 if ($prdUnitJual<>''){$modelNew->UNIT_ID=$prdUnitJual;};
 				 if ($prdIndustriId<>''){$modelNew->INDUSTRY_ID=$prdIndustriId;};
 				 if ($crnStock<>''){$modelNew->CURRENT_STOCK=$crnStock;};
+				 if ($crnPrice<>''){$modelNew->CURRENT_PRICE=$crnPrice;};
 				 if($modelNew->save()){
 					$rsltMax=Product::find()->where(['STORE_ID'=>$store_id])->max(PRODUCT_ID);
 					$modelView=Product::find()->where(['PRODUCT_ID'=>$rsltMax])->one();
@@ -270,6 +272,7 @@ class ProductController extends ActiveController
 		$prdIndustriId	= isset($paramsBody['INDUSTRY_ID'])!=''?$paramsBody['INDUSTRY_ID']:'';
 		$stt			= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
 		$crnStock		= isset($paramsBody['CURRENT_STOCK'])!=''?$paramsBody['CURRENT_STOCK']:'';
+		$crnPrice		= isset($paramsBody['CURRENT_PRICE'])!=''?$paramsBody['CURRENT_PRICE']:'';
 		
 		//Releatiship (check by date)
         //-harga;-Discount;-stock;-Promo
@@ -288,6 +291,7 @@ class ProductController extends ActiveController
 				 if ($prdIndustriId<>''){$modelEdit->INDUSTRY_ID=$prdIndustriId;};
 				 if ($stt<>''){$modelEdit->STATUS=$stt;};
 				 if ($crnStock<>''){$modelEdit->CURRENT_STOCK=$crnStock;};
+				 if ($crnPrice<>''){$modelEdit->CURRENT_PRICE=$crnPrice;};
 				 if($modelEdit->save()){
 					$modelView=Product::find()->where(['PRODUCT_ID'=>$productID])->one();
 					return array('LIST_PRODUCT'=>$modelView);
