@@ -33,6 +33,7 @@ class UserLogin extends \yii\db\ActiveRecord
         return [
 			//[['username', 'ACCESS_ID','ACCESS_GROUP'], 'required'],
             [['auth_key'], 'string'],
+            [['UUID'], 'safe'],
             [['status', 'ACCESS_SITE', 'ONLINE', 'lft', 'rgt', 'lvl', 'icon_type', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['create_at', 'updated_at'], 'safe'],
             [['username', 'password_hash', 'password_reset_token', 'email', 'icon'], 'string', 'max' => 255],
@@ -48,7 +49,8 @@ class UserLogin extends \yii\db\ActiveRecord
             'username' => Yii::t('app', 'User Name'),
 			'password_hash' => Yii::t('app', 'Password Hash'),
 			'ACCESS_ID' => Yii::t('app', 'ACCESS_ID'),
-			'ACCESS_LEVEL' => Yii::t('app', 'ACCESS_LEVEL')			
+			'ACCESS_LEVEL' => Yii::t('app', 'ACCESS_LEVEL'),		
+			'UUID' => Yii::t('app', 'UUID')			
         ];
     }
 	
@@ -69,6 +71,9 @@ class UserLogin extends \yii\db\ActiveRecord
 			},				
 			'ACCESS_ID'=>function($model){
 				return $model->ACCESS_ID;
+			},
+			'UUID'=>function($model){
+				return $model->UUID;
 			},
 			'ACCESS_GROUP'=>function($model){
 				return $model->ACCESS_GROUP;

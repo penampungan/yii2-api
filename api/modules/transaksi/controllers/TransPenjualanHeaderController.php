@@ -167,32 +167,37 @@ class TransPenjualanHeaderController extends ActiveController
 			* PROPERTIES	: TOTAL_PRODUCT,SUB_TOTAL_HARGA,PPN,TOTAL_HARGA,CONSUMER_ID,CONSUMER_NM,CONSUMER_EMAIL,CONSUMER_PHONE,DCRP_DETIL,
 			*				  MERCHANT_ID [TYPE_PAY_ID,TYPE_PAY_NM,BANK_ID,BANK_NM,MERCHANT_NM,MERCHANT_NO]->inquery
 			*/
-			$modelNew = new TransPenjualanHeader();
-			$modelNew->scenario = "create";
-			//==KEY=			
-			if ($opencloseId<>''){$modelNew->OPENCLOSE_ID=$opencloseId;};
-			if ($store_id<>''){$modelNew->STORE_ID=$store_id;};
-			if ($transHeaderKey2<>''){$modelNew->OFLINE_ID=$transHeaderKey2;};
-			if ($tglTrans<>''){$modelNew->TRANS_DATE=date('Y-m-d H:i:s', strtotime($tglTrans));};
-			if ($accessId<>''){$modelNew->ACCESS_ID=$accessId;};			
-			//==PROPERTIES=			
-			if ($ttlProduct<>''){$modelNew->TOTAL_PRODUCT=$ttlProduct;};
-			if ($totalHarga<>''){$modelNew->TOTAL_HARGA=$totalHarga;};
-			if ($subTotalHarga<>''){$modelNew->SUB_TOTAL_HARGA=$subTotalHarga;};
-			if ($ppnPajak<>''){$modelNew->PPN=$ppnPajak;};
-			if ($cunsumerId<>''){$modelNew->CONSUMER_ID=$cunsumerId;};
-			if ($cunsumerNm<>''){$modelNew->CONSUMER_NM=$cunsumerNm;};
-			if ($cunsumerEmail<>''){$modelNew->CONSUMER_EMAIL=$cunsumerEmail;};
-			if ($cunsumerPhone<>''){$modelNew->CONSUMER_PHONE=$cunsumerPhone;};
-			if ($note<>''){$modelNew->DCRP_DETIL=$note;};
-			if ($merchantId<>''){$modelNew->MERCHANT_ID=$merchantId;};
-			if ($stt<>''){$modelNew->STATUS=$stt;};			
-			if($modelNew->save()){
-				$modelView=TransPenjualanHeader::find()->where(['OFLINE_ID'=>$transHeaderKey2])->orderBy(['ID' => SORT_DESC])->limit(1)->one();
-				return array('LIST_TRANS_HEADER'=>$modelView);
+			$modelTransCheck=TransPenjualanHeader::find()->where(['OFLINE_ID'=>$transHeaderKey2])->one();
+			if(!$modelTransCheck){
+				$modelNew = new TransPenjualanHeader();
+				$modelNew->scenario = "create";
+				//==KEY=			
+				if ($opencloseId<>''){$modelNew->OPENCLOSE_ID=$opencloseId;};
+				if ($store_id<>''){$modelNew->STORE_ID=$store_id;};
+				if ($transHeaderKey2<>''){$modelNew->OFLINE_ID=$transHeaderKey2;};
+				if ($tglTrans<>''){$modelNew->TRANS_DATE=date('Y-m-d H:i:s', strtotime($tglTrans));};
+				if ($accessId<>''){$modelNew->ACCESS_ID=$accessId;};			
+				//==PROPERTIES=			
+				if ($ttlProduct<>''){$modelNew->TOTAL_PRODUCT=$ttlProduct;};
+				if ($totalHarga<>''){$modelNew->TOTAL_HARGA=$totalHarga;};
+				if ($subTotalHarga<>''){$modelNew->SUB_TOTAL_HARGA=$subTotalHarga;};
+				if ($ppnPajak<>''){$modelNew->PPN=$ppnPajak;};
+				if ($cunsumerId<>''){$modelNew->CONSUMER_ID=$cunsumerId;};
+				if ($cunsumerNm<>''){$modelNew->CONSUMER_NM=$cunsumerNm;};
+				if ($cunsumerEmail<>''){$modelNew->CONSUMER_EMAIL=$cunsumerEmail;};
+				if ($cunsumerPhone<>''){$modelNew->CONSUMER_PHONE=$cunsumerPhone;};
+				if ($note<>''){$modelNew->DCRP_DETIL=$note;};
+				if ($merchantId<>''){$modelNew->MERCHANT_ID=$merchantId;};
+				if ($stt<>''){$modelNew->STATUS=$stt;};			
+				if($modelNew->save()){
+					$modelView=TransPenjualanHeader::find()->where(['OFLINE_ID'=>$transHeaderKey2])->orderBy(['ID' => SORT_DESC])->limit(1)->one();
+					return array('LIST_TRANS_HEADER'=>$modelView);
+				}else{
+					return array('error'=>$modelNew->errors);
+				}
 			}else{
-				return array('error'=>$modelNew->errors);
-			}		
+				return array('error'=>'OFLINE_ID-EXIST');
+			}
 		};
 	}
 	

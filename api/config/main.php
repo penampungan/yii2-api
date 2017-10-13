@@ -81,6 +81,7 @@ return [
 						'login/user-signup-opr',		//Signup OPERATIONAL
 						'login/user-reset',
 						'login/user-login',
+						'login/user-login-test',		//sementara editor
 						'login/user-link',
 						'login/user-profile',
 						'login/user-image',

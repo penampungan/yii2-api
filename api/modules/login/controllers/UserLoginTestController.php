@@ -31,7 +31,7 @@ use api\modules\login\models\StoreDefault;
   *				  {"result": "wrong-username"}	=> Username salah atau tidak ditemukan. 
   *				  {"result": "wrong-sosmed"} => Login sosmed salah atau tidak ditemukan. 
  */
-class UserLoginController extends ActiveController
+class UserLoginTestController extends ActiveController
 {
     public $modelClass = 'api\modules\login\models\UserLogin';
 	
@@ -154,7 +154,7 @@ class UserLoginController extends ActiveController
 			if($modelCnt){					
 				if($model->validateLoginPassword($password_hash)){
 					if ($model->status==10){
-						$model->UUID=$paramlUUID;
+						$model->UUID=[$paramlUUID];
 						$model->save();
 						// return self::setUuid($model->ACCESS_GROUP,$model->ACCESS_ID,$paramlUUID);
 						self::setUuid($model->ACCESS_GROUP,$model->ACCESS_ID,$paramlUUID);
@@ -164,9 +164,8 @@ class UserLoginController extends ActiveController
 						if ($codeActived){
 							if($model->validateCodeReset($codeActived)){
 								$model->status=10;
-								$model->UUID=$valUUID;
+								$model->UUID=$paramlUUID;
 								$model->save();
-								self::setUuid($model->ACCESS_GROUP,$model->ACCESS_ID,$paramlUUID);
 								$modelView= UserLogin::find()->where([$field=>$value])->one();
 								return array('USER'=>$modelView);
 							}else{
