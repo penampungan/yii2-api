@@ -127,7 +127,7 @@ class ProductController extends ActiveController
 		//POLING SYNC nedded ACCESS_ID
 		$accessID=isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
 		$tblPooling=isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
-		
+		$paramlUUID=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
 		
 		if($metode=='GET'){
 			/**
@@ -220,6 +220,7 @@ class ProductController extends ActiveController
 				 if ($prdIndustriId<>''){$modelNew->INDUSTRY_ID=$prdIndustriId;};
 				 if ($crnStock<>''){$modelNew->CURRENT_STOCK=$crnStock;};
 				 if ($crnPrice<>''){$modelNew->CURRENT_PRICE=$crnPrice;};
+				 if ($paramlUUID<>''){$modelNew->CREATE_UUID=$paramlUUID;};
 				 if($modelNew->save()){
 					$rsltMax=Product::find()->where(['STORE_ID'=>$store_id])->max(PRODUCT_ID);
 					$modelView=Product::find()->where(['PRODUCT_ID'=>$rsltMax])->one();
@@ -273,6 +274,7 @@ class ProductController extends ActiveController
 		$stt			= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
 		$crnStock		= isset($paramsBody['CURRENT_STOCK'])!=''?$paramsBody['CURRENT_STOCK']:'';
 		$crnPrice		= isset($paramsBody['CURRENT_PRICE'])!=''?$paramsBody['CURRENT_PRICE']:'';
+		$paramlUUID=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
 		
 		//Releatiship (check by date)
         //-harga;-Discount;-stock;-Promo
@@ -292,6 +294,7 @@ class ProductController extends ActiveController
 				 if ($stt<>''){$modelEdit->STATUS=$stt;};
 				 if ($crnStock<>''){$modelEdit->CURRENT_STOCK=$crnStock;};
 				 if ($crnPrice<>''){$modelEdit->CURRENT_PRICE=$crnPrice;};
+				 if ($paramlUUID<>''){$modelNew->UPDATE_UUID=$paramlUUID;};
 				 if($modelEdit->save()){
 					$modelView=Product::find()->where(['PRODUCT_ID'=>$productID])->one();
 					return array('LIST_PRODUCT'=>$modelView);

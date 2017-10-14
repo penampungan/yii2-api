@@ -105,8 +105,8 @@ class PollingController extends ActiveController
 			* Subject		: SYNCRONIZE POLLING
 			* Metode		: POST (CRUD)
 			* URL			: http://production.kontrolgampang.com/master/polling
-			* Headers Param	: STORE_ID, UUID
-			* URl PARAM		: ?STORE_ID170726220936.0001&UUID=uuid-test-123
+			* Headers Param	: ACCESS_GROUP,STORE_ID
+			* 				: ?ACCESS_GROUP=170726220936&STORE_ID170726220936.0001
 			* ==== TYPE_ACTION ====	| == STT_OPS ======	| == STT_OWNER ====
 			* 1. CEATE			    | 1. SINKRON		|	1. SINKRON
 			* 2. UPDATE				| 2. TIDAK_SINKRON	|	2. TIDAK_SINKRON
@@ -114,10 +114,17 @@ class PollingController extends ActiveController
 		*/
 		$params     	= $_REQUEST;
 		$paramsHeader	= Yii::$app->request->headers;
+		$accessGroup	= $params['ACCESS_GROUP']!=''?$params['ACCESS_GROUP']:$paramsHeader['ACCESS_GROUP'];	
 		$storeId		= $params['STORE_ID']!=''?$params['STORE_ID']:$paramsHeader['STORE_ID'];
-		$paramlUUID		= $params['UUID']!=''?$params['UUID']:$paramsHeader['UUID'];
-		
-		
+		$accessId		= $params['ACCESS_ID']!=''?$params['ACCESS_ID']:$paramsHeader['ACCESS_ID'];
+		$tblNm			= $params['NM_TABLE']!=''?$params['NM_TABLE']:$paramsHeader['NM_TABLE'];
+		$validationTbl  = str_replace("","",ucwords($tblNm));
+		//VALIDATION STORE
+		// if ($tblNm){
+			// $modelView= SyncPoling::find()->where(['NM_TABLE'=>$validationTbl,'ACCESS_GROUP'=>$accessGroup,'STORE_ID'=>$storeId])->andWhere('STT_OPS<>1 OR STT_OWNER<>1')->all();
+		// }else{
+			// $modelView= SyncPoling::find()->where(['ACCESS_GROUP'=>$accessGroup,'STORE_ID'=>$storeId])->andWhere('STT_OPS<>1 OR STT_OWNER<>1')->all();
+		// }
 		$userModel=User::find()->where(['ACCESS_ID'=>$accessId])->one();
 		$lvl=$userModel->ACCESS_LEVEL;
 		IF($lvl=='OWNER'){

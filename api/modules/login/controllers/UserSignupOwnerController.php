@@ -134,6 +134,7 @@ class UserSignupOwnerController extends ActiveController
 		//SOSMED LOGIN
 		$sosProvider			= isset($paramsBody['SOSMED_PROVIDER'])!=''?$paramsBody['SOSMED_PROVIDER']:'';
 		$sosId					= isset($paramsBody['SOSMED_ID'])!=''?$paramsBody['SOSMED_ID']:'';
+		$paramlUUID				= isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
 		
 		
 		
@@ -176,6 +177,7 @@ class UserSignupOwnerController extends ActiveController
 							$modelManual= new UserLogin();
 							$modelManual->username=$username;
 							$modelManual->email=$email;
+							$modelManual->UUID=$paramlUUID;
 							$modelManual->ACCESS_LEVEL='OWNER';
 							$modelManual->create_at=date('Y-m-d H:i:s');
 							$modelManual->password_hash = Yii::$app->security->generatePasswordHash($password_hash);
@@ -217,6 +219,7 @@ class UserSignupOwnerController extends ActiveController
 						$modelSosmad= New UserLogin();
 						$modelSosmad->username=$email;
 						$modelSosmad->email=$email;
+						$modelSosmad->UUID=$paramlUUID;
 						$modelSosmad->ACCESS_LEVEL='OWNER';
 						$modelSosmad->create_at=date('Y-m-d H:i:s');
 						$modelSosmad->auth_key = Yii::$app->security->generateRandomString();

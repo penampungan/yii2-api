@@ -156,7 +156,7 @@ class UserLoginController extends ActiveController
 					if ($model->status==10){
 						$model->UUID=$paramlUUID;
 						$model->save();
-						// return self::setUuid($model->ACCESS_GROUP,$model->ACCESS_ID,$paramlUUID);
+						//TRIGER ADD UUID TO TABLE STORE
 						self::setUuid($model->ACCESS_GROUP,$model->ACCESS_ID,$paramlUUID);
 						$modelView= UserLogin::find()->where([$field=>$value])->one();
 						return array('USER'=>$modelView);
@@ -166,6 +166,7 @@ class UserLoginController extends ActiveController
 								$model->status=10;
 								$model->UUID=$valUUID;
 								$model->save();
+								//TRIGER ADD UUID TO TABLE STORE
 								self::setUuid($model->ACCESS_GROUP,$model->ACCESS_ID,$paramlUUID);
 								$modelView= UserLogin::find()->where([$field=>$value])->one();
 								return array('USER'=>$modelView);
@@ -186,7 +187,13 @@ class UserLoginController extends ActiveController
 		}else{
 			//SOSMED LOGIN
 			if($modelCnt){
-				return array('USER'=>$model);
+				//return array('USER'=>$model);
+				$model->UUID=$paramlUUID;
+				$model->save();
+				//TRIGER ADD UUID TO TABLE STORE
+				self::setUuid($model->ACCESS_GROUP,$model->ACCESS_ID,$paramlUUID);
+				$modelView= UserLogin::find()->where([$field=>$value])->one();
+				return array('USER'=>$modelView);
 			}else{
 				return array('result'=>'wrong-sosmed');
 			};	
