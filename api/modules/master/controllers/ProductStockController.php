@@ -114,6 +114,8 @@ class ProductStockController extends ActiveController
 		$sisaStock		= isset($paramsBody['SISA_STOCK'])!=''?$paramsBody['SISA_STOCK']:'';
 		$stt			= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
 		$note			= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['DCRP_DETIL']:'';
+		$accessID		= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$paramlUUID		= isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
 		
 		if($metode=='GET'){
 			/**
@@ -190,6 +192,9 @@ class ProductStockController extends ActiveController
 					//GENERAL
 					if ($stt<>''){$modelNew->STATUS=$stt;};
 					if ($note<>''){$modelNew->DCRP_DETIL=$note;};
+					if ($paramlUUID<>''){$modelNew->CREATE_UUID=$paramlUUID;};
+				    if ($accessID<>''){$modelNew->CREATE_BY=$accessID;};
+				 
 					if($modelNew->save()){
 						$rsltMax=ProductStock::find()->where(['PRODUCT_ID'=>$productId])->max(ID);
 						$modelView=ProductStock::find()->where(['ID'=>$rsltMax])->one();
@@ -240,7 +245,9 @@ class ProductStockController extends ActiveController
 		$sisaStock		= isset($paramsBody['SISA_STOCK'])!=''?$paramsBody['SISA_STOCK']:'';
 		$stt			= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
 		$note			= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['DCRP_DETIL']:'';
-	
+		$accessID		= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$paramlUUID		= isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
+		
 		$modelEdit = ProductStock::find()->where(['PRODUCT_ID'=>$productId,'ID'=>$id])->one();
 		if($modelEdit){
 			//STOCK LALU
@@ -256,7 +263,9 @@ class ProductStockController extends ActiveController
 			if ($sisaStock<>''){$modelEdit->SISA_STOCK=$sisaStock;};
 			//GENERAL
 			if ($stt<>''){$modelEdit->STATUS=$stt;};
-			if ($note<>''){$modelEdit->DCRP_DETIL=$note;};			 
+			if ($note<>''){$modelEdit->DCRP_DETIL=$note;};	
+			if ($paramlUUID<>''){$modelEdit->UPDATE_UUID=$paramlUUID;};
+			if ($accessID<>''){$modelEdit->UPDATE_BY=$accessID;};			
 			if($modelEdit->save()){
 				$modelView=ProductStock::find()->where(['PRODUCT_ID'=>$productId,'ID'=>$id])->one();
 				return array('LIST_PRODUCT_STOCK'=>$modelView);

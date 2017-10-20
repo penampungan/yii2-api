@@ -42,9 +42,9 @@ class SyncPoling extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['ID', 'TYPE_ACTION', 'STT_OPS', 'STT_OWNER'], 'integer'],
+            [['ID', 'TYPE_ACTION'], 'integer'],
             [['CREATE_AT', 'UPDATE_AT','ARY_UUID','ARY_PLAYERID'], 'safe'],
-            [['NM_TABLE', 'PRIMARIKEY_NM','PRIMARIKEY_VAL'], 'string', 'max' => 255],
+            [['NM_TABLE', 'PRIMARIKEY_NM','PRIMARIKEY_VAL','PRIMARIKEY_ID'], 'string', 'max' => 255],
             [['ACCESS_GROUP'], 'string', 'max' => 15],
             [['STORE_ID'], 'string', 'max' => 20],
             [['CREATE_BY', 'UPDATE_BY'], 'string', 'max' => 50],
@@ -61,9 +61,8 @@ class SyncPoling extends \yii\db\ActiveRecord
             'NM_TABLE' => 'NM_TABLE',
             'PRIMARIKEY_NM' => 'PRIMARIKEY_NM',
             'PRIMARIKEY_VAL' => 'PRIMARIKEY_VAL',
+            'PRIMARIKEY_ID' => 'PRIMARIKEY_ID',
             'TYPE_ACTION' => 'TYPE_ACTION',
-            'STT_OPS' => 'STT_OPS',
-            'STT_OWNER' => 'STT_OWNER',
             'ACCESS_GROUP' => 'ACCESS_GROUP',
             'STORE_ID' => 'STORE_ID',
             'ARY_UUID' => 'ARY_UUID',
@@ -86,14 +85,11 @@ class SyncPoling extends \yii\db\ActiveRecord
 			'PRIMARIKEY_VAL'=>function($model){
 				return $model->PRIMARIKEY_VAL;
 			},	
+			'PRIMARIKEY_ID'=>function($model){
+				return $model->PRIMARIKEY_ID;
+			},	
 			'TYPE_ACTION'=>function($model){
 				return $model->TYPE_ACTION;
-			},	
-			'STT_OPS'=>function($model){
-				return $model->STT_OPS;
-			},	
-			'STT_OWNER'=>function($model){
-				return $model->STT_OWNER;
 			},	
 			'ACCESS_GROUP'=>function($model){
 				return $model->ACCESS_GROUP;

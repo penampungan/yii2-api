@@ -27,7 +27,7 @@ use api\modules\login\models\User;
   * URL			: http://production.kontrolgampang.com/master/products
   * Body Param	: PRODUCT_ID(key)
  */
-class ProductController extends ActiveController
+class ProductTestController extends ActiveController
 {	
 
     public $modelClass = 'api\modules\login\models\Product';
@@ -199,7 +199,7 @@ class ProductController extends ActiveController
 								}
 							}							
 						}						
-					} else{						
+					}else{						
 						//==GET DATA POLLING
 						$modelPoling=SyncPoling::find()->where([
 							 NM_TABLE=>'TBL_PRODUCT',

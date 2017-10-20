@@ -32,7 +32,7 @@ class ProductStock extends \yii\db\ActiveRecord
         return [
 			[['PRODUCT_ID','INPUT_DATE','INPUT_TIME','INPUT_STOCK'], 'required','on'=>self::SCENARIO_CREATE],
             [['LAST_STOCK', 'INPUT_STOCK', 'CURRENT_STOCK', 'SISA_STOCK'], 'number'],
-            [['INPUT_DATE', 'INPUT_TIME', 'CURRENT_DATE', 'CURRENT_TIME', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
+            [['INPUT_DATE', 'INPUT_TIME', 'CURRENT_DATE', 'CURRENT_TIME', 'CREATE_AT', 'UPDATE_AT','CREATE_UUID','UPDATE_UUID'], 'safe'],
             [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['DCRP_DETIL'], 'string'],
             [['ACCESS_GROUP'], 'string', 'max' => 15],
@@ -68,6 +68,8 @@ class ProductStock extends \yii\db\ActiveRecord
             'DCRP_DETIL' => 'Dcrp  Detil',
             'YEAR_AT' => 'Year  At',
             'MONTH_AT' => 'Month  At',
+			'CREATE_UUID' => 'CREATE_UUID',
+            'UPDATE_UUID' => 'UPDATE_UUID',
         ];
     }
 	

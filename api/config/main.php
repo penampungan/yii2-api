@@ -109,6 +109,7 @@ return [
 						'master/merchant',							
 						'master/merchant-type',							
 						'master/merchant-bank',
+						'master/product-test',						
 						'master/product',						
 						'master/product-group',							
 						'master/product-unit',							

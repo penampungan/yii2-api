@@ -111,32 +111,18 @@ class PollingController extends ActiveController
 			* 1. CEATE			    | 1. SINKRON		|	1. SINKRON
 			* 2. UPDATE				| 2. TIDAK_SINKRON	|	2. TIDAK_SINKRON
 			* 3. DELETE				|
+			* KETERANGAN	: ARY_UUID ada, maka tidak di tampilkan, jika ARY_UUID tidak ada ditampilkan.
 		*/
 		$params     	= $_REQUEST;
 		$paramsHeader	= Yii::$app->request->headers;
+		$accessGroup	= $params['ACCESS_GROUP']!=''?$params['ACCESS_GROUP']:$paramsHeader['ACCESS_GROUP'];
 		$storeId		= $params['STORE_ID']!=''?$params['STORE_ID']:$paramsHeader['STORE_ID'];
 		$paramlUUID		= $params['UUID']!=''?$params['UUID']:$paramsHeader['UUID'];
-		
-		
-		$userModel=User::find()->where(['ACCESS_ID'=>$accessId])->one();
-		$lvl=$userModel->ACCESS_LEVEL;
-		IF($lvl=='OWNER'){
-			$modelView= SyncPoling::find()->where(['ACCESS_GROUP'=>$accessGroup,'STORE_ID'=>$storeId,'STT_OWNER'=>0])->all();
-		}elseif($lvl=='OPS'){
-			$modelView= SyncPoling::find()->where(['ACCESS_GROUP'=>$accessGroup,'STORE_ID'=>$storeId,'STT_OPS'=>0])->all();
-		}
-		// else{
-			// $modelView=[];
-		// } 
-		
+		// $aryStoreId		= explode(".",$storeId);		
+		// $accessGroup	= $aryStoreId[0];				
+		$modelView= SyncPoling::find()->where(['ACCESS_GROUP'=>$accessGroup,'STORE_ID'=>$storeId])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();		
 		return $modelView;
-		//return array($modelView->count());		
-		/* if ($modelView->count()){
-			//$modelView=SyncPoling::find()->where(['ACCESS_GROUP'=>$accessGroup,'STORE_ID'=>$store_id])->All();
-			return array($modelView);
-		}else{
-			return array();
-		} */	
+		
 	}	
 }
 
