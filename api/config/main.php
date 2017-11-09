@@ -23,6 +23,10 @@ return [
 		'hirs' => [
             'basePath' => '@app/modules/hirs',
             'class' => 'api\modules\hirs\Module',
+        ],
+		'laporan' => [
+            'basePath' => '@app/modules/laporan',
+            'class' => 'api\modules\laporan\Module',
         ]
     ],
     'components' => [
@@ -108,6 +112,7 @@ return [
 						'master/customer',							
 						'master/merchant',							
 						'master/merchant-type',							
+						'master/merchant-type-test',							
 						'master/merchant-bank',
 						'master/product-test',						
 						'master/product',						
@@ -121,7 +126,8 @@ return [
 						'master/product-harga',							
 						'master/product-promo',							
 						'master/product-image',							
-						'master/polling'							
+						'master/polling',							
+						'master/polling-test'							
 					],
 					'patterns' => [
 						'PUT' => 'update',
@@ -139,9 +145,7 @@ return [
 							'transaksi/trans-openclose',
 							'transaksi/trans-storan',
 							'transaksi/trans-penjualan-header',
-							'transaksi/trans-penjualan-detail',
-							'transaksi/trans-rpt1',
-							'transaksi/trans-rpt-test'
+							'transaksi/trans-penjualan-detail'
 						],
 						'patterns' => [
 							'PUT,PATCH' => 'update',
@@ -158,6 +162,26 @@ return [
                         'controller' =>[
 							'hirs/karyawan',
 							'hirs/absensi'
+						],
+						'patterns' => [
+							'PUT,PATCH' => 'update',
+							'DELETE {id}' => 'delete',
+							'GET,HEAD {id}' => 'view',
+							'POST' => 'create',
+							'GET,HEAD' => 'index',
+							'{id}' => 'options',
+							'' => 'options',
+						]
+                ],
+				[
+                        'class' => 'yii\rest\UrlRule',
+                        'controller' =>[
+							'laporan/rpt-penjualan',
+							'laporan/trans-rpt-trans',
+							'laporan/trans-rpt1',
+							'laporan/trans-rpt2',
+							'laporan/trans-rpt-test',
+							'laporan/trans-rpt-absensi'
 						],
 						'patterns' => [
 							'PUT,PATCH' => 'update',

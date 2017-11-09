@@ -28,7 +28,7 @@ use api\modules\login\models\User;
   * URL			: http://production.kontrolgampang.com/master/merchant-types
   * Body Param	: No Field
  */
-class MerchantTypeController extends ActiveController
+class MerchantTypeTestController extends ActiveController
 {	
     //public $modelClass = 'common\models\User';
     public $modelClass = 'api\modules\login\models\MerchantType';
@@ -146,11 +146,7 @@ class MerchantTypeController extends ActiveController
 					}
 				}							
 			}
-			IF ($typeId<>''){
-				$modelView=MerchantType::find()->where(['TYPE_PAY_ID'=>$typeId])->one();
-			}else{
-				$modelView=MerchantType::find()->all();
-			}			
+			$modelView=MerchantType::find()->all();
 			return array('MERCHANT_TYPE'=>$modelView);
 			
 		}elseif($metode=='POST'){
@@ -196,7 +192,6 @@ class MerchantTypeController extends ActiveController
 				 if ($dcrip<>''){$modelEdit->DCRP_DETIL=$dcrip;};
 				 if ($stt<>''){$modelEdit->STATUS=$stt;};
 				 if ($accessID<>''){$modelEdit->UPDATE_BY=$accessID;};
-				 if ($paramlUUID<>''){$modelEdit->CREATE_UUID=$paramlUUID;};
 				 if ($paramlUUID<>''){$modelEdit->UPDATE_UUID=$paramlUUID;};
 				 if($modelEdit->save()){
 					$modelView=MerchantType::find()->where(['TYPE_PAY_ID'=>$typeId])->one();

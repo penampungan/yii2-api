@@ -155,6 +155,9 @@ class Karyawan extends \yii\db\ActiveRecord
 			},			
 			'EMAIL'=>function($model){
 				return $model->EMAIL;
+			},
+			'STATUS'=>function($model){
+				return $model->STATUS;
 			}		
 		];
 	}

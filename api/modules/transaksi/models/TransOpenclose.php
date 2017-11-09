@@ -121,13 +121,13 @@ class TransOpenclose extends \yii\db\ActiveRecord
 					return 'none';
 				}
 			},
-			'STORAN'=>function(){
-				return $this->storanTbl;
-			}
+			// 'STORAN'=>function(){
+				// return $this->storanTbl;
+			// }
 		];
 	}
 	
-	public function getStoranTbl(){
-		return $this->hasOne(TransStoran::className(), ['OPENCLOSE_ID' => 'OPENCLOSE_ID']);
-	}	
+	// public function getStoranTbl(){
+		// return $this->hasOne(TransStoran::className(), ['OPENCLOSE_ID' => 'OPENCLOSE_ID']);
+	// }	
 }

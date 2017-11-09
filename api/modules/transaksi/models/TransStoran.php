@@ -7,6 +7,7 @@ use api\modules\transaksi\models\TransStoranImage;
 class TransStoran extends \yii\db\ActiveRecord
 {
 	const SCENARIO_UPDATE = 'update';
+	const SCENARIO_CREATE = 'create';
     /**
      * @inheritdoc
      */
@@ -30,6 +31,7 @@ class TransStoran extends \yii\db\ActiveRecord
     {
         return [
             [['OPENCLOSE_ID','TGL_STORAN','NOMINAL_STORAN','BANK_NM','BANK_NO'], 'required','on'=>self::SCENARIO_UPDATE],
+            [['OPENCLOSE_ID','TGL_STORAN','NOMINAL_STORAN','TOTALCASH'], 'required','on'=>self::SCENARIO_CREATE],
             [['TGL_STORAN', 'CREATE_AT', 'UPDATE_AT','BANK_NM','BANK_NO'], 'safe'],
             [['TOTALCASH', 'NOMINAL_STORAN', 'SISA_STORAN'], 'number'],
             [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],

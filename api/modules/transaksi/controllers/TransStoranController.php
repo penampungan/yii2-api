@@ -96,9 +96,21 @@ class TransStoranController extends ActiveController
 		$metode			= isset($paramsBody['METHODE'])!=''?$paramsBody['METHODE']:'';		
 		//KEY
 		$opencloseID	= isset($paramsBody['OPENCLOSE_ID'])!=''?$paramsBody['OPENCLOSE_ID']:'';
+		$accessgroup	= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';
 		$store_id		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';
+		$acsID			= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
 		$tglCreate		= isset($paramsBody['CREATE_AT'])!=''?$paramsBody['CREATE_AT']:'';
 		$tglStoran		= isset($paramsBody['TGL_STORAN'])!=''?$paramsBody['TGL_STORAN']:'';
+		
+		$stt			= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
+		
+		//PROPERTY
+		$ttlCash		= isset($paramsBody['TOTALCASH'])!=''?$paramsBody['TOTALCASH']:'';
+		$storanNominal	= isset($paramsBody['NOMINAL_STORAN'])!=''?$paramsBody['NOMINAL_STORAN']:'';
+		$bankNm			= isset($paramsBody['BANK_NM'])!=''?$paramsBody['BANK_NM']:'';
+		$bankNo			= isset($paramsBody['BANK_NO'])!=''?$paramsBody['BANK_NO']:'';
+		$caseNote		= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['DCRP_DETIL']:'';
+		$attachImage	= isset($paramsBody['STORAN_IMAGE'])!=''?$paramsBody['STORAN_IMAGE']:'';
 		
 		if($metode=='GET'){
 			/**
@@ -143,7 +155,36 @@ class TransStoranController extends ActiveController
 				}		
 			}			
 		}elseif($metode=='POST'){
-			return array('result'=>'use-update');
+			// return array('result'=>'use-update');
+			
+			$modelNew = new TransStoran();
+			$modelNew->scenario = "create";	
+			if ($accessgroup<>''){$modelNew->ACCESS_GROUP=$accessgroup;}; 
+			if ($store_id<>''){$modelNew->STORE_ID=$store_id;}; 
+			if ($acsID<>''){$modelNew->ACCESS_ID=$acsID;}; 
+			if ($opencloseID<>''){$modelNew->OPENCLOSE_ID=$opencloseID;}; 
+			
+			if ($tglStoran<>''){$modelNew->TGL_STORAN=date('Y-m-d H:i:s', strtotime($tglStoran));}; 			
+			if ($stt<>''){$modelNew->STATUS=$stt;};		
+			if ($ttlCash<>''){$modelNew->TOTALCASH=$ttlCash;};		
+			if ($storanNominal<>''){$modelNew->NOMINAL_STORAN=$storanNominal;};		
+			if ($bankNm<>''){$modelNew->BANK_NM=$bankNm;};		
+			if ($bankNo<>''){$modelNew->BANK_NO=$bankNo;};		
+			if ($caseNote<>''){$modelNew->DCRP_DETIL=$caseNote;};	
+			$modelNew->CREATE_AT=date('Y-m-d H:i:s', strtotime($tglStoran));	
+			if($modelNew->save()){
+					//UPDATE ATTCH IMAGE STORAN.
+					$modelUpdateImage=TransStoranImage::find()->where(['OPENCLOSE_ID'=>$opencloseID])->one();
+					if ($attachImage<>''){$modelUpdateImage->STORAN_IMAGE=$attachImage;};	
+					$modelUpdateImage->STATUS=1;
+					$modelUpdateImage->save();
+					//VIEW STORAN PROPERTIES
+					$modelView=TransStoran::find()->where(['OPENCLOSE_ID'=>$opencloseID])->one();
+					return array('LIST_OPENCLOSE'=>$modelView);
+			}else{
+				return array('result'=>$modelNew->errors);
+			}
+			
 		};
 	}
 	
@@ -180,7 +221,7 @@ class TransStoranController extends ActiveController
 		$modelEdit = TransStoran::find()->where(['OPENCLOSE_ID'=>$opencloseID])->one();
 		
 		if($modelEdit){
-			if($modelEdit->STATUS==0){
+			//if($modelEdit->STATUS==0){
 				if ($tglStoran<>''){$modelEdit->TGL_STORAN=date('Y-m-d H:i:s', strtotime($tglStoran));}; 			
 				if ($stt<>''){$modelEdit->STATUS=$stt;};		
 				if ($storanNominal<>''){$modelEdit->NOMINAL_STORAN=$storanNominal;};		
@@ -200,11 +241,11 @@ class TransStoranController extends ActiveController
 				}else{
 					return array('error'=>$modelEdit->errors);
 				}
-			}elseif($modelEdit->STATUS==2){
-				return array('result'=>'Closing-First');
-			}else{
-				return array('result'=>'Locked');
-			}
+			// }elseif($modelEdit->STATUS==2){
+				// return array('result'=>'Closing-First');
+			// }else{
+				// return array('result'=>'Locked');
+			// }
 		}else{
 			return array('result'=>'OPENCLOSE_ID-not-exist');
 		}

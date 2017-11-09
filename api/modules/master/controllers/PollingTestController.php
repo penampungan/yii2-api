@@ -27,7 +27,7 @@ use api\modules\master\models\SyncPoling;
   * URL			: http://production.kontrolgampang.com/master/polling
   * Body Param	: ACCESS_GROUP,STORE_ID
  */
-class PollingController extends ActiveController
+class PollingTestController extends ActiveController
 {	
     public $modelClass = 'api\modules\login\models\SyncPoling';
 

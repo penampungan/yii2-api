@@ -1,6 +1,6 @@
 <?php
 
-namespace api\modules\master\controllers;
+namespace api\modules\transaksi\controllers;
 
 use yii;
 use yii\helpers\Json;
@@ -15,21 +15,15 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
-use api\modules\login\models\User;
 
-use api\modules\master\models\SyncPoling;
 
-/**
-  * @author 	: ptrnov  <piter@lukison.com>
-  * @since 		: 1.2
-  * Subject		: SYNCRONIZE POLLING
-  * Metode		: POST (CRUD)
-  * URL			: http://production.kontrolgampang.com/master/polling
-  * Body Param	: ACCESS_GROUP,STORE_ID
- */
-class PollingController extends ActiveController
-{	
-    public $modelClass = 'api\modules\login\models\SyncPoling';
+use api\modules\transaksi\models\PenjualanHeader;
+use api\modules\transaksi\models\TransRptTest;
+
+class TransRptTestController extends ActiveController
+{
+
+	public $modelClass = 'api\modules\transaksi\models\TransRptTest';
 
 	/**
      * Behaviors
@@ -88,47 +82,40 @@ class PollingController extends ActiveController
 			], */
         ]);		
     }
-
+	
 	public function actions()
+	 {
+		 $actions = parent::actions();
+		unset($actions['index'], $actions['update'], $actions['create'], $actions['delete'], $actions['view']);
+		 //unset($actions['update'], $actions['create'], $actions['delete'], $actions['view']);
+		 return $actions;
+	 }
+	 
+	public function actionIndex()
 	{
-		$actions = parent::actions();
-		unset($actions['index'], $actions['update'], $actions['create'], $actions['delete'], $actions['view'],$actions['store']);
-		//unset($actions['update'], $actions['create'], $actions['delete'], $actions['view']);
-		return $actions;
+		//?STORE_ID=170726220936.0001&TRANS_DATE=2017-09-29
+		$params	     	= $_REQUEST;
+		$paramsHeader	= Yii::$app->request->headers;	
+		$storeId=$params['STORE_ID']!=''?$params['STORE_ID']:$paramsHeader['STORE_ID'];
+		$transDate=$params['TRANS_DATE']!=''?$params['TRANS_DATE']:$paramsHeader['TRANS_DATE'];
+		// return $params['STORE_ID'];
+		// return $params['TRANS_DATE'];
+		$model = new TransRptTest([
+			'storeId'=>$storeId,
+			'transDate1'=>$transDate,
+			'transDate2'=>$transDate
+		]);
+		// $model = new TransRptTest();
+		return $model; 
+		
+		//return Yii::$app->rpt->perStoreProductTerjualQty();
 	}
 	
-	public function actionIndex()
-    {        
-		/**
-			* @author 		: ptrnov  <piter@lukison.com>
-			* @since 		: 1.2
-			* Subject		: SYNCRONIZE POLLING
-			* Metode		: POST (CRUD)
-			* URL			: http://production.kontrolgampang.com/master/polling
-			* Headers Param	: STORE_ID, UUID
-			* URl PARAM		: ?STORE_ID170726220936.0001&UUID=uuid-test-123
-			* ==== TYPE_ACTION ====	| == STT_OPS ======	| == STT_OWNER ====
-			* 1. CEATE			    | 1. SINKRON		|	1. SINKRON
-			* 2. UPDATE				| 2. TIDAK_SINKRON	|	2. TIDAK_SINKRON
-			* 3. DELETE				|
-			* KETERANGAN	: ARY_UUID ada, maka tidak di tampilkan, jika ARY_UUID tidak ada ditampilkan.
-		*/
-		$params     	= $_REQUEST;
-		$paramsHeader	= Yii::$app->request->headers;
-		$accessGroup	= $params['ACCESS_GROUP']!=''?$params['ACCESS_GROUP']:$paramsHeader['ACCESS_GROUP'];
-		$storeId		= $params['STORE_ID']!=''?$params['STORE_ID']:$paramsHeader['STORE_ID'];
-		$paramlUUID		= $params['UUID']!=''?$params['UUID']:$paramsHeader['UUID'];
-		$tblNm			= $params['NM_TABLE']!=''?$params['NM_TABLE']:$paramsHeader['NM_TABLE'];
-		// $aryStoreId		= explode(".",$storeId);		
-		// $accessGroup	= $aryStoreId[0];	
-		//if ($tblNm=='TBL_MERCHANT_TYPE'){
-			$modelViewAll= SyncPoling::find()->where(['ACCESS_GROUP'=>'','STORE_ID'=>''])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();			
-		//}else{
-			$modelView= SyncPoling::find()->where(['ACCESS_GROUP'=>$accessGroup,'STORE_ID'=>$storeId])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();			
-		//}
-		return ArrayHelper::merge($modelView,$modelViewAll);
-		
-	}	
+	
+	
 }
-
-
+    
+	
+	
+	
+	

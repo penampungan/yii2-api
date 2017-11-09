@@ -95,6 +95,7 @@ class TransOpencloseController extends ActiveController
 		$metode			= isset($paramsBody['METHODE'])!=''?$paramsBody['METHODE']:'';		
 		//KEY
 		$opencloseID	= isset($paramsBody['OPENCLOSE_ID'])!=''?$paramsBody['OPENCLOSE_ID']:'';
+		$accessGrp		= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';
 		$store_id		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';
 		$acsID			= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
 		$tglOpen		= isset($paramsBody['TGL_OPEN'])!=''?$paramsBody['TGL_OPEN']:'';
@@ -114,8 +115,18 @@ class TransOpencloseController extends ActiveController
 			* Body Param	: METHODE=GET & STORE_ID(Key) or  OPENCLOSE_ID(key) 
 			*				: STORE_ID='' All data Open/Closing per-STORE_ID.
 			*				: STORE_ID<>'' data Open/Closing per-OPENCLOSE_ID.
-			*/
-			if($store_id<>''){
+			*/			
+			if($opencloseID<>''){
+				//Model Openclose BY OPENCLOSE_ID
+				$modelCnt= TransOpenclose::find()->where(['OPENCLOSE_ID'=>$opencloseID])->count();
+				$model= TransOpenclose::find()->where(['OPENCLOSE_ID'=>$opencloseID])->one();		
+				//$model->scenario = "ambil_data";
+				if($modelCnt){			
+					return array('LIST_OPENCLOSE'=>$model);
+				}else{
+					return array('result'=>'data-empty');
+				}		
+			}else{				
 				if($tglOpen<>''){					
 					//Model Openclose BY STORE_ID
 					$modelCnt= TransOpenclose::find()->where(['STORE_ID'=>$store_id])->andWhere(['like','TGL_OPEN',date('Y-m-d', strtotime($tglOpen))])->count();
@@ -134,17 +145,7 @@ class TransOpencloseController extends ActiveController
 					}else{
 						return array('result'=>'data-empty');
 					};
-				}
-			}else{
-				//Model Openclose BY OPENCLOSE_ID
-				$modelCnt= TransOpenclose::find()->where(['OPENCLOSE_ID'=>$opencloseID])->count();
-				$model= TransOpenclose::find()->where(['OPENCLOSE_ID'=>$opencloseID])->one();		
-				//$model->scenario = "ambil_data";
-				if($modelCnt){			
-					return array('LIST_OPENCLOSE'=>$model);
-				}else{
-					return array('result'=>'data-empty');
-				}		
+				}				
 			}			
 		}elseif($metode=='POST'){
 			/**
@@ -156,19 +157,25 @@ class TransOpencloseController extends ActiveController
 			* Body Param	: METHODE=POST & STORE_ID(Key) & ACCESS_ID(key) & TGL_OPEN
 			* PROPERTY		: CASHINDRAWER,STATUS
 			*/
-			$modelNew = new TransOpenclose();
-			$modelNew->scenario = "create";
-			if ($store_id<>''){$modelNew->STORE_ID=$store_id;};
-			if ($acsID<>''){$modelNew->ACCESS_ID=$acsID;};
-			if ($tglOpen<>''){$modelNew->TGL_OPEN=date('Y-m-d H:i:s', strtotime($tglOpen));};
-			if ($caseInPeti<>''){$modelNew->CASHINDRAWER=$caseInPeti;};
-			if ($caseAdd<>''){$modelNew->ADDCASH=$caseAdd;};
-			if ($stt<>''){$modelNew->STATUS=$stt;};
-			if($modelNew->save()){
-				$modelView=TransOpenclose::find()->where(['STORE_ID'=>$store_id])->orderBy(['ID' => SORT_DESC])->limit(1)->one();
-				return array('LIST_OPENCLOSE'=>$modelView);
+			$check = TransOpenclose::find()->where(['OPENCLOSE_ID'=>$opencloseID])->one();
+			if($check){
+				return array('result'=>'OPENCLOSE_ID-exist');
 			}else{
-				return array('result'=>$modelNew->errors);
+				$modelNew = new TransOpenclose();
+				$modelNew->scenario = "create";
+				if ($store_id<>''){$modelNew->STORE_ID=$store_id;};
+				if ($opencloseID<>''){$modelNew->OPENCLOSE_ID=$opencloseID;};
+				if ($acsID<>''){$modelNew->ACCESS_ID=$acsID;};
+				if ($tglOpen<>''){$modelNew->TGL_OPEN=date('Y-m-d H:i:s', strtotime($tglOpen));};
+				if ($caseInPeti<>''){$modelNew->CASHINDRAWER=$caseInPeti;};
+				if ($caseAdd<>''){$modelNew->ADDCASH=$caseAdd;};
+				if ($stt<>''){$modelNew->STATUS=$stt;};
+				if($modelNew->save()){
+					$modelView=TransOpenclose::find()->where(['STORE_ID'=>$store_id])->orderBy(['ID' => SORT_DESC])->limit(1)->one();
+					return array('LIST_OPENCLOSE'=>$modelView);
+				}else{
+					return array('result'=>$modelNew->errors);
+				}
 			}
 		};
 	}

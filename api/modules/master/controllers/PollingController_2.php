@@ -118,15 +118,10 @@ class PollingController extends ActiveController
 		$accessGroup	= $params['ACCESS_GROUP']!=''?$params['ACCESS_GROUP']:$paramsHeader['ACCESS_GROUP'];
 		$storeId		= $params['STORE_ID']!=''?$params['STORE_ID']:$paramsHeader['STORE_ID'];
 		$paramlUUID		= $params['UUID']!=''?$params['UUID']:$paramsHeader['UUID'];
-		$tblNm			= $params['NM_TABLE']!=''?$params['NM_TABLE']:$paramsHeader['NM_TABLE'];
 		// $aryStoreId		= explode(".",$storeId);		
-		// $accessGroup	= $aryStoreId[0];	
-		//if ($tblNm=='TBL_MERCHANT_TYPE'){
-			$modelViewAll= SyncPoling::find()->where(['ACCESS_GROUP'=>'','STORE_ID'=>''])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();			
-		//}else{
-			$modelView= SyncPoling::find()->where(['ACCESS_GROUP'=>$accessGroup,'STORE_ID'=>$storeId])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();			
-		//}
-		return ArrayHelper::merge($modelView,$modelViewAll);
+		// $accessGroup	= $aryStoreId[0];				
+		$modelView= SyncPoling::find()->where(['ACCESS_GROUP'=>$accessGroup,'STORE_ID'=>$storeId])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();		
+		return $modelView;
 		
 	}	
 }
