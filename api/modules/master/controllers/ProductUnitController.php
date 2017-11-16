@@ -17,6 +17,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
 
 use api\modules\master\models\ProductUnit;
+use api\modules\master\models\SyncPoling;
 
 
 /**
@@ -108,6 +109,11 @@ class ProductUnitController extends ActiveController
 		$unitNm			= isset($paramsBody['UNIT_NM'])!=''?$paramsBody['UNIT_NM']:'';
 		$unitNote		= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['NOTE']:'';
 		
+		//==POLING SYNC ===
+		$accessID		=isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$tblPooling		=isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		$paramlUUID		=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
+		
 		if($metode=='GET'){
 			/**
 			  * @author 	: ptrnov  <piter@lukison.com>
@@ -123,7 +129,30 @@ class ProductUnitController extends ActiveController
 			  *				 http://production.kontrolgampang.com/master/product-unit-groups	(UNIT_ID_GRP)-> ALL APP
 			 */
 			if($unitIdGrp<>''){	 
-				if($unitID<>''){				
+				if($unitID<>''){
+					//==GET DATA POLLING
+					$modelPoling=SyncPoling::find()->where([
+						 NM_TABLE=>'TBL_PRODUCT_UNIT',
+						 ACCESS_GROUP=>'',
+						 STORE_ID=>'',
+						 PRIMARIKEY_VAL=>$unitID
+					])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+					//==UPDATE DATA POLLING UUID
+					if($modelPoling){							
+						foreach($modelPoling as $row => $val){
+							$modelSimpan=SyncPoling::find()->where([
+								 'NM_TABLE'=>'TBL_PRODUCT_UNIT',
+								 'ACCESS_GROUP'=>'',
+								 'STORE_ID'=>'',
+								 'PRIMARIKEY_VAL'=>$unitID,
+								 'TYPE_ACTION'=>$val->TYPE_ACTION
+							])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+							if($modelSimpan AND $paramlUUID){
+								$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+								$modelSimpan->save();
+							}
+						}							
+					}
 					//Model Per-UNIT
 					$modelCnt= ProductUnit::find()->where(['UNIT_ID'=>$unitID,'UNIT_ID_GRP'=>$unitIdGrp])->count();
 					$model= ProductUnit::find()->where(['UNIT_ID'=>$unitID,'UNIT_ID_GRP'=>$unitIdGrp])->one();		
@@ -146,7 +175,30 @@ class ProductUnitController extends ActiveController
 					}		
 				}
 			}else{
-				if($unitID<>''){				
+				if($unitID<>''){	
+					//==GET DATA POLLING
+					$modelPoling=SyncPoling::find()->where([
+						 NM_TABLE=>'TBL_PRODUCT_UNIT',
+						 ACCESS_GROUP=>'',
+						 STORE_ID=>'',
+						 PRIMARIKEY_VAL=>$unitID
+					])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+					//==UPDATE DATA POLLING UUID
+					if($modelPoling){							
+						foreach($modelPoling as $row => $val){
+							$modelSimpan=SyncPoling::find()->where([
+								 'NM_TABLE'=>'TBL_PRODUCT_UNIT',
+								 'ACCESS_GROUP'=>'',
+								 'STORE_ID'=>'',
+								 'PRIMARIKEY_VAL'=>$unitID,
+								 'TYPE_ACTION'=>$val->TYPE_ACTION
+							])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+							if($modelSimpan AND $paramlUUID){
+								$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+								$modelSimpan->save();
+							}
+						}							
+					}
 					//Model Per-UNIT
 					$modelCnt= ProductUnit::find()->where(['UNIT_ID'=>$unitID])->count();
 					$model= ProductUnit::find()->where(['UNIT_ID'=>$unitID])->one();		

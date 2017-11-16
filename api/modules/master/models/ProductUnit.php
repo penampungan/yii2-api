@@ -44,7 +44,7 @@ class ProductUnit extends \yii\db\ActiveRecord
             //[['UNIT_ID'], 'required'],
             [['UNIT_ID_GRP', 'STATUS'], 'integer'],
             [['DCRP_DETIL'], 'string'],
-            [['CREATE_AT', 'UPDATE_AT'], 'safe'],
+            [['CREATE_AT', 'UPDATE_AT','CREATE_UUID','UPDATE_UUID'], 'safe'],
             [['UNIT_ID'], 'string', 'max' => 6],
             [['UNIT_NM', 'CREATE_BY', 'UPDATE_BY'], 'string', 'max' => 50],
         ];
@@ -59,12 +59,14 @@ class ProductUnit extends \yii\db\ActiveRecord
             'UNIT_ID' => 'Unit  ID',
             'UNIT_NM' => 'Unit  Nm',
             'UNIT_ID_GRP' => 'Unit  Id  Grp',
-            'STATUS' => 'Status',
-            'DCRP_DETIL' => 'Dcrp  Detil',
-            'CREATE_BY' => 'Create  By',
-            'CREATE_AT' => 'Create  At',
-            'UPDATE_BY' => 'Update  By',
-            'UPDATE_AT' => 'Update  At',
+            'STATUS' => 'STATUS',
+            'DCRP_DETIL' => 'DISCRIPTIONS',
+            'CREATE_BY' => 'CREATE.BY',
+            'CREATE_AT' => 'CREATE.AT',
+            'UPDATE_BY' => 'UPDATE.BY',
+            'UPDATE_AT' => 'UPDATE.AT',
+            'CREATE_UUID' => 'CREATE.UUID',
+            'UPDATE_UUID' => 'UPDATE.UUID',
         ];
     }
 	
@@ -96,7 +98,13 @@ class ProductUnit extends \yii\db\ActiveRecord
 				}else{
 					return 'none';
 				}
-			}
+			},
+			'CREATE_UUID'=>function($model){
+				return $model->CREATE_UUID;
+			},	
+			'UPDATE_UUID'=>function($model){
+				return $model->UPDATE_UUID;
+			},	
 		];
 	}
 	

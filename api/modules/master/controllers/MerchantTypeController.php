@@ -102,13 +102,13 @@ class MerchantTypeController extends ActiveController
 	public function actionCreate()
     {        
 		/**
-		  * @author 	: ptrnov  <piter@lukison.com>
-		  * @since 		: 1.2
-		  * Subject		: MERCHANT TYPE
-		  * Metode		: POST (Views)
-		  * URL			: http://production.kontrolgampang.com/master/merchants-types
-		  * Body Param	: No Field 
-		 */
+		* @author 	: ptrnov  <piter@lukison.com>
+		* @since 		: 1.2
+		* Subject		: MERCHANT TYPE
+		* Metode		: POST (GET)
+		* URL			: http://production.kontrolgampang.com/master/merchant-types
+		* Body Param	: METHODE[GET/POST],TYPE_PAY_ID,TYPE_PAY_NM,DCRP_DETIL,STATUS,ACCESS_ID,UUID
+		*/
 		$paramsBody 	= Yii::$app->request->bodyParams;		
 		$metode			= isset($paramsBody['METHODE'])!=''?$paramsBody['METHODE']:'';
 		$typeId			= isset($paramsBody['TYPE_PAY_ID'])!=''?$paramsBody['TYPE_PAY_ID']:'';		
@@ -176,6 +176,14 @@ class MerchantTypeController extends ActiveController
 	
 	public function actionUpdate()
     {  	
+		/**
+		* @author 	: ptrnov  <piter@lukison.com>
+		* @since 		: 1.2
+		* Subject		: MERCHANT TYPE
+		* Metode		: PUT
+		* URL			: http://production.kontrolgampang.com/master/merchant-types
+		* Body Param	: METHODE[GET/POST],TYPE_PAY_ID,TYPE_PAY_NM,DCRP_DETIL,STATUS,ACCESS_ID,UUID
+		*/
 		$paramsBody 	= Yii::$app->request->bodyParams;		
 		$metode			= isset($paramsBody['METHODE'])!=''?$paramsBody['METHODE']:'';
 		$typeId			= isset($paramsBody['TYPE_PAY_ID'])!=''?$paramsBody['TYPE_PAY_ID']:'';		
