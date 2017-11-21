@@ -174,34 +174,40 @@ class TransPenjualanDetailController extends ActiveController
 			*				  '3=PPOB(pembayaran)'=>ACCESS_ID,GOLONGAN,TRANS_DATE,PRODUCT_ID,PRODUCT_NM,
 			*									   PRODUCT_PROVIDER,PRODUCT_PROVIDER_NO,PRODUCT_PROVIDER_NM,
 			*									   PRODUCT_QTY,UNIT_ID,UNIT_NM,HARGA_JUAL,DISCOUNT,PROMO	  			
-			*/					
-			$modelNew = new TransPenjualanDetail();
-			$modelNew->scenario = "create";
-			//==KEY=
-			if ($storeID<>''){$modelNew->STORE_ID=$storeID;};
-			if ($transHeaderKey1<>''){$modelNew->TRANS_ID=$transHeaderKey1;};
-			if ($transHeaderKey2<>''){$modelNew->OFLINE_ID=$transHeaderKey2;};
-			if ($accessId<>''){$modelNew->ACCESS_ID=$accessId;};
-			if ($golongan<>''){$modelNew->GOLONGAN=$golongan;};
-			//==PROPERTES==
-			if ($tglTrans<>''){$modelNew->TRANS_DATE=$tglTrans;};
-			if ($prdID<>''){$modelNew->PRODUCT_ID=$prdID;};
-			if ($prdNM<>''){$modelNew->PRODUCT_NM=$prdNM;};
-			if ($prdProvider<>''){$modelNew->PRODUCT_PROVIDER=$prdProvider;};
-			if ($prdProviderNm<>''){$modelNew->PRODUCT_PROVIDER_NM=$prdProviderNm;};
-			if ($prdProviderNo<>''){$modelNew->PRODUCT_PROVIDER_NO=$prdProviderNo;};
-			if ($prdQty<>''){$modelNew->PRODUCT_QTY=$prdQty;};
-			if ($prdUnitId<>''){$modelNew->UNIT_ID=$prdUnitId;};
-			if ($prdUnitNM<>''){$modelNew->UNIT_NM=$prdUnitNM;};
-			if ($hargaJual<>''){$modelNew->HARGA_JUAL=$hargaJual;};
-			if ($discount<>''){$modelNew->DISCOUNT=$discount;};
-			if ($promo<>''){$modelNew->PROMO=$promo;};		
-			if($modelNew->save()){
-				$modelView=TransPenjualanDetail::find()->where(['TRANS_ID'=>$transHeaderKey1])->orWhere(['OFLINE_ID'=>$transHeaderKey2])->all();
-				return array('LIST_TRANS_DETAILS'=>$modelView);
-			}else{
-				return array('error'=>$modelNew->errors);
-			}		
+			*/	
+			$modelCheck=TransPenjualanDetail::find()->where("PRODUCT_ID='".$prdID."' AND ( TRANS_ID='".$transHeaderKey1."' OR OFLINE_ID='".$transHeaderKey1."')")->count();
+			if($modelCheck){
+				$modelCheckView=TransPenjualanDetail::find()->where(['TRANS_ID'=>$transHeaderKey1])->orWhere(['OFLINE_ID'=>$transHeaderKey2])->all();
+				return array('LIST_TRANS_DETAILS'=>$modelCheckView);
+			}else{	
+				$modelNew = new TransPenjualanDetail();
+				$modelNew->scenario = "create";
+				//==KEY=
+				if ($storeID<>''){$modelNew->STORE_ID=$storeID;};
+				if ($transHeaderKey1<>''){$modelNew->TRANS_ID=$transHeaderKey1;};
+				if ($transHeaderKey2<>''){$modelNew->OFLINE_ID=$transHeaderKey2;};
+				if ($accessId<>''){$modelNew->ACCESS_ID=$accessId;};
+				if ($golongan<>''){$modelNew->GOLONGAN=$golongan;};
+				//==PROPERTES==
+				if ($tglTrans<>''){$modelNew->TRANS_DATE=$tglTrans;};
+				if ($prdID<>''){$modelNew->PRODUCT_ID=$prdID;};
+				if ($prdNM<>''){$modelNew->PRODUCT_NM=$prdNM;};
+				if ($prdProvider<>''){$modelNew->PRODUCT_PROVIDER=$prdProvider;};
+				if ($prdProviderNm<>''){$modelNew->PRODUCT_PROVIDER_NM=$prdProviderNm;};
+				if ($prdProviderNo<>''){$modelNew->PRODUCT_PROVIDER_NO=$prdProviderNo;};
+				if ($prdQty<>''){$modelNew->PRODUCT_QTY=$prdQty;};
+				if ($prdUnitId<>''){$modelNew->UNIT_ID=$prdUnitId;};
+				if ($prdUnitNM<>''){$modelNew->UNIT_NM=$prdUnitNM;};
+				if ($hargaJual<>''){$modelNew->HARGA_JUAL=$hargaJual;};
+				if ($discount<>''){$modelNew->DISCOUNT=$discount;};
+				if ($promo<>''){$modelNew->PROMO=$promo;};		
+				if($modelNew->save()){
+					$modelView=TransPenjualanDetail::find()->where(['TRANS_ID'=>$transHeaderKey1])->orWhere(['OFLINE_ID'=>$transHeaderKey2])->all();
+					return array('LIST_TRANS_DETAILS'=>$modelView);
+				}else{
+					return array('error'=>$modelNew->errors);
+				}
+			}
 		};
 	}
 }

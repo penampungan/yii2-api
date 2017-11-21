@@ -132,6 +132,9 @@ class StoreController extends ActiveController
 		$industriNm				= isset($paramsBody['INDUSTRY_NM'])!=''?$paramsBody['INDUSTRY_NM']:'';
 		$industriGrpId			= isset($paramsBody['INDUSTRY_GRP_ID'])!=''?$paramsBody['INDUSTRY_GRP_ID']:'';
 		$industriGrpNm			= isset($paramsBody['INDUSTRY_GRP_NM'])!=''?$paramsBody['INDUSTRY_GRP_NM']:'';
+		//KOORDINAT
+		$lat					= isset($paramsBody['LATITUDE'])!=''?$paramsBody['LATITUDE']:'';
+		$long					= isset($paramsBody['LONGITUDE'])!=''?$paramsBody['LONGITUDE']:'';
 				
 		if($metode=='POST'){
 			if($accessGroup){
@@ -152,6 +155,8 @@ class StoreController extends ActiveController
 					if ($industriNm!=''){$modelStore->INDUSTRY_NM=$industriNm;};
 					if ($industriGrpId!=''){$modelStore->INDUSTRY_GRP_ID=$industriGrpId;};
 					if ($industriGrpNm!=''){$modelStore->INDUSTRY_GRP_NM=$industriGrpNm;};					
+					if ($lat!=''){$modelStore->LATITUDE=$lat;};
+					if ($long!=''){$modelStore->LONGITUDE=$long;};					
 					if ($modelStore->save()){
 						$rsltMax=Store::find()->where(['ACCESS_GROUP'=>$accessGroup])->max(STORE_ID);
 						$modelView=Store::find()->where(['STORE_ID'=>$rsltMax])->one();
@@ -211,7 +216,9 @@ class StoreController extends ActiveController
 		$industriNm				= isset($paramsBody['INDUSTRY_NM'])!=''?$paramsBody['INDUSTRY_NM']:'';
 		$industriGrpId			= isset($paramsBody['INDUSTRY_GRP_ID'])!=''?$paramsBody['INDUSTRY_GRP_ID']:'';
 		$industriGrpNm			= isset($paramsBody['INDUSTRY_GRP_NM'])!=''?$paramsBody['INDUSTRY_GRP_NM']:'';
-		
+		//KOORDINAT
+		$lat					= isset($paramsBody['LATITUDE'])!=''?$paramsBody['LATITUDE']:'';
+		$long					= isset($paramsBody['LONGITUDE'])!=''?$paramsBody['LONGITUDE']:'';
 		//==STATUS== [0=Disable;1=Enable;3=Disable]
 		$stt					= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
 		
@@ -228,7 +235,9 @@ class StoreController extends ActiveController
 			if ($industriId!=''){$modelStore->INDUSTRY_ID=$industriId;};
 			if ($industriNm!=''){$modelStore->INDUSTRY_NM=$industriNm;};
 			if ($industriGrpId!=''){$modelStore->INDUSTRY_GRP_ID=$industriGrpId;};
-			if ($industriGrpNm!=''){$modelStore->INDUSTRY_GRP_NM=$industriGrpNm;};				
+			if ($industriGrpNm!=''){$modelStore->INDUSTRY_GRP_NM=$industriGrpNm;};	
+			if ($lat!=''){$modelStore->LATITUDE=$lat;};
+			if ($long!=''){$modelStore->LONGITUDE=$long;};				
 			if ($stt!=''){$modelStore->STATUS=$stt;};
 			if ($modelStore->save()){
 				return array('store'=>$modelStore);

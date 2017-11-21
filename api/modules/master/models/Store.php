@@ -149,6 +149,12 @@ class Store extends \yii\db\ActiveRecord
 			'ALAMAT'=>function($model){
 					return $model->ALAMAT;
 				},	
+			'LATITUDE'=>function($model){
+					return $model->LATITUDE;
+				},	
+			'LONGITUDE'=>function($model){
+					return $model->LONGITUDE;
+				},	
 			'PIC'=>function($model){
 					return $model->PIC;
 				},	
