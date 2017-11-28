@@ -33,7 +33,7 @@ class TransaksiController extends Controller
 	*/
 	public function actionTransDetail(){
 
-		$model = Cronjob::find()->where(['STT'=>1])->all();		
+		$model = Cronjob::find()->where(['TABEL'=>'TRANSAKSI','STT'=>1])->all();		
 		foreach ($model as $row => $val){
 			//$rslt[]=$val['TABEL'];		
 			$sqlstr1="
