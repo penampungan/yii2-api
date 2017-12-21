@@ -27,6 +27,10 @@ return [
 		'laporan' => [
             'basePath' => '@app/modules/laporan',
             'class' => 'api\modules\laporan\Module',
+        ],
+		'ppob' => [
+            'basePath' => '@app/modules/ppob',
+            'class' => 'api\modules\ppob\Module',
         ]
     ],
     'components' => [
@@ -185,6 +189,27 @@ return [
 						],
 						'patterns' => [
 							'PUT,PATCH' => 'update',
+							'DELETE {id}' => 'delete',
+							'GET,HEAD {id}' => 'view',
+							'POST' => 'create',
+							'GET,HEAD' => 'index',
+							'{id}' => 'options',
+							'' => 'options',
+						]
+                ],
+				[
+                        'class' => 'yii\rest\UrlRule',
+                        'controller' =>[
+							'ppob/header',
+							'ppob/detail',
+							'ppob/nominal',
+							'ppob/transaksi',
+							'ppob/test-detail',
+							'ppob/test-nominal',
+							'ppob/test-api',
+						],
+							'patterns' => [
+							'PUT,PATCH {ID}' => 'update',
 							'DELETE {id}' => 'delete',
 							'GET,HEAD {id}' => 'view',
 							'POST' => 'create',
