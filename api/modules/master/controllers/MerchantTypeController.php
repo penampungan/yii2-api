@@ -125,10 +125,10 @@ class MerchantTypeController extends ActiveController
 		if($metode=='GET'){
 			//==GET DATA POLLING
 			$modelPoling=SyncPoling::find()->where([
-				 NM_TABLE=>'TBL_MERCHANT_TYPE',
-				 ACCESS_GROUP=>'',
-				 STORE_ID=>'',
-				 PRIMARIKEY_VAL=>$typeId
+				'NM_TABLE'=>'TBL_MERCHANT_TYPE',
+				 'ACCESS_GROUP'=>'',
+				 'STORE_ID'=>'',
+				 'PRIMARIKEY_VAL'=>$typeId
 			])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
 			//==UPDATE DATA POLLING UUID
 			if($modelPoling){							
