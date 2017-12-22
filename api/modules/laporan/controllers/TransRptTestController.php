@@ -96,8 +96,8 @@ class TransRptTestController extends ActiveController
 		//?STORE_ID=170726220936.0001&TRANS_DATE=2017-09-29
 		$params	     	= $_REQUEST;
 		$paramsHeader	= Yii::$app->request->headers;	
-		$storeId=$params['STORE_ID']!=''?$params['STORE_ID']:$paramsHeader['STORE_ID'];
-		$transDate=$params['TRANS_DATE']!=''?$params['TRANS_DATE']:$paramsHeader['TRANS_DATE'];
+		$storeId=isset($params['STORE_ID'])!=''?$params['STORE_ID']:$paramsHeader['STORE_ID'];
+		$transDate=isset($params['TRANS_DATE'])!=''?$params['TRANS_DATE']:$paramsHeader['TRANS_DATE'];
 		// return $params['STORE_ID'];
 		// return $params['TRANS_DATE'];
 		$model = new TransRptTest([

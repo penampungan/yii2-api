@@ -115,10 +115,10 @@ class PollingController extends ActiveController
 		*/
 		$params     	= $_REQUEST;
 		$paramsHeader	= Yii::$app->request->headers;
-		$accessGroup	= $params['ACCESS_GROUP']!=''?$params['ACCESS_GROUP']:$paramsHeader['ACCESS_GROUP'];
-		$storeId		= $params['STORE_ID']!=''?$params['STORE_ID']:$paramsHeader['STORE_ID'];
-		$paramlUUID		= $params['UUID']!=''?$params['UUID']:$paramsHeader['UUID'];
-		$tblNm			= $params['NM_TABLE']!=''?$params['NM_TABLE']:$paramsHeader['NM_TABLE'];
+		$accessGroup	= isset($params['ACCESS_GROUP'])!=''?$params['ACCESS_GROUP']:$paramsHeader['ACCESS_GROUP'];
+		$storeId		= isset($params['STORE_ID'])!=''?$params['STORE_ID']:$paramsHeader['STORE_ID'];
+		$paramlUUID		= isset($params['UUID'])!=''?$params['UUID']:$paramsHeader['UUID'];
+		$tblNm			= isset($params['NM_TABLE'])!=''?$params['NM_TABLE']:$paramsHeader['NM_TABLE'];
 		// $aryStoreId		= explode(".",$storeId);		
 		// $accessGroup	= $aryStoreId[0];	
 		//if ($tblNm=='TBL_MERCHANT_TYPE'){
