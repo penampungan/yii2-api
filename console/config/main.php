@@ -28,9 +28,9 @@ return [
         ],
 		'db' => [
             'class' => 'yii\db\Connection',
-            'dsn' => 'mysql:host=localhost;dbname=kg',
-            'username' => 'kg',
-            'password' => '4dm1n15tr41t0R',
+            'dsn' => 'mysql:host=10.10.99.99;dbname=kg',
+            'username' => 'api_cronjob',
+            'password' => 'ssdjaja81',
             'charset' => 'utf8',
         ],
     ],
