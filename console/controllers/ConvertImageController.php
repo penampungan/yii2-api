@@ -42,6 +42,9 @@ class ConvertImageController extends Controller
 			if ($modelImage['PRODUCT_ID']!=''){
 				$rslt =self::base64toimage($modelImage['PRODUCT_IMAGE'],$modelImage['PRODUCT_ID']);
 				//$rslt[]=$modelImage['PRODUCT_ID'];
+				$produkUpdate = Product::find()->where(['PRODUCT_ID'=>$val['PRODUCT_ID']])->One();
+				$produkUpdate->LINK_STS='1';
+				$produkUpdate->save();
 			}
 			
 		}

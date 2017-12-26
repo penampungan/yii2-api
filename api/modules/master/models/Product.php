@@ -63,7 +63,7 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
            // [['ACCESS_GROUP', 'STORE_ID', 'PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
-            [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
+            [['STATUS', 'YEAR_AT', 'MONTH_AT','LINK_STS'], 'integer'],
             [['PRODUCT_SIZE', 'STOCK_LEVEL'], 'number'],
             [['CREATE_AT', 'UPDATE_AT','CREATE_UUID','UPDATE_UUID','CURRENT_PRICE','INDUSTRY_ID','INDUSTRY_GRP_ID','CURRENT_STOCK'], 'safe'],
             [['DCRP_DETIL'], 'string'],
@@ -216,6 +216,9 @@ class Product extends \yii\db\ActiveRecord
 			},
 			'CURRENT_PROMO'=>function($model){
 				return $this->productPromoTbl;
+			},	
+			'LINK_STS'=>function($model){
+				return $model->LINK_STS;
 			},	
         ];		
 	}
