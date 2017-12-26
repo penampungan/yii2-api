@@ -147,10 +147,10 @@ class ProductController extends ActiveController
 					if ($tblPooling=='TBL_PRODUCT'){						
 						//==GET DATA POLLING
 						$modelPoling=SyncPoling::find()->where([
-							 NM_TABLE=>'TBL_PRODUCT',
-							 ACCESS_GROUP=>$dataHeader[0],
-							 STORE_ID=>$store_id,
-							 PRIMARIKEY_VAL=>$productID
+							 'NM_TABLE'=>'TBL_PRODUCT',
+							 'ACCESS_GROUP'=>$dataHeader[0],
+							 'STORE_ID'=>$store_id,
+							 'PRIMARIKEY_VAL'=>$productID
 						])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
 						//==UPDATE DATA POLLING UUID
 						if($modelPoling){							
@@ -178,10 +178,10 @@ class ProductController extends ActiveController
 					}elseif($tblPooling=='TBL_STOCK'){					//===TBL_STOCK  FOR UPDATE UUID ===
 						//==GET DATA POLLING
 						$modelPoling=SyncPoling::find()->where([
-							 NM_TABLE=>'TBL_STOCK',
-							 ACCESS_GROUP=>$dataHeader[0],
-							 STORE_ID=>$store_id,
-							 PRIMARIKEY_VAL=>$productID
+							 'NM_TABLE'=>'TBL_STOCK',
+							 'ACCESS_GROUP'=>$dataHeader[0],
+							 'STORE_ID'=>$store_id,
+							 'PRIMARIKEY_VAL'=>$productID
 						])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
 						//==UPDATE DATA POLLING UUID
 						if($modelPoling){							
@@ -202,10 +202,10 @@ class ProductController extends ActiveController
 					} else{						
 						//==GET DATA POLLING
 						$modelPoling=SyncPoling::find()->where([
-							 NM_TABLE=>'TBL_PRODUCT',
-							 ACCESS_GROUP=>$dataHeader[0],
-							 STORE_ID=>$store_id,
-							 PRIMARIKEY_VAL=>$productID
+							 'NM_TABLE'=>'TBL_PRODUCT',
+							 'ACCESS_GROUP'=>$dataHeader[0],
+							 'STORE_ID'=>$store_id,
+							 'PRIMARIKEY_VAL'=>$productID
 						])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
 						//==UPDATE DATA POLLING UUID
 						if($modelPoling){							

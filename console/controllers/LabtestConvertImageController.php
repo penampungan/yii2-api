@@ -12,9 +12,9 @@ use yii\console\Controller;
 use yii\filters\VerbFilter;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
-use console\models\Product;
-use console\models\ProductImage;
-class ConvertImageController extends Controller
+use console\models\LabtestProduct;
+use console\models\LabtestProductImage;
+class LabtestConvertImageController extends Controller
 {
     public function behaviors()
     {
@@ -35,14 +35,14 @@ class ConvertImageController extends Controller
 	public function actionStartAll(){
 		
 		//$model = Store::find()->OrderBy(['ACCESS_GROUP'=>SORT_ASC,'STORE_ID'=>SORT_ASC])->all();		
-		$modelProduk = Product::find()->all();	
+		$modelProduk = LabtestProduct::find()->all();	
 		foreach ($modelProduk as $row => $val){
 			// $rslt[]=$val['PRODUCT_ID'];
-			$modelImage = ProductImage::find()->where(['PRODUCT_ID'=>$val['PRODUCT_ID']])->One();
+			$modelImage = LabtestProductImage::find()->where(['PRODUCT_ID'=>$val['PRODUCT_ID']])->One();
 			if ($modelImage['PRODUCT_ID']!=''){
 				$rslt =self::base64toimage($modelImage['PRODUCT_IMAGE'],$modelImage['PRODUCT_ID']);
 				//$rslt[]=$modelImage['PRODUCT_ID'];
-				$produkUpdate = Product::find()->where(['PRODUCT_ID'=>$val['PRODUCT_ID']])->One();
+				$produkUpdate = LabtestProduct::find()->where(['PRODUCT_ID'=>$val['PRODUCT_ID']])->One();
 				$produkUpdate->IMG_FILE=$rslt;
 				$produkUpdate->save();
 			}
@@ -60,7 +60,7 @@ class ConvertImageController extends Controller
 	*  Create by: ptr.nov@gmail.com
 	*/
 	private function base64toimage($string ='',$fileNm){
-		$rootPathImageZip='/var/www/KG_IMAGE/produk/';
+		$rootPathImageZip='/var/www/KG_API_TEST/api/web/IMAGE/produk/';
 		$dataImgScr=$string;
 		$namefile=$fileNm;
 		$img = str_replace('data:image/*;charset=utf-8;base64,', '', $dataImgScr);
