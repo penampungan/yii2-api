@@ -200,6 +200,7 @@ return [
 				[
                         'class' => 'yii\rest\UrlRule',
                         'controller' =>[
+							'ppob/data',
 							'ppob/header',
 							'ppob/detail',
 							'ppob/nominal',
@@ -216,6 +217,12 @@ return [
 							'GET,HEAD' => 'index',
 							'{id}' => 'options',
 							'' => 'options',
+						],
+						'extraPatterns' => [
+							'POST kelompok-group' => 'kelompok-group',
+							'POST kelompok-kategori' => 'kelompok-kategori',
+							'POST produk' => 'produk',
+							'POST transaksi' => 'transaksi',
 						]
                 ],
             ],
