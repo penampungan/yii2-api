@@ -6,14 +6,6 @@ use Yii;
 
 class Store extends \yii\db\ActiveRecord
 {
-	/**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     */
-    public static function getDb()
-    {
-        return Yii::$app->get('api_cronjob');
-    }
-	
     /**
      * @inheritdoc
      */
@@ -21,7 +13,12 @@ class Store extends \yii\db\ActiveRecord
     {
         return 'store';
     }
-	
+
+    public static function getDb()
+    {
+        return Yii::$app->get('production_api');
+    }
+
     /**
      * @inheritdoc
      */
