@@ -66,7 +66,7 @@ class Product extends \yii\db\ActiveRecord
             [['PRODUCT_ID'], 'string', 'max' => 35],
             [['PRODUCT_QR', 'PRODUCT_NM', 'PRODUCT_HEADLINE','GROUP_ID'], 'string', 'max' => 100],
             [['PRODUCT_WARNA', 'PRODUCT_SIZE_UNIT', 'CREATE_BY', 'UPDATE_BY'], 'string', 'max' => 50],
-            [['INDUSTRY_NM', 'INDUSTRY_GRP_NM'], 'string', 'max' => 255],
+            [['INDUSTRY_NM', 'INDUSTRY_GRP_NM','IMG_FILE'], 'string', 'max' => 255],
         ];
     }
 
@@ -95,6 +95,7 @@ class Product extends \yii\db\ActiveRecord
             'INDUSTRY_NM' => 'Industry  Nm',
             'INDUSTRY_GRP_ID' => 'Industry  Grp.ID',
             'INDUSTRY_GRP_NM' => 'Industry  Grp  Nm',
+            'IMG_FILE' => 'IMG_FILE',
             'CREATE_BY' => 'Create  By',
             'CREATE_AT' => 'Create  At',
             'UPDATE_BY' => 'Update  By',

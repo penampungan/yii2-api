@@ -8,6 +8,15 @@ class ProductImage extends \yii\db\ActiveRecord
 {
 	const SCENARIO_CREATE = 'create';
 	const SCENARIO_UPDATE = 'update';
+	
+	/**
+     * @return \yii\db\Connection the database connection used by this AR class.
+     */
+    public static function getDb()
+    {
+        return Yii::$app->get('db');
+    }
+	
     /**
      * @inheritdoc
      */
@@ -16,13 +25,7 @@ class ProductImage extends \yii\db\ActiveRecord
         return 'product_image';
     }
 
-    /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     */
-    public static function getDb()
-    {
-        return Yii::$app->get('db');
-    }
+    
 
     /**
      * @inheritdoc

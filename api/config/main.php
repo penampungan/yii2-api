@@ -54,6 +54,9 @@ return [
                 ],
             ],
         ],
+		'getPolling' =>[
+            'class'=>'api\components\Polling',
+        ],
 		'statusCode' =>[
             'class'=>'common\components\StatusCode',
         ],
@@ -141,7 +144,10 @@ return [
 						'GET,HEAD' => 'index',
 						'{id}' => 'options',
 						'' => 'options',
-					]
+					],
+					'extraPatterns' => [
+							'POST uuid' => 'uuid',
+						]
                 ],
 				[
                         'class' => 'yii\rest\UrlRule',

@@ -128,7 +128,14 @@ class PollingTestController extends ActiveController
 		//}
 		return ArrayHelper::merge($modelView,$modelViewAll);
 		
-	}	
+	}
+    
+	public function actionUuid(){
+		//$polling=Yii::$app->polling->uuidUpdate($table,$primaryVal,$storeID,$action,$paramlUUID);
+		$polling=Yii::$app->getPolling->uuidUpdate('TBL_PRODUCT','170726220936.0003.00002','170726220936.0003','UPDATE','123');
+		return array('test'=>$polling);
+	}
+	
 }
 
 
