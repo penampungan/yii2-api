@@ -8,20 +8,21 @@ class LabtestProductImage extends \yii\db\ActiveRecord
 {
 	const SCENARIO_CREATE = 'create';
 	const SCENARIO_UPDATE = 'update';
+	
+	/**
+     * @return \yii\db\Connection the database connection used by this AR class.
+     */
+    public static function getDb()
+    {
+        return Yii::$app->get('labapi_cronjob');
+    }
+	
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
         return 'product_image';
-    }
-
-    /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     */
-    public static function getDb()
-    {
-        return Yii::$app->get('db_labtest');
     }
 
     /**

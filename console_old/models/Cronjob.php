@@ -17,21 +17,21 @@ use Yii;
  */
 class Cronjob extends \yii\db\ActiveRecord
 {
-	/**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     */
-    public static function getDb()
-    {
-        return Yii::$app->get('api_cronjob');
-    }
-	
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
         return 'cronjob';
-    }   
+    }
+
+    /**
+     * @return \yii\db\Connection the database connection used by this AR class.
+     */
+    public static function getDb()
+    {
+        return Yii::$app->get('db');
+    }
 
     /**
      * @inheritdoc

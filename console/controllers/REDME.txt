@@ -1,0 +1,5 @@
+TRIGER:
+DB=Server-Database
+Api=Server-Api
+PPOB=Server-PPOB
+LAB=Server-Labtest

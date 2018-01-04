@@ -54,6 +54,9 @@ return [
                 ],
             ],
         ],
+		'getPolling' =>[
+            'class'=>'api\components\Polling',
+        ],
 		'statusCode' =>[
             'class'=>'common\components\StatusCode',
         ],
@@ -141,7 +144,10 @@ return [
 						'GET,HEAD' => 'index',
 						'{id}' => 'options',
 						'' => 'options',
-					]
+					],
+					'extraPatterns' => [
+							'POST uuid' => 'uuid',
+						]
                 ],
 				[
                         'class' => 'yii\rest\UrlRule',
@@ -200,6 +206,7 @@ return [
 				[
                         'class' => 'yii\rest\UrlRule',
                         'controller' =>[
+							'ppob/data',
 							'ppob/header',
 							'ppob/detail',
 							'ppob/nominal',
@@ -216,6 +223,12 @@ return [
 							'GET,HEAD' => 'index',
 							'{id}' => 'options',
 							'' => 'options',
+						],
+						'extraPatterns' => [
+							'POST kelompok-group' => 'kelompok-group',
+							'POST kelompok-kategori' => 'kelompok-kategori',
+							'POST produk' => 'produk',
+							'POST transaksi' => 'transaksi',
 						]
                 ],
             ],

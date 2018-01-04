@@ -14,9 +14,9 @@ class ProductImage extends \yii\db\ActiveRecord
      */
     public static function getDb()
     {
-        return Yii::$app->get('api_cronjob');
+        return Yii::$app->get('db');
     }
-		
+	
     /**
      * @inheritdoc
      */

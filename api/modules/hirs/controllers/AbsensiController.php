@@ -136,7 +136,7 @@ class AbsensiController extends ActiveController
 						if($modelCnt){
 							return array('LIST_ABSENSI'=>$model);
 						}else{
-							return array('error'=>$model->errors);
+							return array('error'=>'ABSENSI-KARYAWAN_ID-is-empty');
 						};
 					}else{
 						//Model ABSENSI BY STORE_ID
@@ -145,7 +145,7 @@ class AbsensiController extends ActiveController
 						if($modelCnt){
 							return array('LIST_ABSENSI'=>$model);
 						}else{
-							return array('error'=>$model->errors);
+							return array('error'=>'ABSENSI-KARYAWAN_ID-is-empty');
 						};
 					}
 				}else{
@@ -160,7 +160,7 @@ class AbsensiController extends ActiveController
 						if($modelCnt){
 							return array('LIST_ABSENSI'=>$model);
 						}else{
-							return array('error'=>$model->errors);
+							return array('error'=>'ABSENSI-KARYAWAN_ID-is-empty');
 						};
 					}else{
 						//Model ABSENSI BY KARYAWAN_ID
@@ -169,7 +169,7 @@ class AbsensiController extends ActiveController
 						if($modelCnt){
 							return array('LIST_ABSENSI'=>$model);
 						}else{
-							return array('error'=>$model->errors);
+							return array('error'=>'ABSENSI-KARYAWAN_ID-is-empty');
 						};
 					}
 					
@@ -183,7 +183,7 @@ class AbsensiController extends ActiveController
 						if($modelCnt){
 							return array('LIST_ABSENSI'=>$model);
 						}else{
-							return array('error'=>$model->errors);
+							return array('error'=>'ABSENSI-KARYAWAN_ID-is-empty');
 						};
 					}else{
 						//Model Openclose BY STORE_ID
@@ -192,7 +192,7 @@ class AbsensiController extends ActiveController
 						if($modelCnt){
 							return array('LIST_ABSENSI'=>$model);
 						}else{
-							return array('error'=>$model->errors);
+							return array('error'=>'ABSENSI-KARYAWAN_ID-is-empty');
 						};
 					}
 				}else{
