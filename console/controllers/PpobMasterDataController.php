@@ -61,8 +61,8 @@ class PpobMasterDataController extends Controller
 	public function actionUpdateProduk(){
 		$allDataKelpmpok=Yii::$app->ppobh2h->ArrayKelompokAllType();
 		$rslt=self::simpanDataProduk($allDataKelpmpok);
-		//print_r($rslt);
-		return $rslt;
+		print_r($rslt);
+		//return $rslt;
 	}
 	
 	/*  
