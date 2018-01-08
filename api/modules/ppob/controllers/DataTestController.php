@@ -22,7 +22,7 @@ use api\modules\ppob\models\PpobMasterHarga;
 use api\modules\ppob\models\PpobTransaksi;
 use api\modules\ppob\models\PpobSaldoStore;
 
-class DataController extends ActiveController
+class DataTestController extends ActiveController
 {
 
 	public $modelClass = 'api\modules\ppob\models\PpobMasterKtg';
@@ -274,7 +274,8 @@ class DataController extends ActiveController
 						return array('error'=>'updated');
 					}else{
 						return array('error'=>'not-update');
-					}					
+					}
+					
 				}
 				//=== END TRANSAKSI PASCABAYAR ====
 				

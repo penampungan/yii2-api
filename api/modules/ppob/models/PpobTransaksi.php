@@ -33,8 +33,11 @@ class PpobTransaksi extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-			[['TRANS_ID','TRANS_DATE','STORE_ID','ID_PRODUK','ID_PELANGGAN','PEMBAYARAN'], 'required','on'=>self::SCENARIO_PASCABAYAR],
-            [['TRANS_ID','TRANS_DATE','STORE_ID','ID_PRODUK','MSISDN','PEMBAYARAN'], 'required','on'=>self::SCENARIO_PRABAYAR],            
+			// [['TRANS_ID','TRANS_DATE','STORE_ID','ID_PRODUK','ID_PELANGGAN','PEMBAYARAN'], 'required','on'=>self::SCENARIO_PASCABAYAR],
+            // [['TRANS_ID','TRANS_DATE','STORE_ID','ID_PRODUK','MSISDN','PEMBAYARAN'], 'required','on'=>self::SCENARIO_PRABAYAR],   
+			
+			[['TRANS_ID','TRANS_DATE','STORE_ID','ID_PRODUK','ID_PELANGGAN'], 'required','on'=>self::SCENARIO_PASCABAYAR],
+            [['TRANS_ID','TRANS_DATE','STORE_ID','ID_PRODUK','MSISDN','PEMBAYARAN'], 'required','on'=>self::SCENARIO_PRABAYAR],           			
             [['TRANS_DATE', 'TGL', 'JAM', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
             [['NAME', 'RESPON_MESSAGE', 'RESPON_STRUK','RESPON_SN'], 'string'],
             [['DENOM', 'HARGA_DASAR', 'MARGIN_FEE_KG', 'MARGIN_FEE_MEMBER', 'HARGA_JUAL', 'PEMBAYARAN', 'RESPON_ADMIN_BANK', 'RESPON_TAGIHAN', 'RESPON_TOTAL_BAYAR'], 'number'],

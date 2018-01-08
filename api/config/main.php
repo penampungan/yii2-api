@@ -207,6 +207,7 @@ return [
                         'class' => 'yii\rest\UrlRule',
                         'controller' =>[
 							'ppob/data',
+							'ppob/data-test',
 							'ppob/header',
 							'ppob/detail',
 							'ppob/nominal',
@@ -229,6 +230,7 @@ return [
 							'POST kelompok-kategori' => 'kelompok-kategori',
 							'POST produk' => 'produk',
 							'POST transaksi' => 'transaksi',
+							'POST saldo' => 'saldo',
 						]
                 ],
             ],
