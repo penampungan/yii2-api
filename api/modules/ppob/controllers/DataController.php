@@ -308,9 +308,11 @@ class DataController extends ActiveController
 						return array('error'=>$modelNewPrabayar->errors);
 					}
 				}else{
+					//== UPDATE DATA TRANSAKSI PRABAYAR ===
 					$validationInputPrabayar->PEMBAYARAN=$pembayaran;
 					if($validationInputPrabayar->save()){
-						return array('error'=>'updated');
+						$responPrabayar = PpobTransaksi::find()->where(['TRANS_UNIK'=>$validationInputPrabayar['TRANS_UNIK']])->one();
+						return array('respon'=>$responPrabayar);
 					}else{
 						return array('error'=>'not-update');
 					}					
