@@ -155,35 +155,34 @@ class PpobTransaksi extends \yii\db\ActiveRecord
 			'PEMBAYARAN'=>function($model){
 				return $model->PEMBAYARAN;				// INPUT = PEMBAYARAN (Manual/RESPON_TOTAL_BAYAR untuk PASCABAYAR), Untuk PRABAYAR from HARGA_JUAL
 			},
-			'RESPON_REFF_ID'=>function($model){
-				return $model->RESPON_REFF_ID;			// RESPON = REFF_ID     
-			},
-			'RESPON_NAMA_PELANGGAN'=>function($model){
-				return $model->RESPON_NAMA_PELANGGAN;	// RESPON = NAMA_PELANGGAN (PASCABAYAR) 
-			},
-			'RESPON_ADMIN_BANK'=>function($model){
-				return $model->RESPON_ADMIN_BANK;		// RESPON = ADMIN_BANK (PASCABAYAR) 
-			},
-			'RESPON_TAGIHAN'=>function($model){
-				return $model->RESPON_TAGIHAN;			// RESPON = ADMIN_BANK (PASCABAYAR) 
-			},
-			'RESPON_TOTAL_BAYAR'=>function($model){
-				return $model->RESPON_TOTAL_BAYAR;		// RESPON = TOTAL_BAYAR (PASCABAYAR)
-			},
-			'RESPON_MESSAGE'=>function($model){
-				return $model->RESPON_MESSAGE;			// RESPON = MESSAGE (PASCABAYAR)
-			},
-			'RESPON_STRUK'=>function($model){
-				return $model->RESPON_STRUK;			// RESPON = STRUK (PASCABAYAR)
-			},
-			'RESPON_TOKEN'=>function($model){
-				return $model->RESPON_TOKEN;			// RESPON = TOKEN (PASCABAYAR)
-			},
 			'STATUS'=>function($model){					// RESPON = STATUS (0=(first transaksi); 1=(success B to B to A to C); 2=Panding; 3=Gagal)
 				return $model->STATUS;					
 				// sudah mendapatkan update respon, status 0 pmenjadi status=1
 				// Status=1, maka tidak akan bisa di kembalikan ke Status=0
 			},
+			'RESPON_PRABAYAR'=>function($model){
+				$data=[
+					'RESPON_MESSAGE'=>$model->ID_PELANGGAN==''?$model->RESPON_MESSAGE:null,					// RESPON = MESSAGE (PASCABAYAR/PRABAYAR)
+					'RESPON_SN'=>$model->ID_PELANGGAN==''?$model->RESPON_SN:null,							// RESPON = SN (PASCABAYAR/PRABAYAR)
+					'RESPON_STRUK'=>$model->ID_PELANGGAN==''?$model->RESPON_STRUK:null,						// RESPON = STRUK (PASCABAYAR/PRABAYAR)
+				];
+				return $data;
+			},		
+			'RESPON_PASCABAYAR'=>function($model){
+				$dataPascabayar=[
+					'ID_PELANGGAN'=>$model->ID_PELANGGAN,	
+					'RESPON_NAMA_PELANGGAN'=>$model->ID_PELANGGAN!=''?$model->RESPON_NAMA_PELANGGAN:null,	// RESPON = NAMA_PELANGGAN (PASCABAYAR) 
+					'RESPON_REFF_ID'=>$model->ID_PELANGGAN!=''?$model->RESPON_REFF_ID:null,					// RESPON = REFF_ID					
+					'RESPON_ADMIN_BANK'=>$model->ID_PELANGGAN!=''?$model->RESPON_ADMIN_BANK:null,			// RESPON = ADMIN_BANK (PASCABAYAR) 
+					'RESPON_TAGIHAN'=>$model->ID_PELANGGAN!=''?$model->RESPON_TAGIHAN:null,					// RESPON = ADMIN_BANK (PASCABAYAR) 
+					'RESPON_TOTAL_BAYAR'=>$model->ID_PELANGGAN!=''?$model->RESPON_TOTAL_BAYAR:null,			// RESPON = TOTAL_BAYAR (PASCABAYAR)
+					'RESPON_MESSAGE'=>$model->ID_PELANGGAN!=''?$model->RESPON_MESSAGE:null,					// RESPON = MESSAGE (PASCABAYAR/PRABAYAR)
+					'RESPON_STRUK'=>$model->ID_PELANGGAN!=''?$model->RESPON_STRUK:null,						// RESPON = STRUK (PASCABAYAR/PRABAYAR)
+					'RESPON_SN'=>$model->ID_PELANGGAN!=''?$model->RESPON_SN:null,							// RESPON = SN (PASCABAYAR/PRABAYAR)
+					'RESPON_TOKEN'=>$model->ID_PELANGGAN!=''?$model->RESPON_TOKEN:null,						// RESPON = TOKEN (PASCABAYAR)
+				];
+				return $dataPascabayar;
+			},			
 		];
 	}
 }
