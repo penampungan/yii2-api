@@ -12,6 +12,7 @@ use console\models\PpobMasterKelompok;
 use console\models\PpobMasterKtg;
 use console\models\PpobMasterFungsi;
 use console\models\PpobMasterData;
+use console\models\PpobTransaksi;
 
 class PpobMasterDataController extends Controller
 {	
@@ -25,6 +26,10 @@ class PpobMasterDataController extends Controller
 		// print_r($result);
 		//$result=Yii::$app->ppobh2h->ArrayBayar('50','14020296076');
 		$result=Yii::$app->ppobh2h->ArrayInquery('163','12345678');
+		// foreach($result['detail'] as $row =>$value){
+			// $rslt[$row]=$value;
+		// }
+		// $rslt['struk']=$result['struk'];
 		print_r($result);
 		
 		//$allDataKelpmpok=Yii::$app->ppobh2h->ArrayKelompokAllType();
@@ -33,6 +38,114 @@ class PpobMasterDataController extends Controller
 		// foreach($allDataKelpmpok as $row2 => $value2){
 			// $groupKelompok[]=$row2;
 		// } 		
+	}
+	
+	/*  
+	 * ACTION	: 1. pascabayar inquery
+	 * 			  2. next bayar
+	*/
+	public function actionInqueryTest(){
+		$result=Yii::$app->ppobh2h->ArrayInquery('163','123456781');
+		print_r($result);
+		/* (
+				[id_pelanggan] => 537316344073
+				[nama_pelanggan] => Rukanda
+				[tagihan] => 383795
+				[admin_bank] => 3200
+				[total_bayar] => 386995
+				[reff_id] => 16090600530
+				[struk] => 	ID Pelanggan     : 537316344073
+							Nama    : Rukanda
+							Tarif/Daya      : R1/900
+							Periode : AGU16, SEP16
+							Stand Meter     : 01685500-01754200
+							Tagihan : Rp. 383.795,00
+							Admin Bank      : Rp.   3.200,00
+							Total Bayar     : Rp. 386.995,00
+							Nomor Reff      : 16090600530
+			) 
+		*/
+	}	
+	
+	/*  
+	 * ACTION	: - BAYAR PASCABAYAR
+	 * 			  - BAYAR PRABAYAR
+	*/
+	public function actionBayarTest(){
+		$result=Yii::$app->ppobh2h->ArrayBayar('163','123123123','16090600530');   #pascabayar
+		 // $result=Yii::$app->ppobh2h->ArrayBayar('1657','12345678');  #prabayar
+		print_r($result);
+	}	
+	
+	
+	
+	/*  
+	 * ACTION	: CRONJOB PASCABAYAR
+	*/
+	public function actionCronjobPascabayar(){
+		$modelTransaksi=PpobTransaksi::find()->where(['TYPE_NM'=>'PASCABAYAR','STATUS'=>0])->all();
+		if($modelTransaksi){
+			foreach($modelTransaksi as $row => $value){
+				$rsltSub['TRANS_UNIK']=$value['TRANS_UNIK'];
+				$rsltSub['TYPE_NM']=$value['TYPE_NM'];
+				$rsltSub['ID_PELANGGAN']=$value['ID_PELANGGAN'];
+				$rsltSub['MSISDN']=$value['MSISDN'];
+				$rsltSub['ID_CODE']=$value['ID_CODE'];
+				$rsltSub['STATUS']=$value['STATUS'];
+				$rslt[]=$rsltSub;
+			}
+		}else{
+			$rslt['triger']='no-data';
+		};
+		print_r($rslt);
+	}
+	
+	/*  
+	 * ACTION	: CRONJOB PRABAYAR
+	*/
+	public function actionCronjobPrabayar(){		
+		$modelTransaksi=PpobTransaksi::find()->where(['TYPE_NM'=>'PRABAYAR','STATUS'=>0])->all();
+		if($modelTransaksi){
+			foreach($modelTransaksi as $row => $value){
+				$rsltSub['TRANS_UNIK']=$value['TRANS_UNIK'];
+				$rsltSub['TYPE_NM']=$value['TYPE_NM'];
+				//$rsltSub['ID_PELANGGAN']=$value['ID_PELANGGAN'];
+				$rsltSub['MSISDN']=$value['MSISDN'];
+				$rsltSub['ID_CODE']=$value['ID_CODE'];
+				$rsltSub['STATUS']=$value['STATUS'];
+				//$rslt[]=$rsltSub;
+				$respon=Yii::$app->ppobh2h->ArrayBayar($value['ID_CODE'],$value['MSISDN']);  #prabayar
+				if($respon){					
+					$modelSubTransaksi=PpobTransaksi::find()->where(['TRANS_UNIK'=>$value['TRANS_UNIK']])->one();
+					$modelSubTransaksi->PEMBAYARAN=$respon['potong_saldo'];
+					$modelSubTransaksi->RESPON_MESSAGE=$respon['message'];
+					$modelSubTransaksi->RESPON_STRUK=$respon['struk'];
+					$modelSubTransaksi->RESPON_SN=$respon['sn'];
+					$modelSubTransaksi->STATUS=1;
+					if( $modelSubTransaksi->save()){
+						$rsltSub['RESPON_PEMBAYARAN']=$respon['potong_saldo'];
+						$rsltSub['RESPON_MESSAGE']=$respon['message'];
+						$rsltSub['RESPON_SN']=$respon['struk'];
+						$rsltSub['RESPON_STATUS']=$modelSubTransaksi['STATUS'];
+						//T=RIGER => POLING by query AfterUpdate.
+					}
+					$rslt[]=$rsltSub;
+				}
+				/* (
+					[kode_voucher] => AXBR1
+					[potong_saldo] => 16000
+					[operator] => AXIS DATA
+					[nominal] => 1000
+					[msisdn] => 12345678
+					[message] => Pembelian 500MB 00-06 + 500MB 00-23.59 Aktif 30 hari 12345678 BERHASIL!
+					[struk] => STRUK PEMBELIAN VOUCHER PRABAYAR|--------------------------------|Tanggal   : 2018-01-09 22:34|Nopel     : 12345678|Provider  : AXIS DATA|Nominal   : 1000|VSN       : 0427161252160154302|Status    : BERHASIL||--------- TERIMA KASIH ---------
+					[sn] => 0427161252160154302
+				) */	
+			}
+		}else{
+			$rslt['triger']='no-data';
+		};
+		print_r($rslt);
 	}
 	
 	/*  
@@ -245,13 +358,16 @@ class PpobMasterDataController extends Controller
 	/*
 	1. Uapdate harga, apakah langsung update di api? jika iya apakah ada periode/manual confirmasi ?
     2. Apakah upadate harga secara keseluruhan/per-produck.
-    3. Apakah POSTPAID/PASCABAYAR saja yang inquery.
-    4. Keuntungan/margin dari paskabayar ?	
-	5. PLN pulsa, tidak ada nama dari pelanggan.
-	6. Status code, berhasil/tidak?  pulsa atau paket sampai ke konsumen langsung.
-	7. apakah history bisa di panggil per-transaksi, untuk validasi (berhasil/tidak).
-    8. VSN /Virtual Serial Number/ Token, apa masksudunya ?	
-	
+	3. Keuntungan/margin dari paskabayar ?	
+	----------
+    1. Apakah POSTPAID/PASCABAYAR saja yang inquery ?.
+	2. Status code, berhasil/tidak?  pulsa atau paket sampai ke konsumen langsung. jika tidak bisa, ke poin 3
+	3. apakah history bisa di panggil per-transaksi, untuk validasi (berhasil/tidak).
+	   - no salah, provider salah,
+    4. VSN /Virtual Serial Number/ Token, apa masksudunya ?	
+	5. bayar ID_PELANGAN, MSISDN requeired ? msisdn boleh kosong gk, saya coba gk bisa.
+	6. REFF_ID ?
+	7. SN ?	
 	*/
 }
 

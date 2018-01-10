@@ -123,28 +123,108 @@ class PpobH2h extends Component{
 	public function ArrayBayar($produkId ='',$msisdn='', $reff_id='')
     {
 		$client = new \GuzzleHttp\Client();
+		if ($reff_id<>''){			
+			$dataBody = [
+				"apikey"=>\Yii::$app->params['apikey'],
+				"page" =>\Yii::$app->params['page'],
+				"function" => \Yii::$app->params['bayar'],
+				"param" => [
+					'memberid'=>\Yii::$app->params['memberid'],
+					'produk'=>$produkId,
+					'reff_id'=>$reff_id,
+					'msisdn'=>$msisdn,
+				],			
+			];
+		}else{
+			$dataBody = [
+				"apikey"=>\Yii::$app->params['apikey'],
+				"page" =>\Yii::$app->params['page'],
+				"function" => \Yii::$app->params['bayar'],
+				"param" => [
+					'memberid'=>\Yii::$app->params['memberid'],
+					'produk'=>$produkId,
+					'msisdn'=>$msisdn,
+				],			
+			];
+		}
 		
-		// $param=[
-			// 'memberid'=>\Yii::$app->params['memberid'],
-			// 'produk'=>$produkId,
-		// ];
-		
-		$dataBody = [
-			"apikey"=>\Yii::$app->params['apikey'],
-			"page" =>\Yii::$app->params['page'],
-			"function" => \Yii::$app->params['bayar'],
-			"param" => [
-				'memberid'=>\Yii::$app->params['memberid'],
-				'produk'=>$produkId,
-				'msisdn'=>$msisdn,
-			],			
-		];
 		$res = $client->post(\Yii::$app->params['urlApi'], ['body' => json_encode($dataBody), 'future' => false]);
 		// echo $res->getStatusCode();
 		// echo $res->getBody();
 		$data=json_decode(json_encode(json_decode($res->getBody())->data),true);	
-		return $data;		
+		return $data;	
+		
+		/* ==================================== RESPON PASCABAYAR ===========================================
+		(
+			[struk] => <h3 style="margin:0;font-size:16px;font-weight:bold;">STRUK PEMBAYARAN TAGIHAN LISTRIK</h3>
+						Tgl Lunas    : 2018-01-09 23:38         No. Reff     : 073521V00KF5052824744O6B0RG94167
+						ID Pelanggan : 537316344073             Tahun/Bulan  : 201608, 201609
+						Nama         : Rukanda                  Stand Meter  : 01685500-01754200
+						Tarif/Daya   : R1/000000900VA           Non Subsidi  : 0
+						RP TAG PLN   : Rp.  383.795,00          Admin Bank   : Rp.    3.200,00
+						Total Bayar  : Rp.  386.995,00
+
+						<i>PLN menyatakan struk ini sebagai bukti pembayaran yang sah, Mohon disimpan</i>
+						  Rincian tagihan dapat diakses di http://www.pln.co.id/
+						  informasi hub Call Center : 123 atau hub PLN terdekat
+									Terima kasih atas kepercayaan Anda
+			[struk_json] => Array
+				(
+					[header] => Array
+						(
+							[0] => STRUK PEMBAYARAN TAGIHAN LISTRIK
+						)
+
+					[content] => Array
+						(
+							[tgl_lunas] => 2018-01-09 23:38
+							[no_reff] => 073521V00KF5052824744O6B0RG94167
+							[id_pelanggan] => 537316344073
+							[thn_bln] => 201608, 201609
+							[nama] => Rukanda
+							[stand_meter] => 01685500-01754200
+							[tarif_daya] => R1/000000900VA
+							[non_subsidi] => 0
+							[rp_tag_pln] =>  383.795,00
+							[adm_bank] =>    3.200,00
+							[total_bayar] =>  386.995,00
+						)
+
+					[footer] => Array
+						(
+							[0] => PLN menyatakan struk ini sebagai bukti pembayaran yang sah, Mohon disimpan
+							[1] => Rincian tagihan dapat diakses di http://www.pln.co.id/
+							[2] => informasi hub Call Center : 123 atau hub PLN terdekat
+							[3] => Terima kasih atas kepercayaan Anda
+						)
+
+				)
+
+		) 
+		
+		========================================== RESPON PRABAYAR =============================================
+			(
+				[kode_voucher] => AXBR1
+				[potong_saldo] => 16000
+				[operator] => AXIS DATA
+				[nominal] => 1000
+				[msisdn] => 12345678
+				[message] => Pembelian 500MB 00-06 + 500MB 00-23.59 Aktif 30 hari 12345678 BERHASIL!
+				[struk] => STRUK PEMBELIAN VOUCHER PRABAYAR
+						  |--------------------------------
+						  |Tanggal   : 2018-01-09 22:34
+						  |Nopel     : 12345678|Provider  : AXIS DATA
+						  |Nominal   : 1000|VSN       : 0427161252160154302
+						  |Status    : BERHASIL
+						  |
+						  |--------- TERIMA KASIH ---------
+				[sn] => 0427161252160154302
+			) 
+		 * ======================================================================================================
+		*/
 	}
+	
+	
 	
 	/* ==========================================================================
 	 * ===============  H2H INQUIRY ===============================================
@@ -155,12 +235,6 @@ class PpobH2h extends Component{
 	public function ArrayInquery($produkId ='',$idPelanggan='')
     {
 		$client = new \GuzzleHttp\Client();
-		
-		// $param=[
-			// 'memberid'=>\Yii::$app->params['memberid'],
-			// 'produk'=>$produkId,
-		// ];
-		
 		$dataBody = [
 			"apikey"=>\Yii::$app->params['apikey'],
 			"page" =>\Yii::$app->params['page'],
@@ -175,9 +249,34 @@ class PpobH2h extends Component{
 		// echo $res->getStatusCode();
 		// echo $res->getBody();
 		$data=json_decode(json_encode(json_decode($res->getBody())->data),true);	
-		return $data;		
-	}
-	
+		// return $data;	
+        foreach($data['detail'] as $row =>$value){
+			$rslt[$row]=$value;
+		}
+		$rslt['struk']=$data['struk'];
+        return $rslt;		
+		
+		/* ===============================================================
+			(
+				[id_pelanggan] => 537316344073
+				[nama_pelanggan] => Rukanda
+				[tagihan] => 383795
+				[admin_bank] => 3200
+				[total_bayar] => 386995
+				[reff_id] => 16090600530
+				[struk] => 	ID Pelanggan     : 537316344073
+							Nama    : Rukanda
+							Tarif/Daya      : R1/900
+							Periode : AGU16, SEP16
+							Stand Meter     : 01685500-01754200
+							Tagihan : Rp. 383.795,00
+							Admin Bank      : Rp.   3.200,00
+							Total Bayar     : Rp. 386.995,00
+							Nomor Reff      : 16090600530
+			) 
+		* ===============================================================
+		*/
+	}	
 	
 	public function actionKelompokPostpaid()
     {
