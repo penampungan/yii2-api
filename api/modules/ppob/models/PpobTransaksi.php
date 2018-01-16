@@ -41,7 +41,7 @@ class PpobTransaksi extends \yii\db\ActiveRecord
             [['TRANS_DATE', 'TGL', 'JAM', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
             [['NAME', 'RESPON_MESSAGE', 'RESPON_STRUK','RESPON_SN'], 'string'],
             [['DENOM', 'HARGA_DASAR', 'MARGIN_FEE_KG', 'MARGIN_FEE_MEMBER', 'HARGA_JUAL', 'PEMBAYARAN', 'RESPON_ADMIN_BANK', 'RESPON_TAGIHAN', 'RESPON_TOTAL_BAYAR'], 'number'],
-            [['PERMIT', 'STATUS'], 'integer'],
+            [['PERMIT', 'STATUS','DEV_STT'], 'integer'],
             [['TRANS_ID', 'KTG_ID', 'ID_CODE', 'CODE', 'CREATE_BY', 'UPDATE_BY'], 'string', 'max' => 50],
             [['ACCESS_GROUP'], 'string', 'max' => 15],
             [['STORE_ID'], 'string', 'max' => 25],
@@ -154,6 +154,9 @@ class PpobTransaksi extends \yii\db\ActiveRecord
 			},
 			'PEMBAYARAN'=>function($model){
 				return $model->PEMBAYARAN;				// INPUT = PEMBAYARAN (Manual/RESPON_TOTAL_BAYAR untuk PASCABAYAR), Untuk PRABAYAR from HARGA_JUAL
+			},
+			'DEV_STT'=>function($model){				// KG RESPON = STATUS (0=production; 1=development)
+				return $model->DEV_STT;					
 			},
 			'STATUS'=>function($model){					// RESPON = STATUS (0=(first transaksi); 1=(success B to B to A to C); 2=Panding; 3=Gagal)
 				return $model->STATUS;					
