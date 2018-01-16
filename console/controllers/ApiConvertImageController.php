@@ -93,16 +93,28 @@ class ApiConvertImageController extends Controller
 	*  CONVERT BASE64 TO IMAGE
 	*  Create by: ptr.nov@gmail.com
 	*/
-	private function base64toimage($string ='',$fileNm){
-		
+	private function base64toimage($string64 ='',$fileNm){		
 	
-			$rootPathImageZip='/var/www/KG_IMAGE/produk/';
-			$dataImgScr=$string;
-			$namefile=$fileNm;			
-			 $img = str_replace('data:image/jpeg;base64,','',trim($dataImgScr));   //PR OTHER EXTENTION [png,bmp]
-			 $img1 = str_replace('charset=utf-8','',$img);
-			 $img2 = str_replace(' ', '+', $img1);
-			 $data = imagecreatefromstring(base64_decode($img2));
+		$rootPathImageZip='/var/www/KG_IMAGE/produk/';
+		// $dataImgScr=$string;
+		// $namefile=$fileNm;			
+		// $img = str_replace('data:image/jpeg;base64,','',trim($dataImgScr));   //PR OTHER EXTENTION [png,bmp]
+		// $img1 = str_replace('charset=utf-8','',$img);
+		// $img2 = str_replace(' ', '+', $img1);
+		$dataImgScr=str_replace('charset=utf-8;','',$string64);//$string64;//str_replace(' ', '+', $$string64);//$string64;
+		$namefile=$fileNm;			
+		 // $img = str_replace('data:image/jpeg;base64,','',trim($dataImgScr));   //PR OTHER EXTENTION [png,bmp]
+		 // $img1 = str_replace('charset=utf-8','',$img);
+		 // $img2 = str_replace(' ', '+', $img1);
+		 //----------------- cara2 ---
+		list($type, $dataImgScr1) = explode(';', $dataImgScr);
+		list(,$extension) = explode('/',$type);
+		//list(,$dataImgScr2)      = explode(',', $dataImgScr);
+		$img = str_replace($type.';base64,','',trim($dataImgScr));   //PR OTHER EXTENTION [png,bmp]
+		//$fileName = uniqid().'.'.$extension;
+		//$dataImgScr = base64_decode($dataImgScr);
+		if(self::is_base64_encoded($img)){
+			$data = imagecreatefromstring(base64_decode($img));
 			// header('Content-Type: image/jpeg');
 			
 			 //RESIZE RATIO
@@ -135,6 +147,9 @@ class ApiConvertImageController extends Controller
 			//$success = file_put_contents($file, $image_p);
 			return $namefile.$extention;	 
 			//return self::is_base64_encoded($img2);  #check Base64
+		}else{
+			return $fileNm;
+		}
 		
 	}
 	

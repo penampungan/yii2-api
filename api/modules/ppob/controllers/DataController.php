@@ -269,12 +269,14 @@ class DataController extends ActiveController
 						return array('error'=>$modelNewPascaBayar->errors);
 					}
 				}else{
+					//== UPDATE DATA TRANSAKSI PASCABAYAR ===
 					$validationInputPascabayar->PEMBAYARAN=$pembayaran;
 					if($validationInputPascabayar->save()){
-						return array('error'=>'updated');
+						$responPascabayar = PpobTransaksi::find()->where(['TRANS_UNIK'=>$validationInputPascabayar['TRANS_UNIK']])->one();
+						return array('respon'=>$responPascabayar);
 					}else{
 						return array('error'=>'not-update');
-					}					
+					}								
 				}
 				//=== END TRANSAKSI PASCABAYAR ====
 				
