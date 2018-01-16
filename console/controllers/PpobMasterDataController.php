@@ -13,6 +13,7 @@ use console\models\PpobMasterKtg;
 use console\models\PpobMasterFungsi;
 use console\models\PpobMasterData;
 use console\models\PpobTransaksi;
+use console\models\PpobTransaksiValidasi;
 
 class PpobMasterDataController extends Controller
 {	
@@ -22,10 +23,12 @@ class PpobMasterDataController extends Controller
 	*/
 	public function actionCoba(){
 		//$result=Yii::$app->ppobh2h->ArrayBayar($produkId,$msisdn,$reff_id);
-		// $result=Yii::$app->ppobh2h->ArrayBayar('39','085883319929','');
+		 //$result=Yii::$app->ppobh2h->ArrayBayar('117','085883319929','');
+		 $result=Yii::$app->ppobh2h->ArrayBayar('50','085883319929','');
+		
 		// print_r($result);
 		//$result=Yii::$app->ppobh2h->ArrayBayar('50','14020296076');
-		$result=Yii::$app->ppobh2h->ArrayInquery('163','12345678');
+		//$result=Yii::$app->ppobh2h->ArrayInquery('163','12345678');
 		// foreach($result['detail'] as $row =>$value){
 			// $rslt[$row]=$value;
 		// }
@@ -45,7 +48,7 @@ class PpobMasterDataController extends Controller
 	 * 			  2. next bayar
 	*/
 	public function actionInqueryTest(){
-		$result=Yii::$app->ppobh2h->ArrayInquery('163','123456781');
+		$result=Yii::$app->ppobh2h->ArrayInquery('163','12345678123213');
 		print_r($result);
 		/* (
 				[id_pelanggan] => 537316344073
@@ -77,75 +80,252 @@ class PpobMasterDataController extends Controller
 		print_r($result);
 	}	
 	
-	
-	
+	/*  
+	 * ACTION	: CRONJOB PASCABAYAR INQUERY
+	*/
+	public function actionCronjobInqueryPascabayar(){
+		
+		//[0]== AMBIL TRANSAKSI DENGAN STATUS=0 [new Transaksi] -> next check by CURRENT DATE
+		$modelTransaksi=PpobTransaksi::find()->where(['TYPE_NM'=>'PASCABAYAR','STATUS'=>0])->all();
+		if($modelTransaksi){
+			foreach($modelTransaksi as $row => $value){
+				
+				//[2]== AMBIL TRANSAKSI SATU TRANSAKSI
+				$modelSubTransaksi=PpobTransaksi::find()->where(['TRANS_UNIK'=>$value['TRANS_UNIK']])->one();
+				if($modelSubTransaksi){
+					$resultInquery=Yii::$app->ppobh2h->ArrayInquery($value['DEV_STT'],$value['ID_CODE'],$value['ID_PELANGGAN']);
+					//$strStruk=$resultInquery;
+					$modelSubTransaksi->RESPON_NAMA_PELANGGAN=$resultInquery['nama_pelanggan'];
+					$modelSubTransaksi->RESPON_TAGIHAN=$resultInquery['tagihan'];
+					$modelSubTransaksi->RESPON_ADMIN_BANK=$resultInquery['admin_bank'];
+					$modelSubTransaksi->RESPON_TOTAL_BAYAR=$resultInquery['total_bayar'];
+					$modelSubTransaksi->RESPON_REFF_ID=$resultInquery['reff_id'];
+					$modelSubTransaksi->RESPON_STRUK=json_decode(json_encode($resultInquery['struk']));	//json_encode($resultInquery['struk'],true);
+					$modelSubTransaksi->STATUS=4;											//STATUS INQUERY BERHASIl			
+					$modelSubTransaksi->save();
+				}
+				$rsltSub['DATA_KG']['TRANS_UNIK']=$value['TRANS_UNIK'];
+				$rsltSub['DATA_KG']['ACCESS_GROUP']=$value['ACCESS_GROUP'];
+				$rsltSub['DATA_KG']['STORE_ID']=$value['STORE_ID'];
+				$rsltSub['DATA_KG']['TYPE_NM']=$value['TYPE_NM'];
+				$rsltSub['DATA_KG']['ID_PELANGGAN']=isset($value['ID_PELANGGAN'])?$value['ID_PELANGGAN']:'';
+				$rsltSub['DATA_KG']['MSISDN']=$value['MSISDN'];
+				$rsltSub['DATA_KG']['ID_CODE']=$value['ID_CODE'];
+				$rsltSub['DATA_KG']['STATUS']=$value['STATUS'];
+				$rsltSub['DATA_SIBISNIS']=$resultInquery;
+			}			
+			$rslt[$value['TRANS_UNIK']]=$rsltSub;
+			print_r($rslt);
+		}else{
+			$rsltNoData['DATA_KG']['status']='no-data-transaksi';
+			print_r($rsltNoData);
+		}		
+	}
 	/*  
 	 * ACTION	: CRONJOB PASCABAYAR
 	*/
 	public function actionCronjobPascabayar(){
-		$modelTransaksi=PpobTransaksi::find()->where(['TYPE_NM'=>'PASCABAYAR','STATUS'=>0])->all();
-		if($modelTransaksi){
+		
+		//[0]== AMBIL TRANSAKSI DENGAN STATUS=4 [new Transaksi] -> next check by DATE NNow
+		$modelTransaksi=PpobTransaksi::find()->where(['TYPE_NM'=>'PASCABAYAR','STATUS'=>4])->all();
+		if($modelTransaksi){							
 			foreach($modelTransaksi as $row => $value){
-				$rsltSub['TRANS_UNIK']=$value['TRANS_UNIK'];
-				$rsltSub['TYPE_NM']=$value['TYPE_NM'];
-				$rsltSub['ID_PELANGGAN']=$value['ID_PELANGGAN'];
-				$rsltSub['MSISDN']=$value['MSISDN'];
-				$rsltSub['ID_CODE']=$value['ID_CODE'];
-				$rsltSub['STATUS']=$value['STATUS'];
-				$rslt[]=$rsltSub;
-			}
+				$rsltSub='';
+				$idpelanggan=isset($value['ID_PELANGGAN'])?$value['ID_PELANGGAN']:'';
+				
+				//[1]== VIEWS PROPERTIES TRANSAKSI PPOB KG ====
+				$rsltSub['DATA_KG']['TRANS_UNIK']=$value['TRANS_UNIK'];
+				$rsltSub['DATA_KG']['ACCESS_GROUP']=$value['ACCESS_GROUP'];
+				$rsltSub['DATA_KG']['STORE_ID']=$value['STORE_ID'];
+				$rsltSub['DATA_KG']['TYPE_NM']=$value['TYPE_NM'];
+				$rsltSub['DATA_KG']['ID_PELANGGAN']=isset($value['ID_PELANGGAN'])?$value['ID_PELANGGAN']:'';
+				$rsltSub['DATA_KG']['MSISDN']=$value['MSISDN'];
+				$rsltSub['DATA_KG']['ID_CODE']=$value['ID_CODE'];
+				$rsltSub['DATA_KG']['STATUS']=$value['STATUS'];
+				$rsltSub['DATA_KG']['validasiStatus']=$value['validasiStatus'];				
+				$rsltSub['DATA_KG']['validasiStatusNm']=$value['validasiStatus']==0? 'PEMBAYARAN DILAKSANAKAN':'PEMBAYARAN TIDAK DI IJINKAN DUA KALI';				
+				//== END PROPERTIES TRANSAKSI PPOB KG ====				
+								
+				//[2]======== CHECK VALIDASI DUPLICATE POST BAYAR ====
+				if($value['validasiStatus']==0){
+					//$rsltSub['DATA_SIBISNIS']['TEST_BAYAR']='LAYAK MELAKUKAN PEMBAYARAN';
+					
+					//[3.1]== SAVE VALIDASI DUPLICATE POST BAYAR ====					
+					$modelValidasiLooping= new PpobTransaksiValidasi();
+					$modelValidasiLooping->TRANS_UNIK=$value['TRANS_UNIK'];
+					$modelValidasiLooping->ACCESS_GROUP=$value['ACCESS_GROUP'];
+					$modelValidasiLooping->STORE_ID=$value['STORE_ID'];
+					$modelValidasiLooping->CREATE_BY='CRONJOB PRABAYAR';
+					$modelValidasiLooping->CREATE_AT=$value['CREATE_AT'];
+					if($modelValidasiLooping->save()){												
+					
+						//[4]======== TRIGER POST BAYAR ====
+						$respon=Yii::$app->ppobh2h->ArrayBayar($value['DEV_STT'],$value['ID_CODE'],$value['MSISDN'],$value['ID_PELANGGAN'],$value['RESPON_REFF_ID']);
+						if($respon){	
+							if (strtoupper($respon['status'])<>'FAILED') {
+								
+								//[3.2]== UPDATE VALIDASI DUPLICATE POST BAYAR ====					
+								$modelValidasiUpdate= PpobTransaksiValidasi::find()->where(['TRANS_UNIK'=>$value['TRANS_UNIK']])->one();
+								$modelValidasiUpdate->SN_NUMBER=$respon['sn'];						//--- GENERAL
+								$modelValidasiUpdate->status=$respon['status'];						//--- GENERAL
+								$modelValidasiUpdate->errcode=$respon['errcode'];					//--- GENERAL
+								$modelValidasiUpdate->remarks=$respon['remarks'];					//--- GENERAL
+								$modelValidasiUpdate->UPDATE_BY='CRONJOB PRABAYAR_UPDATE';
+								$modelValidasiUpdate->save();										//TRIGER => to Polling.
+							
+								//[5]=== TRANSAKSI UPDATE ===
+								 $modelSubTransaksi=PpobTransaksi::find()->where(['TRANS_UNIK'=>$value['TRANS_UNIK']])->one();
+								//--- PASCABAYAR
+								 //$modelSubTransaksi->PEMBAYARAN=isset($respon['potong_saldo'])?$respon['potong_saldo']:'';
+								//--- PRABAYAR
+								 $modelSubTransaksi->PEMBAYARAN=$modelSubTransaksi->HARGA_JUAL;//isset($respon['potong_saldo'])?$respon['potong_saldo']:'';
+								 $modelSubTransaksi->RESPON_OPERATOR=$respon['operator'];
+								 $modelSubTransaksi->RESPON_KODE_VOUCHER=$respon['kode_voucher'];
+								 $modelSubTransaksi->RESPON_NOMINAL=$respon['nominal'];
+								//--- GENERAL
+								 $modelSubTransaksi->RESPON_MESSAGE=$respon['message'];
+								 $modelSubTransaksi->RESPON_STRUK=$respon['struk'];
+								 $modelSubTransaksi->RESPON_SN=isset($respon['sn'])?$respon['sn']:'';						
+								 $modelSubTransaksi->STATUS=isset($respon['sn'])?1:2;								// PEMBAYARAN SUCCESS TO APP	1=Sukses; 2=panding			
+								 $modelSubTransaksi->save();
+								
+								//[6]=== VEWS RESPON PEMBAYARAN SIBISNIS ===
+								 $rsltSub['DATA_SIBISNIS']=$respon; // DEFULT PpobH2h Component
+								// $rsltSub['DATA_SIBISNIS']['RESPON_PEMBAYARAN']=$respon['potong_saldo'];
+								// $rsltSub['DATA_SIBISNIS']['RESPON_MESSAGE']=$respon['message'];
+								// $rsltSub['DATA_SIBISNIS']['RESPON_SN']=$respon['struk'];
+								// $rsltSub['DATA_SIBISNIS']['RESPON_STATUS']=$modelSubTransaksi['STATUS'];							
+							}else{
+								//[7]== SAVE VALIDASI DUPLICATE POST BAYAR ====					
+								$modelValidasiLooping= new PpobTransaksiValidasi();
+								$modelValidasiLooping->TRANS_UNIK=$value['TRANS_UNIK'];
+								$modelValidasiLooping->ACCESS_GROUP=$value['ACCESS_GROUP'];
+								$modelValidasiLooping->STORE_ID=$value['STORE_ID'];
+								$modelValidasiLooping->status=$respon['status'];
+								$modelValidasiLooping->errcode=$respon['errcode'];
+								$modelValidasiLooping->remarks=$respon['remarks'];
+								$modelValidasiLooping->CREATE_BY='CRONJOB PRABAYAR';
+								$modelValidasiLooping->CREATE_AT=$value['CREATE_AT'];
+								$modelValidasiLooping->save();							//TRIGER => to Polling.
+								//$rslt['triger']='no-data';
+								$rsltSub['DATA_SIBISNIS']=$respon;
+							} 				
+						}
+					}
+				}
+				//$rslt[]=$rsltSub;			
+				$rslt[$value['TRANS_UNIK']]=$rsltSub;	
+			}			
+			$viewResult['TRANSAKSI']=$rslt;
+			print_r($viewResult);
 		}else{
-			$rslt['triger']='no-data';
-		};
-		print_r($rslt);
+			$rsltNoData['DATA_KG']['status']='no-data-transaksi';
+			print_r($rsltNoData);
+		}
 	}
 	
 	/*  
 	 * ACTION	: CRONJOB PRABAYAR
 	*/
-	public function actionCronjobPrabayar(){		
+	public function actionCronjobPrabayar(){	
+		// check public IP				: 	curl ipinfo.io/ip	
+		
+		//[0]== AMBIL TRANSAKSI DENGAN STATUS=0 [new Transaksi] -> next check by DATE NNow
 		$modelTransaksi=PpobTransaksi::find()->where(['TYPE_NM'=>'PRABAYAR','STATUS'=>0])->all();
 		if($modelTransaksi){
 			foreach($modelTransaksi as $row => $value){
-				$rsltSub['TRANS_UNIK']=$value['TRANS_UNIK'];
-				$rsltSub['TYPE_NM']=$value['TYPE_NM'];
-				//$rsltSub['ID_PELANGGAN']=$value['ID_PELANGGAN'];
-				$rsltSub['MSISDN']=$value['MSISDN'];
-				$rsltSub['ID_CODE']=$value['ID_CODE'];
-				$rsltSub['STATUS']=$value['STATUS'];
-				//$rslt[]=$rsltSub;
-				$respon=Yii::$app->ppobh2h->ArrayBayar($value['ID_CODE'],$value['MSISDN']);  #prabayar
-				if($respon){					
-					$modelSubTransaksi=PpobTransaksi::find()->where(['TRANS_UNIK'=>$value['TRANS_UNIK']])->one();
-					$modelSubTransaksi->PEMBAYARAN=$respon['potong_saldo'];
-					$modelSubTransaksi->RESPON_MESSAGE=$respon['message'];
-					$modelSubTransaksi->RESPON_STRUK=$respon['struk'];
-					$modelSubTransaksi->RESPON_SN=$respon['sn'];
-					$modelSubTransaksi->STATUS=1;
-					if( $modelSubTransaksi->save()){
-						$rsltSub['RESPON_PEMBAYARAN']=$respon['potong_saldo'];
-						$rsltSub['RESPON_MESSAGE']=$respon['message'];
-						$rsltSub['RESPON_SN']=$respon['struk'];
-						$rsltSub['RESPON_STATUS']=$modelSubTransaksi['STATUS'];
-						//T=RIGER => POLING by query AfterUpdate.
+				$rsltSub='';
+				$idpelanggan=isset($value['ID_PELANGGAN'])?$value['ID_PELANGGAN']:'';
+				
+				//[1]== VIEWS PROPERTIES TRANSAKSI PPOB KG ====
+				$rsltSub['DATA_KG']['TRANS_UNIK']=$value['TRANS_UNIK'];
+				$rsltSub['DATA_KG']['ACCESS_GROUP']=$value['ACCESS_GROUP'];
+				$rsltSub['DATA_KG']['STORE_ID']=$value['STORE_ID'];
+				$rsltSub['DATA_KG']['TYPE_NM']=$value['TYPE_NM'];
+				$rsltSub['DATA_KG']['ID_PELANGGAN']=isset($value['ID_PELANGGAN'])?$value['ID_PELANGGAN']:'';
+				$rsltSub['DATA_KG']['MSISDN']=$value['MSISDN'];
+				$rsltSub['DATA_KG']['ID_CODE']=$value['ID_CODE'];
+				$rsltSub['DATA_KG']['STATUS']=$value['STATUS'];
+				$rsltSub['DATA_KG']['validasiStatus']=$value['validasiStatus'];				
+				$rsltSub['DATA_KG']['validasiStatusNm']=$value['validasiStatus']==0? 'PEMBAYARAN DILAKSANAKAN':'PEMBAYARAN TIDAK DI IJINKAN DUA KALI';				
+				//== END PROPERTIES TRANSAKSI PPOB KG ====				
+								
+				//[2]======== CHECK VALIDASI DUPLICATE POST BAYAR ====
+				if($value['validasiStatus']==0){
+					//$rsltSub['DATA_SIBISNIS']['TEST_BAYAR']='LAYAK MELAKUKAN PEMBAYARAN';
+					
+					//[3.1]== SAVE VALIDASI DUPLICATE POST BAYAR ====					
+					$modelValidasiLooping= new PpobTransaksiValidasi();
+					$modelValidasiLooping->TRANS_UNIK=$value['TRANS_UNIK'];
+					$modelValidasiLooping->ACCESS_GROUP=$value['ACCESS_GROUP'];
+					$modelValidasiLooping->STORE_ID=$value['STORE_ID'];
+					$modelValidasiLooping->CREATE_BY='CRONJOB PRABAYAR';
+					$modelValidasiLooping->CREATE_AT=$value['CREATE_AT'];
+					if($modelValidasiLooping->save()){												
+					
+						//[4]======== TRIGER POST BAYAR ====
+						$respon=Yii::$app->ppobh2h->ArrayBayar($value['DEV_STT'],$value['ID_CODE'],$value['MSISDN'],$idpelanggan,'');  #prabayar
+						if($respon){	
+							if (strtoupper($respon['status'])<>'FAILED') {
+								
+								//[3.2]== UPDATE VALIDASI DUPLICATE POST BAYAR ====					
+								$modelValidasiUpdate= PpobTransaksiValidasi::find()->where(['TRANS_UNIK'=>$value['TRANS_UNIK']])->one();
+								$modelValidasiUpdate->SN_NUMBER=$respon['sn'];						//--- GENERAL
+								$modelValidasiUpdate->status=$respon['status'];						//--- GENERAL
+								$modelValidasiUpdate->errcode=$respon['errcode'];					//--- GENERAL
+								$modelValidasiUpdate->remarks=$respon['remarks'];					//--- GENERAL
+								$modelValidasiUpdate->UPDATE_BY='CRONJOB PRABAYAR_UPDATE';
+								$modelValidasiUpdate->save();										//TRIGER => to Polling.
+							
+								//[5]=== TRANSAKSI UPDATE ===
+								 $modelSubTransaksi=PpobTransaksi::find()->where(['TRANS_UNIK'=>$value['TRANS_UNIK']])->one();
+								//--- PASCABAYAR
+								 //$modelSubTransaksi->PEMBAYARAN=isset($respon['potong_saldo'])?$respon['potong_saldo']:'';
+								//--- PRABAYAR
+								 $modelSubTransaksi->PEMBAYARAN=$modelSubTransaksi->HARGA_JUAL;//isset($respon['potong_saldo'])?$respon['potong_saldo']:'';
+								 $modelSubTransaksi->RESPON_OPERATOR=$respon['operator'];
+								 $modelSubTransaksi->RESPON_KODE_VOUCHER=$respon['kode_voucher'];
+								 $modelSubTransaksi->RESPON_NOMINAL=$respon['nominal'];
+								//--- GENERAL
+								 $modelSubTransaksi->RESPON_MESSAGE=$respon['message'];
+								 $modelSubTransaksi->RESPON_STRUK=$respon['struk'];
+								 $modelSubTransaksi->RESPON_SN=isset($respon['sn'])?$respon['sn']:'';						
+								 $modelSubTransaksi->STATUS=isset($respon['sn'])?1:2;								// PEMBAYARAN SUCCESS TO APP	1=Sukses; 2=panding			
+								 $modelSubTransaksi->save();
+								
+								//[6]=== VEWS RESPON PEMBAYARAN SIBISNIS ===
+								 $rsltSub['DATA_SIBISNIS']=$respon; // DEFULT PpobH2h Component
+								// $rsltSub['DATA_SIBISNIS']['RESPON_PEMBAYARAN']=$respon['potong_saldo'];
+								// $rsltSub['DATA_SIBISNIS']['RESPON_MESSAGE']=$respon['message'];
+								// $rsltSub['DATA_SIBISNIS']['RESPON_SN']=$respon['struk'];
+								// $rsltSub['DATA_SIBISNIS']['RESPON_STATUS']=$modelSubTransaksi['STATUS'];							
+							}else{
+								//[7]== SAVE VALIDASI DUPLICATE POST BAYAR ====					
+								$modelValidasiLooping= new PpobTransaksiValidasi();
+								$modelValidasiLooping->TRANS_UNIK=$value['TRANS_UNIK'];
+								$modelValidasiLooping->ACCESS_GROUP=$value['ACCESS_GROUP'];
+								$modelValidasiLooping->STORE_ID=$value['STORE_ID'];
+								$modelValidasiLooping->status=$respon['status'];
+								$modelValidasiLooping->errcode=$respon['errcode'];
+								$modelValidasiLooping->remarks=$respon['remarks'];
+								$modelValidasiLooping->CREATE_BY='CRONJOB PRABAYAR';
+								$modelValidasiLooping->CREATE_AT=$value['CREATE_AT'];
+								$modelValidasiLooping->save();							//TRIGER => to Polling.
+								//$rslt['triger']='no-data';
+								$rsltSub['DATA_SIBISNIS']=$respon;
+							} 				
+						}
 					}
-					$rslt[]=$rsltSub;
 				}
-				/* (
-					[kode_voucher] => AXBR1
-					[potong_saldo] => 16000
-					[operator] => AXIS DATA
-					[nominal] => 1000
-					[msisdn] => 12345678
-					[message] => Pembelian 500MB 00-06 + 500MB 00-23.59 Aktif 30 hari 12345678 BERHASIL!
-					[struk] => STRUK PEMBELIAN VOUCHER PRABAYAR|--------------------------------|Tanggal   : 2018-01-09 22:34|Nopel     : 12345678|Provider  : AXIS DATA|Nominal   : 1000|VSN       : 0427161252160154302|Status    : BERHASIL||--------- TERIMA KASIH ---------
-					[sn] => 0427161252160154302
-				) */	
-			}
+				//$rslt[]=$rsltSub;			
+				$rslt[$value['TRANS_UNIK']]=$rsltSub;	
+			}			
+			$viewResult['TRANSAKSI']=$rslt;
+			print_r($viewResult);
 		}else{
-			$rslt['triger']='no-data';
-		};
-		print_r($rslt);
+			$rsltNoData['DATA_KG']['status']='no-data-transaksi';
+			print_r($rsltNoData);
+		}
 	}
 	
 	/*  
@@ -183,7 +363,8 @@ class PpobMasterDataController extends Controller
 	*/
 	public function actionUpdateHargaProduk(){
 		$rslt=self::UpdateHargaProduk();
-		return $rslt;
+		//return $rslt;
+		print_r($rslt);
 	}
 	
 	
@@ -203,7 +384,8 @@ class PpobMasterDataController extends Controller
 			}
 			$rslt[]= $row2;
 		}
-		return $rslt;
+		//return $rslt;
+		print_r($rslt);
 	}	
 	
 		
@@ -230,7 +412,8 @@ class PpobMasterDataController extends Controller
 				}
 			}
 		}		
-		return $dataKtg;
+		//return $dataKtg;
+		print_r($dataKtg);
 	}	
 	
 	/*  TITTLE	: TYPE/GROUP/KATEGORY PRODUK

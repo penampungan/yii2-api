@@ -120,10 +120,10 @@ class PpobH2h extends Component{
 	 * Authorby	: 	ptr.nov@gmail.com
 	 * ==========================================================================
 	*/	
-	public function ArrayBayar($produkId ='',$msisdn='', $reff_id='')
+	public function ArrayBayar($devplopment=true,$produkId ='',$msisdn='',$id_pelanggan='', $reff_id='')
     {
 		$client = new \GuzzleHttp\Client();
-		if ($reff_id<>''){			
+		if ($reff_id<>''){																//JIKA PASCABAYAR		 
 			$dataBody = [
 				"apikey"=>\Yii::$app->params['apikey'],
 				"page" =>\Yii::$app->params['page'],
@@ -135,24 +135,158 @@ class PpobH2h extends Component{
 					'msisdn'=>$msisdn,
 				],			
 			];
-		}else{
-			$dataBody = [
-				"apikey"=>\Yii::$app->params['apikey'],
-				"page" =>\Yii::$app->params['page'],
-				"function" => \Yii::$app->params['bayar'],
-				"param" => [
-					'memberid'=>\Yii::$app->params['memberid'],
-					'produk'=>$produkId,
-					'msisdn'=>$msisdn,
-				],			
-			];
+		}else{																			//JIKA PRABAYAE		
+			if($id_pelanggan<>''){														//JIKA MENGUNAKAN NO.PELANGGAN		
+				$dataBody = [
+					"apikey"=>\Yii::$app->params['apikey'],
+					"page" =>\Yii::$app->params['page'],
+					"function" => \Yii::$app->params['bayar'],
+					"param" => [
+						'memberid'=>\Yii::$app->params['memberid'],
+						'produk'=>$produkId,
+						'msisdn'=>$msisdn,
+						'id_pelanggan'=>$id_pelanggan,
+					],			
+				];
+			}else{
+				$dataBody = [															//JIKA TIDAK MENGUNAKAN NO.PELANGGAN		
+					"apikey"=>\Yii::$app->params['apikey'],
+					"page" =>\Yii::$app->params['page'],
+					"function" => \Yii::$app->params['bayar'],
+					"param" => [
+						'memberid'=>\Yii::$app->params['memberid'],
+						'produk'=>$produkId,
+						'msisdn'=>$msisdn,
+					],			
+				];
+			}
+			
 		}
 		
-		$res = $client->post(\Yii::$app->params['urlApi'], ['body' => json_encode($dataBody), 'future' => false]);
-		// echo $res->getStatusCode();
-		// echo $res->getBody();
-		$data=json_decode(json_encode(json_decode($res->getBody())->data),true);	
-		return $data;	
+		if ($devplopment){
+				/* ====================
+				 * === DEVELOPMENT ====
+				 * ====================
+				*/
+				if ($reff_id<>''){	
+					/* ==========================
+					 * === RESPON PASCABAYAR ====
+					 * ==========================
+					*/
+					 $rslt['status']='success';
+					 $rslt['errcode']='200';
+					 $rslt['remarks']='development';
+					 // $rslt['data']=$val;
+					 //----------------------------------------
+					 $rslt['tgl_lunas']='2018-01-14 03:52';					//$val['tgl_lunas'];
+					 $rslt['no_reff']='073521V00KF5052824744O6B0RG94167';	//$val['no_reff'];
+					 $rslt['id_pelanggan']='537316344073';					//$val['id_pelanggan'];
+					 $rslt['thn_bln']='201608, 201609';						//$val['thn_bln'];
+					 $rslt['nama']='Piter Novian';							//$val['nama'];
+					 $rslt['stand_meter']='01685500-01754200';				//$val['stand_meter'];
+					 $rslt['tarif_daya']='R1/000000900VA';					//$val['tarif_daya'];
+					 $rslt['non_subsidi']='0';								//$val['non_subsidi'];
+					 $rslt['rp_tag_pln']='383.795,00';						//$val['rp_tag_pln'];
+					 $rslt['adm_bank']='3.200,00';							//$val['adm_bank'];
+					 $rslt['total_bayar']='386.995,00';						//$val['total_bayar'];
+					 $rslt['sn']='';										//isset($val['sn'])?$val['sn']:'';
+					 $rslt['struk']='
+					 
+					 
+					 ';														//$val['struk'];
+				
+				}else{
+					//=== RESPON PRABAYAR ===
+					 $rslt['status']='success';
+					 $rslt['errcode']='200';
+					 $rslt['remarks']='development';
+					 //----------------------------------------
+					 $rslt['kode_voucher']='212';
+					 $rslt['operator']='KG PROVIDER';
+					 $rslt['nominal']='10000';
+					 $rslt['msisdn']='085883319929';
+					 $rslt['message']='Berhasil TopUp Development';
+					 $rslt['struk']=' STRUK PEMBELIAN VOUCHER PRABAYAR
+						  |--------------------------------
+						  |Tanggal   : 2018-01-09 22:34
+						  |Nopel     : 12345678|Provider  : KG DEVELOPMENT PROVIDER DATA
+						  |Nominal   : 1000|VSN       : 0427161252160154302
+						  |Status    : BERHASIL
+						  |
+						  |--------- TERIMA KASIH ---------
+					 ';
+					 $rslt['id_pelanggan']='123456789';
+					 $rslt['sn']='0427161252160154302';
+				}
+			
+		}else{
+				/* ====================
+				 * === PRODUCTION ====
+				 * ====================
+				*/
+				$res = $client->post(\Yii::$app->params['urlApi'], ['body' => json_encode($dataBody), 'future' => false]);
+				// echo $res->getStatusCode();
+				// echo $res->getBody();
+				 $rslt='';
+				 $status=json_decode(json_encode(json_decode($res->getBody())->status),true);
+				 $errcode=json_decode(json_encode(json_decode($res->getBody())->errcode),true);
+				 $remarks=json_decode(json_encode(json_decode($res->getBody())->remarks),true);
+				 //$data=json_decode(json_encode(json_decode($res->getBody())->data),true);	
+				 $data=json_decode(json_encode(json_decode($res->getBody())),true);	
+				 if (strtoupper($status)<>'FAILED'){
+					 if ($reff_id<>''){	
+						/* ==========================
+						 * === RESPON PASCABAYAR ====
+						 * ==========================
+						*/
+						 foreach($data as $rows => $val){
+							 $rslt['status']=$status;
+							 $rslt['errcode']=$errcode;
+							 $rslt['remarks']=$remarks;
+							 $rslt['data']=$val;
+							 //----------------------------------------
+							 // $rslt['tgl_lunas']='2018-01-14 03:52';//$val['tgl_lunas'];
+							 // $rslt['no_reff']='073521V00KF5052824744O6B0RG94167';//$val['no_reff'];
+							 // $rslt['id_pelanggan']='537316344073';//$val['id_pelanggan'];
+							 // $rslt['thn_bln']='201608, 201609';//$val['thn_bln'];
+							 // $rslt['nama']='Rukanda';//$val['nama'];
+							 // $rslt['stand_meter']='01685500-01754200';//$val['stand_meter'];
+							 // $rslt['tarif_daya']='R1/000000900VA';//$val['tarif_daya'];
+							 // $rslt['non_subsidi']='0';//$val['non_subsidi'];
+							 // $rslt['rp_tag_pln']='383.795,00';//$val['rp_tag_pln'];
+							 // $rslt['adm_bank']='3.200,00';//$val['adm_bank'];
+							 // $rslt['total_bayar']='386.995,00';//$val['total_bayar'];
+							 // $rslt['sn']='';//isset($val['sn'])?$val['sn']:'';
+							 // $rslt['struk']='';//$val['struk'];
+						 }
+					 }else{	
+						/* ==========================
+						 * ===  RESPON PRABAYAR  ====
+						 * ==========================
+						*/
+						foreach($data as $rows => $val){
+							 $rslt['status']=$status;
+							 $rslt['errcode']=$errcode;
+							 $rslt['remarks']=$remarks;
+							 //----------------------------------------
+							 $rslt['kode_voucher']=$val['kode_voucher'];
+							 $rslt['operator']=$val['operator'];
+							 $rslt['nominal']=$val['nominal'];
+							 $rslt['msisdn']=$val['msisdn'];
+							 $rslt['message']=$val['message'];
+							 $rslt['struk']=$val['struk'];
+							 $rslt['id_pelanggan']=isset($val['id_pelanggan'])?$val['id_pelanggan']:'';			//field kosong dari sibisnis
+							 $rslt['sn']=isset($val['sn'])?$val['sn']:'';
+						}
+					 }
+				 }else{
+					 $rslt['status']=$status;
+					 $rslt['errcode']=$errcode;
+					 $rslt['remarks']=$remarks;
+				 }
+		}	 
+		return $rslt;	
+		// return json_decode($res->getBody());	
 		
 		/* ==================================== RESPON PASCABAYAR ===========================================
 		(
@@ -232,7 +366,7 @@ class PpobH2h extends Component{
 	 * Authorby	: 	ptr.nov@gmail.com
 	 * ==========================================================================
 	*/	
-	public function ArrayInquery($produkId ='',$idPelanggan='')
+	public function ArrayInquery($devplopment=true,$produkId ='',$idPelanggan='')
     {
 		$client = new \GuzzleHttp\Client();
 		$dataBody = [
@@ -245,16 +379,58 @@ class PpobH2h extends Component{
 				'id_pelanggan'=>$idPelanggan,
 			],			
 		];
-		$res = $client->post(\Yii::$app->params['urlApi'], ['body' => json_encode($dataBody), 'future' => false]);
-		// echo $res->getStatusCode();
-		// echo $res->getBody();
-		$data=json_decode(json_encode(json_decode($res->getBody())->data),true);	
-		// return $data;	
-        foreach($data['detail'] as $row =>$value){
-			$rslt[$row]=$value;
+		
+		if ($devplopment){
+				/* ====================
+				 * === DEVELOPMENT ====
+				 * ====================
+				*/
+				$struksub['ID_PELANGGAN']='537316344073';
+				$struksub['NAMA']='Piter Novian';
+				$struksub['TARIF/DAYA']='R1/900';
+				$struksub['PERIODE']=' AGU16, SEP16';
+				$struksub['STAND_METER']='01685500-01754200';
+				$struksub['TAGIHAN']='Rp. 383.795,00';
+				$struksub['ADMIN_BANK']='Rp.   3.200,00';
+				$struksub['TOTAL_BAYAR']='Rp. 386.995,00';
+				$struksub['NOMOR_REFF']='16090600530';
+				//-------------------------------
+				$rslt['status']='success';
+				$rslt['errcode']='200';
+				$rslt['remarks']='development';
+				//------------------------------
+				$rslt['id_pelanggan']='537316344073';
+				$rslt['nama_pelanggan']='Piter Novian';
+				$rslt['tagihan']='383795';
+				$rslt['admin_bank']='3200';
+				$rslt['total_bayar']='386995';
+				$rslt['reff_id']='16090600530';
+				$rslt['struk']=$struksub;				
+		}else{
+			/* ====================
+			 * === PRODUCTIOAN ====
+			 * ====================
+			*/		
+			$res = $client->post(\Yii::$app->params['urlApi'], ['body' => json_encode($dataBody), 'future' => false]);
+			// echo $res->getStatusCode();
+			// echo $res->getBody();
+			$status=json_decode(json_encode(json_decode($res->getBody())->status),true);
+			$errcode=json_decode(json_encode(json_decode($res->getBody())->errcode),true);
+			$remarks=json_decode(json_encode(json_decode($res->getBody())->remarks),true);
+			$data=json_decode(json_encode(json_decode($res->getBody())->data),true);		
+			//$struk=json_decode(json_encode(json_decode($res->getBody())->struk),true);		
+			// return $data;	
+			foreach($data['detail'] as $row =>$value){
+				$rslt['status']=$status;
+				$rslt['errcode']=$errcode;
+				$rslt['remarks']=$remarks;
+				//----------------------------------
+				$rslt[$row]=$value;
+				//------------struk-----------------
+				$rslt['struk']=$data['struk'];//$struk;
+			}
 		}
-		$rslt['struk']=$data['struk'];
-        return $rslt;		
+	    return $rslt;
 		
 		/* ===============================================================
 			(
