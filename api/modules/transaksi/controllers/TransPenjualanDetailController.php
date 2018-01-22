@@ -102,6 +102,7 @@ class TransPenjualanDetailController extends ActiveController
 		$accessId			= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
 		$golongan			= isset($paramsBody['GOLONGAN'])!=''?$paramsBody['GOLONGAN']:'';
 		$tglTrans			= isset($paramsBody['TRANS_DATE'])!=''?$paramsBody['TRANS_DATE']:'';
+		$transType			= isset($paramsBody['TRANS_TYPE'])!=''?$paramsBody['TRANS_TYPE']:'';
 		$prdID				= isset($paramsBody['PRODUCT_ID'])!=''?$paramsBody['PRODUCT_ID']:'';
 		$prdNM				= isset($paramsBody['PRODUCT_NM'])!=''?$paramsBody['PRODUCT_NM']:'';
 		$prdProvider		= isset($paramsBody['PRODUCT_PROVIDER'])!=''?$paramsBody['PRODUCT_PROVIDER']:'';
@@ -190,6 +191,7 @@ class TransPenjualanDetailController extends ActiveController
 				if ($golongan<>''){$modelNew->GOLONGAN=$golongan;};
 				//==PROPERTES==
 				if ($tglTrans<>''){$modelNew->TRANS_DATE=$tglTrans;};
+				if ($transType<>''){$modelNew->TRANS_TYPE=$transType;};
 				if ($prdID<>''){$modelNew->PRODUCT_ID=$prdID;};
 				if ($prdNM<>''){$modelNew->PRODUCT_NM=$prdNM;};
 				if ($prdProvider<>''){$modelNew->PRODUCT_PROVIDER=$prdProvider;};

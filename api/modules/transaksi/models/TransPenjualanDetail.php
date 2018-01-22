@@ -34,7 +34,7 @@ class TransPenjualanDetail extends \yii\db\ActiveRecord
 			[['STORE_ID','TRANS_ID','OFLINE_ID'], 'required','on'=>self::SCENARIO_CREATE],
             [['TRANS_DATE', 'CREATE_AT', 'UPDATE_AT','OFLINE_ID','GOLONGAN'], 'safe'],
             [['PRODUCT_QTY', 'HARGA_JUAL', 'DISCOUNT'], 'number'],
-            [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
+            [['STATUS', 'YEAR_AT', 'MONTH_AT','TRANS_TYPE'], 'integer'],
             [['DCRP_DETIL'], 'string'],
             [['ACCESS_GROUP', 'ACCESS_ID'], 'string', 'max' => 15],
             [['STORE_ID','UNIT_ID'], 'string', 'max' => 20],
@@ -60,6 +60,7 @@ class TransPenjualanDetail extends \yii\db\ActiveRecord
             'OFLINE_ID' => 'Ofline ID',
             'TRANS_DATE' => 'Trans  Date',
             'PRODUCT_ID' => 'Product  ID',
+            'TRANS_TYPE' => 'TRANS_TYPE',
             'PRODUCT_NM' => 'Product  Nm',
             'PRODUCT_PROVIDER' => 'Provider',
             'PRODUCT_PROVIDER_NO' => 'Provider No',
@@ -107,6 +108,9 @@ class TransPenjualanDetail extends \yii\db\ActiveRecord
 			'TRANS_DATE'=>function($model){
 				return $model->TRANS_DATE;
 			},					
+			'TRANS_TYPE'=>function($model){
+				return $model->TRANS_TYPE;
+			},
 			'PRODUCT_ID'=>function($model){
 				return $model->PRODUCT_ID;
 			},
