@@ -30,7 +30,7 @@ class TransPenjualanHeader extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['STORE_ID','ACCESS_ID','TRANS_DATE','OFLINE_ID'], 'required','on'=>self::SCENARIO_CREATE],
+            [['STORE_ID','ACCESS_ID','TRANS_DATE'], 'required','on'=>self::SCENARIO_CREATE],
 			[['TRANS_ID','TOTAL_PRODUCT'], 'required','on'=>self::SCENARIO_UPDATE],
 			[['TRANS_DATE', 'CREATE_AT', 'UPDATE_AT','MERCHANT_ID','TRANS_ID','CONSUMER_ID','OPENCLOSE_ID'], 'safe'],
             [['TOTAL_PRODUCT', 'SUB_TOTAL_HARGA', 'PPN', 'TOTAL_HARGA'], 'number'],
@@ -41,7 +41,7 @@ class TransPenjualanHeader extends \yii\db\ActiveRecord
             [['UPDATE_BY'], 'string', 'max' => 50],
             [['TYPE_PAY_NM', 'BANK_NM', 'CONSUMER_PHONE'], 'string', 'max' => 150],
             [['MERCHANT_NM', 'MERCHANT_NO','OFLINE_ID'], 'string', 'max' => 255],
-            [['CONSUMER_NM'], 'string', 'max' => 100],
+            [['CONSUMER_NM','CASHIER_NAME'], 'string', 'max' => 100],
             [['CONSUMER_EMAIL'], 'string', 'max' => 200],
         ];
     }
@@ -56,6 +56,7 @@ class TransPenjualanHeader extends \yii\db\ActiveRecord
             'ACCESS_GROUP' => 'Access  Group',
             'STORE_ID' => 'Store  ID',
             'ACCESS_ID' => 'Access  ID',
+            'CASHIER_NAME' => 'CASHIER_NAME',
             'TRANS_ID' => 'Trans  ID',
             'OFLINE_ID' => 'Ofline ID',
             'OPENCLOSE_ID' => 'Openclose ID',
@@ -166,7 +167,11 @@ class TransPenjualanHeader extends \yii\db\ActiveRecord
 				}else{
 					return 'none';
 				}
-			}
+			},
+			'CASHIER_NAME'=>function($model){
+				return $model->CASHIER_NAME;
+			},	
+			
 		];
 	}
 }
