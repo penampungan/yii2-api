@@ -102,6 +102,7 @@ class TransPenjualanDetailController extends ActiveController
 		$accessId			= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
 		$golongan			= isset($paramsBody['GOLONGAN'])!=''?$paramsBody['GOLONGAN']:'';
 		$tglTrans			= isset($paramsBody['TRANS_DATE'])!=''?$paramsBody['TRANS_DATE']:'';
+		$transType			= isset($paramsBody['TRANS_TYPE'])!=''?$paramsBody['TRANS_TYPE']:'';
 		$prdID				= isset($paramsBody['PRODUCT_ID'])!=''?$paramsBody['PRODUCT_ID']:'';
 		$prdNM				= isset($paramsBody['PRODUCT_NM'])!=''?$paramsBody['PRODUCT_NM']:'';
 		$prdProvider		= isset($paramsBody['PRODUCT_PROVIDER'])!=''?$paramsBody['PRODUCT_PROVIDER']:'';
@@ -126,36 +127,15 @@ class TransPenjualanDetailController extends ActiveController
 			*/
 			if($transHeaderKey1<>''){				
 				//MODEL TARNS DETAILS BY TRANS_ID/OFLINE_ID
-				if($transHeaderKey2<>''){	
-					$modelCnt= TransPenjualanDetail::find()->where(['OFLINE_ID'=>$transHeaderKey2])->count();
-					$model= TransPenjualanDetail::find()->where(['OFLINE_ID'=>$transHeaderKey2])->all();		
-					if($modelCnt){
-						return array('LIST_TRANS_DETAILS'=>$model);
-					}else{
-						return array('result'=>'OFLINE_ID-not-exist');
-					};
+				$modelCnt= TransPenjualanDetail::find()->where(['TRANS_ID'=>$transHeaderKey1])->count();
+				$model= TransPenjualanDetail::find()->where(['TRANS_ID'=>$transHeaderKey1])->all();		
+				if($modelCnt){
+					return array('LIST_TRANS_DETAILS'=>$model);
 				}else{
-					$modelCnt= TransPenjualanDetail::find()->where(['TRANS_ID'=>$transHeaderKey1])->count();
-					$model= TransPenjualanDetail::find()->where(['TRANS_ID'=>$transHeaderKey1])->all();		
-					if($modelCnt){
-						return array('LIST_TRANS_DETAILS'=>$model);
-					}else{
-						return array('result'=>'TRANS_ID-not-exist');
-					};
-				}
+					return array('result'=>'TRANS_ID-not-exist');
+				};
 			}else{
-				//MODEL TARNS DETAILS BY OFLINE_ID
-				if($transHeaderKey2<>''){	
-					$modelCnt= TransPenjualanDetail::find()->where(['OFLINE_ID'=>$transHeaderKey2])->count();
-					$model= TransPenjualanDetail::find()->where(['OFLINE_ID'=>$transHeaderKey2])->all();		
-					if($modelCnt){
-						return array('LIST_TRANS_DETAILS'=>$model);
-					}else{
-						return array('result'=>'OFLINE_ID-not-exist');
-					};
-				}else{
-					return array('result'=>'TRANS_ID-OFLINE_ID-not-exist');
-				}	
+				return array('result'=>'TRANS_ID-not-exist');
 			}			
 		}elseif($metode=='POST'){
 			/**
@@ -175,10 +155,10 @@ class TransPenjualanDetailController extends ActiveController
 			*									   PRODUCT_PROVIDER,PRODUCT_PROVIDER_NO,PRODUCT_PROVIDER_NM,
 			*									   PRODUCT_QTY,UNIT_ID,UNIT_NM,HARGA_JUAL,DISCOUNT,PROMO	  			
 			*/	
-			$modelCheck=TransPenjualanDetail::find()->where("PRODUCT_ID='".$prdID."' AND ( TRANS_ID='".$transHeaderKey1."' OR OFLINE_ID='".$transHeaderKey1."')")->count();
+			$modelCheck=TransPenjualanDetail::find()->where("PRODUCT_ID='".$prdID."' AND ( TRANS_ID='".$transHeaderKey1."')")->count();
 			if($modelCheck){
-				$modelCheckView=TransPenjualanDetail::find()->where(['TRANS_ID'=>$transHeaderKey1])->orWhere(['OFLINE_ID'=>$transHeaderKey2])->all();
-				return array('LIST_TRANS_DETAILS'=>$modelCheckView);
+				// $modelCheckView=TransPenjualanDetail::find()->where(['TRANS_ID'=>$transHeaderKey1])->all();
+				// return array('LIST_TRANS_DETAILS'=>$modelCheckView);
 			}else{	
 				$modelNew = new TransPenjualanDetail();
 				$modelNew->scenario = "create";
@@ -190,6 +170,7 @@ class TransPenjualanDetailController extends ActiveController
 				if ($golongan<>''){$modelNew->GOLONGAN=$golongan;};
 				//==PROPERTES==
 				if ($tglTrans<>''){$modelNew->TRANS_DATE=$tglTrans;};
+				if ($transType<>''){$modelNew->TRANS_TYPE=$transType;};
 				if ($prdID<>''){$modelNew->PRODUCT_ID=$prdID;};
 				if ($prdNM<>''){$modelNew->PRODUCT_NM=$prdNM;};
 				if ($prdProvider<>''){$modelNew->PRODUCT_PROVIDER=$prdProvider;};
@@ -202,7 +183,7 @@ class TransPenjualanDetailController extends ActiveController
 				if ($discount<>''){$modelNew->DISCOUNT=$discount;};
 				if ($promo<>''){$modelNew->PROMO=$promo;};		
 				if($modelNew->save()){
-					$modelView=TransPenjualanDetail::find()->where(['TRANS_ID'=>$transHeaderKey1])->orWhere(['OFLINE_ID'=>$transHeaderKey2])->all();
+					$modelView=TransPenjualanDetail::find()->where(['TRANS_ID'=>$transHeaderKey1,'PRODUCT_ID'=>$prdID,'TRANS_TYPE'=>$transType])->one();
 					return array('LIST_TRANS_DETAILS'=>$modelView);
 				}else{
 					return array('error'=>$modelNew->errors);

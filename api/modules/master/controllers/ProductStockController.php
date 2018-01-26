@@ -196,7 +196,7 @@ class ProductStockController extends ActiveController
 				    if ($accessID<>''){$modelNew->CREATE_BY=$accessID;};
 				 
 					if($modelNew->save()){
-						$rsltMax=ProductStock::find()->where(['PRODUCT_ID'=>$productId])->max(ID);
+						$rsltMax=ProductStock::find()->where(['PRODUCT_ID'=>$productId])->max('ID');
 						$modelView=ProductStock::find()->where(['ID'=>$rsltMax])->one();
 						return array('LIST_PRODUCT_STOCK'=>$modelView);
 					}else{

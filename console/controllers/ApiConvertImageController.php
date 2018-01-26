@@ -94,7 +94,7 @@ class ApiConvertImageController extends Controller
 	*  Create by: ptr.nov@gmail.com
 	*/
 	private function base64toimage($string64 ='',$fileNm){		
-	
+		$timestamp=strtotime(date('Y-m-d H:i:s'));
 		$rootPathImageZip='/var/www/KG_IMAGE/produk/';
 		// $dataImgScr=$string;
 		// $namefile=$fileNm;			
@@ -102,7 +102,7 @@ class ApiConvertImageController extends Controller
 		// $img1 = str_replace('charset=utf-8','',$img);
 		// $img2 = str_replace(' ', '+', $img1);
 		$dataImgScr=str_replace('charset=utf-8;','',$string64);//$string64;//str_replace(' ', '+', $$string64);//$string64;
-		$namefile=$fileNm;			
+		$namefile=$timestamp.'.'.$fileNm;			
 		 // $img = str_replace('data:image/jpeg;base64,','',trim($dataImgScr));   //PR OTHER EXTENTION [png,bmp]
 		 // $img1 = str_replace('charset=utf-8','',$img);
 		 // $img2 = str_replace(' ', '+', $img1);
@@ -148,7 +148,7 @@ class ApiConvertImageController extends Controller
 			return $namefile.$extention;	 
 			//return self::is_base64_encoded($img2);  #check Base64
 		}else{
-			return $fileNm;
+			return $namefile;
 		}
 		
 	}
