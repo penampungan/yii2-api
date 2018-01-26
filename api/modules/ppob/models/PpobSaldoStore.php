@@ -5,18 +5,19 @@ namespace api\modules\ppob\models;
 use Yii;
 
 /**
- * This is the model class for table "ppob_master_kelompok".
+ * This is the model class for table "ppob_saldo_store".
  *
  * @property string $ID
- * @property string $KELOMPOK
+ * @property string $ACCESS_GROUP
+ * @property string $STORE_ID
+ * @property string $SALDO_DEPOSIT
  * @property int $STATUS
- * @property string $KETERANGAN
  * @property string $CREATE_BY
  * @property string $CREATE_AT
  * @property string $UPDATE_BY
  * @property string $UPDATE_AT
  */
-class PpobMasterKelompok extends \yii\db\ActiveRecord
+class PpobSaldoStore extends \yii\db\ActiveRecord
 {
 	/**
      * @return \yii\db\Connection the database connection used by this AR class.
@@ -31,7 +32,7 @@ class PpobMasterKelompok extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'ppob_master_kelompok';
+        return 'ppob_saldo_store';
     }
 
     /**
@@ -40,11 +41,12 @@ class PpobMasterKelompok extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['KELOMPOK'], 'required'],
+            [['ACCESS_GROUP', 'STORE_ID', 'SALDO_DEPOSIT'], 'required'],
+            [['SALDO_DEPOSIT'], 'number'],
             [['STATUS'], 'integer'],
-            [['KETERANGAN'], 'string'],
             [['CREATE_AT', 'UPDATE_AT'], 'safe'],
-            [['KELOMPOK'], 'string', 'max' => 255],
+            [['ACCESS_GROUP'], 'string', 'max' => 15],
+            [['STORE_ID'], 'string', 'max' => 25],
             [['CREATE_BY', 'UPDATE_BY'], 'string', 'max' => 50],
         ];
     }
@@ -56,24 +58,29 @@ class PpobMasterKelompok extends \yii\db\ActiveRecord
     {
         return [
             'ID' => 'ID',
-            'KELOMPOK' => 'Kelompok',
+            'ACCESS_GROUP' => 'Access  Group',
+            'STORE_ID' => 'Store  ID',
+            'STORE_SALDO' => 'Saldo  Deposit',
             'STATUS' => 'Status',
-            'KETERANGAN' => 'Keterangan',
             'CREATE_BY' => 'Create  By',
             'CREATE_AT' => 'Create  At',
             'UPDATE_BY' => 'Update  By',
             'UPDATE_AT' => 'Update  At',
         ];
     }
+	
 	public function fields()
 	{
 		return [			
-			'ID'=>function($model){
-				return $model->ID;
+			'STORE_ID'=>function($model){
+				return $model->STORE_ID;
 			},
-			'KELOMPOK'=>function($model){
-				return $model->KELOMPOK;
+			'ACCESS_GROUP'=>function($model){
+				return $model->ACCESS_GROUP;
 			},
+			'STORE_SALDO'=>function($model){
+				return $model->STORE_SALDO;
+			},			
 			'STATUS'=>function($model){
 				return $model->STATUS;
 			}

@@ -1,0 +1,21 @@
+STATUS ERROR     DESCRIPTION
+406				 Maaf, saldo anda tidak mencukupi
+407				 Anda tidak memiliki akses produk ini, produk->PREMIT=0
+failed	407	Anda tidak memiliki akses produk ini.
+
+
+
+PRABAYAR ISI PULSA
+(
+	[status] => success
+	[errcode] => 200
+	[remarks] => OK
+	[kode_voucher] => I5S
+	[operator] => INDOSAT SMS
+	[nominal] => 1000
+	[msisdn] => 321123127732
+	[message] => Pembelian ISAT SMS 5K 321123127732 BERHASIL!
+	[struk] => STRUK PEMBELIAN VOUCHER PRABAYAR|--------------------------------|Tanggal   : 2018-01-13 23:10|Nopel     : 321123127732|Provider  : INDOSAT SMS|Nominal   : 1000|VSN       : 0427161252160154302|Status    : BERHASIL||--------- TERIMA KASIH ---------
+	[id_pelanggan] =>
+	[sn] => 0427161252160154302
+)

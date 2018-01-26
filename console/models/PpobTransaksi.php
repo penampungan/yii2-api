@@ -1,8 +1,9 @@
 <?php
 
-namespace api\modules\ppob\models;
+namespace console\models;
 
 use Yii;
+use console\models\PpobTransaksiValidasi;
 /*
  * INPUT	 (TYPE_NM,TRANS_ID,TRANS_DATE,STORE_ID,ID_PRODUK,MSISDN,ID_PELANGGAN,PEMBAYARAN)
  * RESPON 	 (NAMA_PELANGGAN,ADMIN_BANK,TAGIHAN,TOTAL_BAYAR,MESSAGE,STRUK,TOKEN,STATUS)
@@ -17,7 +18,7 @@ class PpobTransaksi extends \yii\db\ActiveRecord
      */
     public static function getDb()
     {
-        return Yii::$app->get('production_api');
+        return Yii::$app->get('api_cronjob');
     }	
 	/**
      * @inheritdoc
@@ -36,9 +37,9 @@ class PpobTransaksi extends \yii\db\ActiveRecord
 			// [['TRANS_ID','TRANS_DATE','STORE_ID','ID_PRODUK','ID_PELANGGAN','PEMBAYARAN'], 'required','on'=>self::SCENARIO_PASCABAYAR],
             // [['TRANS_ID','TRANS_DATE','STORE_ID','ID_PRODUK','MSISDN','PEMBAYARAN'], 'required','on'=>self::SCENARIO_PRABAYAR],   
 			
-			[['TRANS_ID','TRANS_DATE','STORE_ID','ID_PRODUK','ID_PELANGGAN'], 'required','on'=>self::SCENARIO_PASCABAYAR],
-            [['TRANS_ID','TRANS_DATE','STORE_ID','ID_PRODUK','MSISDN','PEMBAYARAN'], 'required','on'=>self::SCENARIO_PRABAYAR],           			
-            [['TRANS_DATE', 'TGL', 'JAM', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
+			// [['TRANS_ID','TRANS_DATE','STORE_ID','ID_PRODUK','ID_PELANGGAN'], 'required','on'=>self::SCENARIO_PASCABAYAR],
+            // [['TRANS_ID','TRANS_DATE','STORE_ID','ID_PRODUK','MSISDN','PEMBAYARAN'], 'required','on'=>self::SCENARIO_PRABAYAR],		
+            [['TRANS_DATE', 'TGL', 'JAM', 'CREATE_AT', 'UPDATE_AT','TRANS_UNIK','validasiStatus','RESPON_OPERATOR','RESPON_KODE_VOUCHER','RESPON_NOMINAL'], 'safe'],
             [['NAME', 'RESPON_MESSAGE', 'RESPON_STRUK','RESPON_SN'], 'string'],
             [['DENOM', 'HARGA_DASAR', 'MARGIN_FEE_KG', 'MARGIN_FEE_MEMBER', 'HARGA_JUAL', 'PEMBAYARAN', 'RESPON_ADMIN_BANK', 'RESPON_TAGIHAN', 'RESPON_TOTAL_BAYAR'], 'number'],
             [['PERMIT', 'STATUS','DEV_STT'], 'integer'],
@@ -90,6 +91,9 @@ class PpobTransaksi extends \yii\db\ActiveRecord
             'RESPON_STRUK' => 'Respon  Struk',
             'RESPON_TOKEN' => 'Respon  Token',
             'RESPON_SN' => 'Respon  SN',
+            'RESPON_OPERATOR' => 'Operator',
+            'RESPON_KODE_VOUCHER' => 'Kode Voucher',
+            'RESPON_NOMINAL' => 'Nominal',
             'STATUS' => 'Status',
             'CREATE_BY' => 'Create  By',
             'CREATE_AT' => 'Create  At',
@@ -101,6 +105,9 @@ class PpobTransaksi extends \yii\db\ActiveRecord
 	public function fields()
 	{
 		return [			
+			'TRANS_UNIK'=>function($model){
+				return $model->TRANS_ID;				// INPUT = NO-TRANSAKSI KASIR
+			},
 			'TRANS_ID'=>function($model){
 				return $model->TRANS_ID;				// INPUT = NO-TRANSAKSI KASIR
 			},
@@ -155,39 +162,58 @@ class PpobTransaksi extends \yii\db\ActiveRecord
 			'PEMBAYARAN'=>function($model){
 				return $model->PEMBAYARAN;				// INPUT = PEMBAYARAN (Manual/RESPON_TOTAL_BAYAR untuk PASCABAYAR), Untuk PRABAYAR from HARGA_JUAL
 			},
-			'DEV_STT'=>function($model){				// KG RESPON = STATUS (0=production; 1=development)
-				return $model->DEV_STT;					
+			'RESPON_REFF_ID'=>function($model){
+				return $model->RESPON_REFF_ID;			// RESPON = REFF_ID     
+			},
+			'RESPON_NAMA_PELANGGAN'=>function($model){
+				return $model->RESPON_NAMA_PELANGGAN;	// RESPON = NAMA_PELANGGAN (PASCABAYAR) 
+			},
+			'RESPON_ADMIN_BANK'=>function($model){
+				return $model->RESPON_ADMIN_BANK;		// RESPON = ADMIN_BANK (PASCABAYAR) 
+			},
+			'RESPON_TAGIHAN'=>function($model){
+				return $model->RESPON_TAGIHAN;			// RESPON = ADMIN_BANK (PASCABAYAR) 
+			},
+			'RESPON_TOTAL_BAYAR'=>function($model){
+				return $model->RESPON_TOTAL_BAYAR;		// RESPON = TOTAL_BAYAR (PASCABAYAR)
+			},
+			'RESPON_MESSAGE'=>function($model){
+				return $model->RESPON_MESSAGE;			// RESPON = MESSAGE (PASCABAYAR)
+			},
+			'RESPON_STRUK'=>function($model){
+				return $model->RESPON_STRUK;			// RESPON = STRUK (PASCABAYAR)
+			},
+			'RESPON_TOKEN'=>function($model){
+				return $model->RESPON_TOKEN;			// RESPON = TOKEN (PASCABAYAR)
 			},
 			'STATUS'=>function($model){					// RESPON = STATUS (0=(first transaksi); 1=(success B to B to A to C); 2=Panding; 3=Gagal)
 				return $model->STATUS;					
 				// sudah mendapatkan update respon, status 0 pmenjadi status=1
 				// Status=1, maka tidak akan bisa di kembalikan ke Status=0
 			},
-			'RESPON_PRABAYAR'=>function($model){
-				$data=[
-					'RESPON_MESSAGE'=>$model->ID_PELANGGAN==''?$model->RESPON_MESSAGE:null,					// RESPON = MESSAGE (PASCABAYAR/PRABAYAR)
-					'RESPON_SN'=>$model->ID_PELANGGAN==''?$model->RESPON_SN:null,							// RESPON = SN (PASCABAYAR/PRABAYAR)
-					'RESPON_STRUK'=>$model->ID_PELANGGAN==''?$model->RESPON_STRUK:null,						// RESPON = STRUK (PASCABAYAR/PRABAYAR)
-				];
-				return $data;
-			},		
-			'RESPON_PASCABAYAR'=>function($model){
-				$dataPascabayar=[
-					'ID_PELANGGAN'=>$model->ID_PELANGGAN,	
-					'RESPON_NAMA_PELANGGAN'=>$model->ID_PELANGGAN!=''?$model->RESPON_NAMA_PELANGGAN:null,	// RESPON = NAMA_PELANGGAN (PASCABAYAR) 
-					'RESPON_REFF_ID'=>$model->ID_PELANGGAN!=''?$model->RESPON_REFF_ID:null,					// RESPON = REFF_ID					
-					'RESPON_ADMIN_BANK'=>$model->ID_PELANGGAN!=''?$model->RESPON_ADMIN_BANK:null,			// RESPON = ADMIN_BANK (PASCABAYAR) 
-					'RESPON_TAGIHAN'=>$model->ID_PELANGGAN!=''?$model->RESPON_TAGIHAN:null,					// RESPON = ADMIN_BANK (PASCABAYAR) 
-					'RESPON_TOTAL_BAYAR'=>$model->ID_PELANGGAN!=''?$model->RESPON_TOTAL_BAYAR:null,			// RESPON = TOTAL_BAYAR (PASCABAYAR)
-					'RESPON_MESSAGE'=>$model->ID_PELANGGAN!=''?$model->RESPON_MESSAGE:null,					// RESPON = MESSAGE (PASCABAYAR/PRABAYAR)
-					'RESPON_STRUK'=>$model->ID_PELANGGAN!=''?$model->RESPON_STRUK:null,						// RESPON = STRUK (PASCABAYAR/PRABAYAR)
-					'RESPON_SN'=>$model->ID_PELANGGAN!=''?$model->RESPON_SN:null,							// RESPON = SN (PASCABAYAR/PRABAYAR)
-					'RESPON_TOKEN'=>$model->ID_PELANGGAN!=''?$model->RESPON_TOKEN:null,						// RESPON = TOKEN (PASCABAYAR)
-				];
-				return $dataPascabayar;
-			},			
+			'RESPON_OPERATOR'=>function($model){
+				return $model->RESPON_OPERATOR;			// RESPON_OPERATOR 
+			},
+			'RESPON_KODE_VOUCHER'=>function($model){
+				return $model->RESPON_KODE_VOUCHER;		// RESPON_KODE_VOUCHER
+			},
+			'RESPON_NOMINAL'=>function($model){
+				return $model->RESPON_NOMINAL;			// RESPON_NOMINAL
+			}
 		];
 	}
+	
+	public function getTransaksiValidasi()
+    {
+        return $this->hasOne(PpobTransaksiValidasi::className(),['TRANS_UNIK'=>'TRANS_UNIK']);         
+    }
+	
+	//VALIDASI PPOB POST PEMBAYARAN
+    public function getValidasiStatus(){
+        $result=$this->transaksiValidasi;
+        return $result!=''?1:0;
+		//TAMBAHKAN TABEL LOCK STORE BERMASALAH, TRANSAKSI DI GAGALKAN
+    }
 }
 
 

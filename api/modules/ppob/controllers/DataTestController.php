@@ -22,7 +22,7 @@ use api\modules\ppob\models\PpobMasterHarga;
 use api\modules\ppob\models\PpobTransaksi;
 use api\modules\ppob\models\PpobSaldoStore;
 
-class DataController extends ActiveController
+class DataTestController extends ActiveController
 {
 
 	public $modelClass = 'api\modules\ppob\models\PpobMasterKtg';
@@ -269,14 +269,13 @@ class DataController extends ActiveController
 						return array('error'=>$modelNewPascaBayar->errors);
 					}
 				}else{
-					//== UPDATE DATA TRANSAKSI PASCABAYAR ===
 					$validationInputPascabayar->PEMBAYARAN=$pembayaran;
 					if($validationInputPascabayar->save()){
-						$responPascabayar = PpobTransaksi::find()->where(['TRANS_UNIK'=>$validationInputPascabayar['TRANS_UNIK']])->one();
-						return array('respon'=>$responPascabayar);
+						return array('error'=>'updated');
 					}else{
 						return array('error'=>'not-update');
-					}								
+					}
+					
 				}
 				//=== END TRANSAKSI PASCABAYAR ====
 				
@@ -310,11 +309,9 @@ class DataController extends ActiveController
 						return array('error'=>$modelNewPrabayar->errors);
 					}
 				}else{
-					//== UPDATE DATA TRANSAKSI PRABAYAR ===
 					$validationInputPrabayar->PEMBAYARAN=$pembayaran;
 					if($validationInputPrabayar->save()){
-						$responPrabayar = PpobTransaksi::find()->where(['TRANS_UNIK'=>$validationInputPrabayar['TRANS_UNIK']])->one();
-						return array('respon'=>$responPrabayar);
+						return array('error'=>'updated');
 					}else{
 						return array('error'=>'not-update');
 					}					
