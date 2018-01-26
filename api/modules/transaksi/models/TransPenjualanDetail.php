@@ -31,14 +31,14 @@ class TransPenjualanDetail extends \yii\db\ActiveRecord
     {
         return [
             //[['STORE_ID', 'ACCESS_ID', 'TRANS_ID', 'TRANS_DATE', 'PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
-			[['STORE_ID','TRANS_ID','OFLINE_ID'], 'required','on'=>self::SCENARIO_CREATE],
-            [['TRANS_DATE', 'CREATE_AT', 'UPDATE_AT','OFLINE_ID','GOLONGAN'], 'safe'],
+			[['STORE_ID','TRANS_ID'], 'required','on'=>self::SCENARIO_CREATE],
+            [['TRANS_ID','TRANS_DATE', 'CREATE_AT', 'UPDATE_AT','OFLINE_ID','GOLONGAN'], 'safe'],
             [['PRODUCT_QTY', 'HARGA_JUAL', 'DISCOUNT'], 'number'],
             [['STATUS', 'YEAR_AT', 'MONTH_AT','TRANS_TYPE'], 'integer'],
             [['DCRP_DETIL'], 'string'],
             [['ACCESS_GROUP', 'ACCESS_ID'], 'string', 'max' => 15],
             [['STORE_ID','UNIT_ID'], 'string', 'max' => 20],
-            [['TRANS_ID', 'UNIT_NM', 'PROMO', 'UPDATE_BY'], 'string', 'max' => 50],
+            [['UNIT_NM', 'PROMO', 'UPDATE_BY'], 'string', 'max' => 70],
             [['PRODUCT_ID'], 'string', 'max' => 35],
             [['PRODUCT_PROVIDER','PRODUCT_PROVIDER_NO','PRODUCT_PROVIDER_NM','OFLINE_ID'], 'string', 'max' => 255],
             [['PRODUCT_NM'], 'string', 'max' => 100],

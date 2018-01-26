@@ -146,8 +146,8 @@ class TransPenjualanHeaderController extends ActiveController
 				}
 			}else{
 				//TARNS HEADER BY TRANS_ID
-				$modelCnt= TransPenjualanHeader::find()->where(['TRANS_ID'=>$transHeaderKey1])->orWhere(['OFLINE_ID'=>$transHeaderKey2])->count();
-				$model= TransPenjualanHeader::find()->where(['TRANS_ID'=>$transHeaderKey1])->orWhere(['OFLINE_ID'=>$transHeaderKey2])->one();		
+				$modelCnt= TransPenjualanHeader::find()->where(['TRANS_ID'=>$transHeaderKey1])->count();
+				$model= TransPenjualanHeader::find()->where(['TRANS_ID'=>$transHeaderKey1])->one();		
 				if($modelCnt){			
 					return array('LIST_TRANS_HEADER'=>$model);
 				}else{
@@ -167,13 +167,14 @@ class TransPenjualanHeaderController extends ActiveController
 			* PROPERTIES	: TOTAL_PRODUCT,SUB_TOTAL_HARGA,PPN,TOTAL_HARGA,CONSUMER_ID,CONSUMER_NM,CONSUMER_EMAIL,CONSUMER_PHONE,DCRP_DETIL,
 			*				  MERCHANT_ID [TYPE_PAY_ID,TYPE_PAY_NM,BANK_ID,BANK_NM,MERCHANT_NM,MERCHANT_NO]->inquery
 			*/
-			$modelTransCheck=TransPenjualanHeader::find()->where(['OFLINE_ID'=>$transHeaderKey2])->one();
+			$modelTransCheck=TransPenjualanHeader::find()->where(['TRANS_ID'=>$transHeaderKey1])->one();
 			if(!$modelTransCheck){
 				$modelNew = new TransPenjualanHeader();
 				$modelNew->scenario = "create";
 				//==KEY=			
 				if ($opencloseId<>''){$modelNew->OPENCLOSE_ID=$opencloseId;};
 				if ($store_id<>''){$modelNew->STORE_ID=$store_id;};
+				if ($transHeaderKey1<>''){$modelNew->TRANS_ID=$transHeaderKey1;};
 				if ($transHeaderKey2<>''){$modelNew->OFLINE_ID=$transHeaderKey2;};
 				if ($tglTrans<>''){$modelNew->TRANS_DATE=date('Y-m-d H:i:s', strtotime($tglTrans));};
 				if ($accessId<>''){$modelNew->ACCESS_ID=$accessId;};			
@@ -190,13 +191,13 @@ class TransPenjualanHeaderController extends ActiveController
 				if ($merchantId<>''){$modelNew->MERCHANT_ID=$merchantId;};
 				if ($stt<>''){$modelNew->STATUS=$stt;};			
 				if($modelNew->save()){
-					$modelView=TransPenjualanHeader::find()->where(['OFLINE_ID'=>$transHeaderKey2])->orderBy(['ID' => SORT_DESC])->limit(1)->one();
+					$modelView=TransPenjualanHeader::find()->where(['TRANS_ID'=>$transHeaderKey1])->orderBy(['ID' => SORT_DESC])->limit(1)->one();
 					return array('LIST_TRANS_HEADER'=>$modelView);
 				}else{
 					return array('error'=>$modelNew->errors);
 				}
 			}else{
-				return array('error'=>'OFLINE_ID-EXIST');
+				return array('error'=>'TRANS_ID-EXIST');
 			}
 		};
 	}
