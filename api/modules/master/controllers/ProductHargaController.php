@@ -128,9 +128,14 @@ class ProductHargaController extends ActiveController
 					//Model Produck harga Per-Product
 					$modelCnt= ProductHarga::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId])->count();
 					$model= ProductHarga::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,])->all();				
-					if($modelCnt){
-						//return array('LIST_PRODUCT_HARGA'=>$model);
-						return array('LIST_PRODUCT_HARGA'=>ArrayHelper::index($model, null, 'STORE_ID'));
+					if($modelCnt){						
+						if ($id){
+							$model= ProductHarga::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,'ID'=>$id])->one();				
+							return array('LIST_PRODUCT_HARGA'=>$model);							
+						}else{						
+							return array('LIST_PRODUCT_HARGA'=>$model);
+							//return array('LIST_PRODUCT_HARGA'=>ArrayHelper::index($model, null, 'STORE_ID'));						
+						}					
 					}else{
 						return array('result'=>'data-empty');
 					}						
@@ -168,7 +173,7 @@ class ProductHargaController extends ActiveController
 					if ($prdhargaJual<>''){$modelNew->HARGA_JUAL=$prdhargaJual;};
 					if ($prdNote<>''){$modelNew->DCRP_DETIL=$prdNote;};
 					if($modelNew->save()){
-						$rsltMax=ProductHarga::find()->where(['PRODUCT_ID'=>$productId])->max(ID);
+						$rsltMax=ProductHarga::find()->where(['PRODUCT_ID'=>$productId])->max('ID');
 						$modelView=ProductHarga::find()->where(['ID'=>$rsltMax])->one();
 						return array('LIST_PRODUCT_HARGA'=>$modelView);
 					}else{

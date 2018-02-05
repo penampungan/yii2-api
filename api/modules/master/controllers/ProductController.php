@@ -199,7 +199,55 @@ class ProductController extends ActiveController
 								}
 							}							
 						}						
-					} else{						
+					}elseif($tblPooling=='TBL_SYNC_QTY'){					//===TBL_STOCK  FOR UPDATE UUID ===
+						//==GET DATA POLLING
+						$modelPoling=SyncPoling::find()->where([
+							 'NM_TABLE'=>'TBL_SYNC_QTY',
+							 'ACCESS_GROUP'=>$dataHeader[0],
+							 'STORE_ID'=>$store_id,
+							 'PRIMARIKEY_VAL'=>$productID
+						])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();					
+						//==UPDATE DATA POLLING UUID
+						if($modelPoling){							
+							foreach($modelPoling as $row => $val){
+								$modelSimpan=SyncPoling::find()->where([
+									 'NM_TABLE'=>'TBL_SYNC_QTY',
+									 'ACCESS_GROUP'=>$dataHeader[0],
+									 'STORE_ID'=>$store_id,
+									 'PRIMARIKEY_VAL'=>$productID,
+									 'TYPE_ACTION'=>$val->TYPE_ACTION
+								])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+								if($modelSimpan && $paramlUUID){
+									$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+									$modelSimpan->save();
+								}
+							}							
+						}						
+					}elseif($tblPooling=='TBL_SYNC_HARGA'){					//===TBL_STOCK  FOR UPDATE UUID ===
+						//==GET DATA POLLING
+						$modelPoling=SyncPoling::find()->where([
+							 'NM_TABLE'=>'TBL_SYNC_HARGA',
+							 'ACCESS_GROUP'=>$dataHeader[0],
+							 'STORE_ID'=>$store_id,
+							 'PRIMARIKEY_VAL'=>$productID
+						])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();					
+						//==UPDATE DATA POLLING UUID
+						if($modelPoling){							
+							foreach($modelPoling as $row => $val){
+								$modelSimpan=SyncPoling::find()->where([
+									 'NM_TABLE'=>'TBL_SYNC_HARGA',
+									 'ACCESS_GROUP'=>$dataHeader[0],
+									 'STORE_ID'=>$store_id,
+									 'PRIMARIKEY_VAL'=>$productID,
+									 'TYPE_ACTION'=>$val->TYPE_ACTION
+								])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+								if($modelSimpan && $paramlUUID){
+									$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+									$modelSimpan->save();
+								}
+							}							
+						}						
+					}else{						
 						//==GET DATA POLLING
 						$modelPoling=SyncPoling::find()->where([
 							 'NM_TABLE'=>'TBL_PRODUCT',

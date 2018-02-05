@@ -65,7 +65,7 @@ class Product extends \yii\db\ActiveRecord
            // [['ACCESS_GROUP', 'STORE_ID', 'PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
             [['STATUS', 'YEAR_AT', 'MONTH_AT','IMG_FILE'], 'integer'],
             [['PRODUCT_SIZE', 'STOCK_LEVEL'], 'number'],
-            [['CREATE_AT', 'UPDATE_AT','CREATE_UUID','UPDATE_UUID','CURRENT_PRICE','INDUSTRY_ID','INDUSTRY_GRP_ID','CURRENT_STOCK'], 'safe'],
+            [['CREATE_AT', 'UPDATE_AT','CREATE_UUID','UPDATE_UUID','CURRENT_PRICE','INDUSTRY_ID','INDUSTRY_GRP_ID','CURRENT_STOCK','CURRENT_PPN'], 'safe'],
             [['DCRP_DETIL'], 'string'],
             [['ACCESS_GROUP','UNIT_ID'], 'string', 'max' => 15],
             [['STORE_ID'], 'string', 'max' => 20],
@@ -208,8 +208,11 @@ class Product extends \yii\db\ActiveRecord
 				return $model->CURRENT_STOCK;
 				// return $this->productStockTbl;
 			},	
-            'CURRENT_PRICE'=>function($model){
-				return $this->productHargaTbl;
+            'CURRENT_PPN'=>function($model){
+				return $model->CURRENT_PPN;
+			},	 
+			'CURRENT_PRICE'=>function($model){
+				return $model->CURRENT_PRICE;
 			},	 
 			'CURRENT_DISCOUNT'=>function($model){
 				return $this->productDicountTbl;
