@@ -63,9 +63,9 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
            // [['ACCESS_GROUP', 'STORE_ID', 'PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
-            [['STATUS', 'YEAR_AT', 'MONTH_AT','IMG_FILE'], 'integer'],
+            [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['PRODUCT_SIZE', 'STOCK_LEVEL'], 'number'],
-            [['CREATE_AT', 'UPDATE_AT','CREATE_UUID','UPDATE_UUID','CURRENT_PRICE','INDUSTRY_ID','INDUSTRY_GRP_ID','CURRENT_STOCK','CURRENT_PPN'], 'safe'],
+            [['CREATE_AT', 'UPDATE_AT','CREATE_UUID','UPDATE_UUID','CURRENT_PRICE','INDUSTRY_ID','INDUSTRY_GRP_ID','CURRENT_STOCK','CURRENT_HPP','CURRENT_PPN','IMG_FILE'], 'safe'],
             [['DCRP_DETIL'], 'string'],
             [['ACCESS_GROUP','UNIT_ID'], 'string', 'max' => 15],
             [['STORE_ID'], 'string', 'max' => 20],
@@ -96,6 +96,8 @@ class Product extends \yii\db\ActiveRecord
             'UNIT_ID' => 'Unit  ID',
             'STOCK_LEVEL' => 'Stock  Level',
 			'CURRENT_STOCK'=>'CURRENT_STOCK',
+            'CURRENT_HPP' => 'CURRENT_HPP',
+            'CURRENT_PPN' => 'CURRENT_PPN',
             'CURRENT_PRICE' => 'Harga Jual',
             'INDUSTRY_ID' => 'Industry  ID',
             'INDUSTRY_NM' => 'Industry  Nm',
@@ -208,7 +210,10 @@ class Product extends \yii\db\ActiveRecord
 				return $model->CURRENT_STOCK;
 				// return $this->productStockTbl;
 			},	
-            'CURRENT_PPN'=>function($model){
+            'CURRENT_HPP'=>function($model){
+				return $model->CURRENT_HPP;
+			},	 
+			'CURRENT_PPN'=>function($model){
 				return $model->CURRENT_PPN;
 			},	 
 			'CURRENT_PRICE'=>function($model){

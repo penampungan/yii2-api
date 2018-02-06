@@ -17,7 +17,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
 
 use api\modules\master\models\ProductHarga;
-
+use api\modules\master\models\SyncPoling;
 
 /**
   * @author 	: ptrnov  <piter@lukison.com>
@@ -109,8 +109,15 @@ class ProductHargaController extends ActiveController
 		$prdtgl1		= isset($paramsBody['PERIODE_TGL1'])!=''?$paramsBody['PERIODE_TGL1']:'';
 		$prdtgl2		= isset($paramsBody['PERIODE_TGL2'])!=''?$paramsBody['PERIODE_TGL2']:'';
 		$prdjam			= isset($paramsBody['START_TIME'])!=''?$paramsBody['START_TIME']:'';
+		$hpp			= isset($paramsBody['HPP'])!=''?$paramsBody['HPP']:'';
+		$ppn			= isset($paramsBody['PPN'])!=''?$paramsBody['PPN']:'';
 		$prdhargaJual	= isset($paramsBody['HARGA_JUAL'])!=''?$paramsBody['HARGA_JUAL']:'';
 		$prdNote		= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['DCRP_DETIL']:'';
+		
+		//POLING SYNC nedded ACCESS_ID
+		$accessID=isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$tblPooling=isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		$paramlUUID=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
 		
 		if($metode=='GET'){
 			/**
@@ -126,16 +133,39 @@ class ProductHargaController extends ActiveController
 			if($store_id<>''){	
 				if($productId<>''){			
 					//Model Produck harga Per-Product
-					$modelCnt= ProductHarga::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId])->count();
+					$modelCntId= ProductHarga::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,'ID'=>$id])->count();
 					$model= ProductHarga::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,])->all();				
-					if($modelCnt){						
-						if ($id){
-							$model= ProductHarga::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,'ID'=>$id])->one();				
-							return array('LIST_PRODUCT_HARGA'=>$model);							
-						}else{						
-							return array('LIST_PRODUCT_HARGA'=>$model);
-							//return array('LIST_PRODUCT_HARGA'=>ArrayHelper::index($model, null, 'STORE_ID'));						
-						}					
+					if($modelCntId){						
+							$model= ProductHarga::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,'ID'=>$id])->one();	
+							if ($tblPooling=='TBL_HARGA'){						
+								//==GET DATA POLLING
+								$dataHeader=explode('.',$productId);
+								$modelPoling=SyncPoling::find()->where([
+									 'NM_TABLE'=>'TBL_HARGA',
+									 'ACCESS_GROUP'=>$dataHeader[0],
+									 'STORE_ID'=>$store_id,
+									 'PRIMARIKEY_VAL'=>$productId,
+									 'PRIMARIKEY_ID'=>$id
+								])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+								//==UPDATE DATA POLLING UUID
+								if($modelPoling){							
+									foreach($modelPoling as $row => $val){
+										$modelSimpan=SyncPoling::find()->where([
+											 'NM_TABLE'=>'TBL_HARGA',
+											 'ACCESS_GROUP'=>$dataHeader[0],
+											 'STORE_ID'=>$store_id,
+											 'PRIMARIKEY_VAL'=>$productId,
+											 'PRIMARIKEY_ID'=>$id,
+											 'TYPE_ACTION'=>$val->TYPE_ACTION
+										])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+										if($modelSimpan AND $paramlUUID){
+											$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+											$modelSimpan->save();
+										}
+									}							
+								}
+							}
+							return array('LIST_PRODUCT_HARGA'=>$model);											
 					}else{
 						return array('result'=>'data-empty');
 					}						
@@ -144,8 +174,8 @@ class ProductHargaController extends ActiveController
 					$modelCnt= ProductHarga::find()->where(['STORE_ID'=>$store_id])->count();
 					$model= ProductHarga::find()->where(['STORE_ID'=>$store_id])->all();				
 					if($modelCnt){
-						//return array('LIST_PRODUCT_HARGA'=>$model);
-						return array('LIST_PRODUCT_HARGA'=>ArrayHelper::index($model, null, 'STORE_ID'));
+						return array('LIST_PRODUCT_HARGA'=>$model);
+						// return array('LIST_PRODUCT_HARGA'=>ArrayHelper::index($model, null, 'STORE_ID'));
 					}else{
 						return array('result'=>'data-empty');
 					}
@@ -170,6 +200,8 @@ class ProductHargaController extends ActiveController
 					if ($prdtgl1<>''){$modelNew->PERIODE_TGL1=date("Y-m-d", strtotime($prdtgl1));}; 
 					if ($prdtgl2<>''){$modelNew->PERIODE_TGL2=date("Y-m-d", strtotime($prdtgl2));};
 					if ($prdjam<>''){$modelNew->START_TIME=$prdjam;};
+					if ($hpp<>''){$modelNew->HPP=$hpp;};
+					if ($ppn<>''){$modelNew->PPN=$ppn;};
 					if ($prdhargaJual<>''){$modelNew->HARGA_JUAL=$prdhargaJual;};
 					if ($prdNote<>''){$modelNew->DCRP_DETIL=$prdNote;};
 					if($modelNew->save()){
@@ -209,6 +241,8 @@ class ProductHargaController extends ActiveController
 		$prdtgl1		= isset($paramsBody['PERIODE_TGL1'])!=''?$paramsBody['PERIODE_TGL1']:'';
 		$prdtgl2		= isset($paramsBody['PERIODE_TGL2'])!=''?$paramsBody['PERIODE_TGL2']:'';
 		$prdjam			= isset($paramsBody['START_TIME'])!=''?$paramsBody['START_TIME']:'';
+		$hpp			= isset($paramsBody['HPP'])!=''?$paramsBody['HPP']:'';
+		$ppn			= isset($paramsBody['PPN'])!=''?$paramsBody['PPN']:'';
 		$prdhargaJual	= isset($paramsBody['HARGA_JUAL'])!=''?$paramsBody['HARGA_JUAL']:'';
 		$prdNote		= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['DCRP_DETIL']:'';
 		$stt			= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
@@ -218,6 +252,8 @@ class ProductHargaController extends ActiveController
 			if ($prdtgl1<>''){$modelEdit->PERIODE_TGL1=date("Y-m-d", strtotime($prdtgl1));}; 
 			if ($prdtgl2<>''){$modelEdit->PERIODE_TGL2=date("Y-m-d", strtotime($prdtgl2));};
 			if ($prdjam<>''){$modelEdit->START_TIME=$prdjam;};
+			if ($hpp<>''){$modelEdit->HPP=$hpp;};
+			if ($ppn<>''){$modelEdit->PPN=$ppn;};
 			if ($prdhargaJual<>''){$modelEdit->HARGA_JUAL=$prdhargaJual;};
 			if ($prdNote<>''){$modelEdit->DCRP_DETIL=$prdNote;};
 			if ($stt<>''){$modelEdit->STATUS=$stt;};				 

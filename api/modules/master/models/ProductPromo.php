@@ -31,7 +31,7 @@ class ProductPromo extends \yii\db\ActiveRecord
     {
         return [
             [['PRODUCT_ID','PERIODE_TGL1','PERIODE_TGL2','START_TIME','PROMO'], 'required','on'=>self::SCENARIO_CREATE],
-            [['PERIODE_TGL1', 'PERIODE_TGL2', 'START_TIME', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
+            [['PERIODE_TGL1', 'PERIODE_TGL2', 'START_TIME', 'CREATE_AT', 'UPDATE_AT','END_TIME'], 'safe'],
             [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['DCRP_DETIL'], 'string'],
             [['ACCESS_GROUP'], 'string', 'max' => 15],
@@ -54,6 +54,7 @@ class ProductPromo extends \yii\db\ActiveRecord
             'PERIODE_TGL1' => 'Periode  Tgl1',
             'PERIODE_TGL2' => 'Periode  Tgl2',
             'START_TIME' => 'Start  Time',
+            'END_TIME' => 'END_TIME',
             'PROMO' => 'Promo',
             'CREATE_BY' => 'Create  By',
             'CREATE_AT' => 'Create  At',
@@ -89,6 +90,9 @@ class ProductPromo extends \yii\db\ActiveRecord
 			},
 			'START_TIME'=>function($model){
 				return $model->START_TIME;
+			},
+			'END_TIME'=>function($model){
+				return $model->END_TIME;
 			},
 			'PROMO'=>function($model){
 				return $model->PROMO;

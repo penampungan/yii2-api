@@ -33,7 +33,7 @@ class TransPenjualanDetail extends \yii\db\ActiveRecord
             //[['STORE_ID', 'ACCESS_ID', 'TRANS_ID', 'TRANS_DATE', 'PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
 			[['STORE_ID','TRANS_ID'], 'required','on'=>self::SCENARIO_CREATE],
             [['TRANS_ID','TRANS_DATE', 'CREATE_AT', 'UPDATE_AT','OFLINE_ID','GOLONGAN'], 'safe'],
-            [['PRODUCT_QTY', 'HARGA_JUAL', 'DISCOUNT'], 'number'],
+            [['PRODUCT_QTY', 'HARGA_JUAL', 'DISCOUNT','PPN','HPP'], 'number'],
             [['STATUS', 'YEAR_AT', 'MONTH_AT','TRANS_TYPE'], 'integer'],
             [['DCRP_DETIL'], 'string'],
             [['ACCESS_GROUP', 'ACCESS_ID'], 'string', 'max' => 15],
@@ -68,6 +68,8 @@ class TransPenjualanDetail extends \yii\db\ActiveRecord
             'PRODUCT_QTY' => 'Product  Qty',
             'UNIT_ID' => 'Unit  ID',
             'UNIT_NM' => 'Unit  Nm',
+            'HPP' => 'HPP',
+            'PPN' => 'PPN',
             'HARGA_JUAL' => 'Harga  Jual',
             'DISCOUNT' => 'Discount',
             'PROMO' => 'Promo',
@@ -134,6 +136,12 @@ class TransPenjualanDetail extends \yii\db\ActiveRecord
 			},
 			'UNIT_NM'=>function($model){
 				return $model->UNIT_NM;
+			},
+			'HPP'=>function($model){
+				return $model->HPP;
+			},
+			'PPN'=>function($model){
+				return $model->PPN;
 			},
 			'HARGA_JUAL'=>function($model){
 				return $model->HARGA_JUAL;

@@ -17,6 +17,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
 
 use api\modules\master\models\ProductPromo;
+use api\modules\master\models\SyncPoling;
 
 /**
   * @author 	: ptrnov  <piter@lukison.com>
@@ -110,6 +111,11 @@ class ProductPromoController extends ActiveController
 		$prdPromo		= isset($paramsBody['PROMO'])!=''?$paramsBody['PROMO']:'';
 		$prdNote		= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['DCRP_DETIL']:'';
 		
+		//POLING SYNC nedded ACCESS_ID
+		$accessID=isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$tblPooling=isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		$paramlUUID=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
+		
 		if($metode=='GET'){
 			/**
 			* @author 		: ptrnov  <piter@lukison.com>
@@ -126,10 +132,43 @@ class ProductPromoController extends ActiveController
 				if($productId<>''){			
 					//Model Produck harga Per-Product
 					$modelCnt= ProductPromo::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId])->count();
-					$model= ProductPromo::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,])->all();				
+					//$model= ProductPromo::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,])->all();				
 					if($modelCnt){
-						//return array('LIST_PRODUCT_PROMO'=>$model);
-						return array('LIST_PRODUCT_PROMO'=>$model);
+						if ($id){
+							$model= ProductPromo::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,'ID'=>$id])->one();	
+							if ($tblPooling=='TBL_PROMO'){						
+								//==GET DATA POLLING
+								$dataHeader=explode('.',$productId);
+								$modelPoling=SyncPoling::find()->where([
+									 'NM_TABLE'=>'TBL_PROMO',
+									 'ACCESS_GROUP'=>$dataHeader[0],
+									 'STORE_ID'=>$store_id,
+									 'PRIMARIKEY_VAL'=>$productId,
+									 'PRIMARIKEY_ID'=>$id
+								])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+								//==UPDATE DATA POLLING UUID
+								if($modelPoling){							
+									foreach($modelPoling as $row => $val){
+										$modelSimpan=SyncPoling::find()->where([
+											 'NM_TABLE'=>'TBL_PROMO',
+											 'ACCESS_GROUP'=>$dataHeader[0],
+											 'STORE_ID'=>$store_id,
+											 'PRIMARIKEY_VAL'=>$productId,
+											 'PRIMARIKEY_ID'=>$id,
+											 'TYPE_ACTION'=>$val->TYPE_ACTION
+										])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+										if($modelSimpan AND $paramlUUID){
+											$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+											$modelSimpan->save();
+										}
+									}							
+								}
+							}
+							return array('LIST_PRODUCT_DISCOUNT'=>$model);
+						}else{						
+							$model= ProductPromo::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId])->all();				
+							return array('LIST_PRODUCT_PROMO'=>$model);						
+						}
 					}else{
 						return array('result'=>'data-empty');
 					}						

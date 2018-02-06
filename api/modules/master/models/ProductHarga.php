@@ -50,7 +50,7 @@ class ProductHarga extends \yii\db\ActiveRecord
             //[['PRODUCT_ID', 'YEAR_AT', 'MONTH_AT'], 'required'],
             [['PRODUCT_ID', 'PERIODE_TGL1', 'PERIODE_TGL2','HARGA_JUAL'], 'required'],
             [['PERIODE_TGL1', 'PERIODE_TGL2', 'START_TIME', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
-            [['HARGA_JUAL'], 'number'],
+            [['HARGA_JUAL','HPP','PPN'], 'safe'],
             [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['DCRP_DETIL'], 'string'],
             [['ACCESS_GROUP'], 'string', 'max' => 15],
@@ -112,6 +112,20 @@ class ProductHarga extends \yii\db\ActiveRecord
 					return $model->START_TIME;
 				}else{
 					return '00:00:00';
+				}
+			},
+			'HPP'=>function($model){
+				if($model->HPP){
+					return $model->HPP;
+				}else{
+					return 0;
+				}
+			},
+			'PPN'=>function($model){
+				if($model->PPN){
+					return $model->PPN;
+				}else{
+					return 0;
 				}
 			},
 			'HARGA_JUAL'=>function($model){

@@ -17,6 +17,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
 
 use api\modules\master\models\ProductStock;
+use api\modules\master\models\SyncPoling;
 
 /**
   * @author 	: ptrnov  <piter@lukison.com>
@@ -117,6 +118,11 @@ class ProductStockController extends ActiveController
 		$accessID		= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
 		$paramlUUID		= isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
 		
+		//POLING SYNC nedded ACCESS_ID
+		$accessID=isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$tblPooling=isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		$paramlUUID=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
+		
 		if($metode=='GET'){
 			/**
 			* @author 		: ptrnov  <piter@lukison.com>
@@ -133,7 +139,35 @@ class ProductStockController extends ActiveController
 					$modelCnt= ProductStock::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId])->count();
 					if($modelCnt){
 						if ($id){
-							$model= ProductStock::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,'ID'=>$id])->one();				
+							$model= ProductStock::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,'ID'=>$id])->one();		
+								if ($tblPooling=='TBL_STOCK'){						
+									//==GET DATA POLLING
+									$dataHeader=explode('.',$productId);
+									$modelPoling=SyncPoling::find()->where([
+										 'NM_TABLE'=>'TBL_STOCK',
+										 'ACCESS_GROUP'=>$dataHeader[0],
+										 'STORE_ID'=>$store_id,
+										 'PRIMARIKEY_VAL'=>$productId,
+										 'PRIMARIKEY_ID'=>$id
+									])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+									//==UPDATE DATA POLLING UUID
+									if($modelPoling){							
+										foreach($modelPoling as $row => $val){
+											$modelSimpan=SyncPoling::find()->where([
+												 'NM_TABLE'=>'TBL_STOCK',
+												 'ACCESS_GROUP'=>$dataHeader[0],
+												 'STORE_ID'=>$store_id,
+												 'PRIMARIKEY_VAL'=>$productId,
+												 'PRIMARIKEY_ID'=>$id,
+												 'TYPE_ACTION'=>$val->TYPE_ACTION
+											])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+											if($modelSimpan AND $paramlUUID){
+												$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+												$modelSimpan->save();
+											}
+										}							
+									}
+								}
 							return array('LIST_PRODUCT_STOCK'=>$model);							
 						}else{						
 							$model= ProductStock::find()->where(['STORE_ID'=>$store_id,'PRODUCT_ID'=>$productId,])->all();				

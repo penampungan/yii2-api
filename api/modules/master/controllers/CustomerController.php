@@ -17,6 +17,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
 
 use api\modules\master\models\Customer;
+use api\modules\master\models\SyncPoling;
 
 /**
   * @author 	: ptrnov  <piter@lukison.com>
@@ -119,6 +120,11 @@ class CustomerController extends ActiveController
 		$status			= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
 		$dcript			= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['DCRP_DETIL']:'';
 		
+		//POLING SYNC nedded ACCESS_ID
+		$accessID=isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$tblPooling=isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		$paramlUUID=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
+		
 		//VALIDATION STORE
 		$cntStore= Customer::find()->where(['STORE_ID'=>$store_id])->count();
 		
@@ -144,7 +150,33 @@ class CustomerController extends ActiveController
 				return array('result'=>'Store-Not-Exist');
 			}	
 		}elseif($metode=='GET'){
-			if($cntStore And $customerId){
+			if($cntStore And $customerId){				
+				if ($tblPooling=='TBL_CUSTOMER'){						
+					//==GET DATA POLLING
+					$dataHeader=explode('.',$store_id);
+					$modelPoling=SyncPoling::find()->where([
+						 'NM_TABLE'=>'TBL_CUSTOMER',
+						 'ACCESS_GROUP'=>$dataHeader[0],
+						 'STORE_ID'=>$store_id,
+						 'PRIMARIKEY_VAL'=>$customerId,
+					])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+					//==UPDATE DATA POLLING UUID
+					if($modelPoling){							
+						foreach($modelPoling as $row => $val){
+							$modelSimpan=SyncPoling::find()->where([
+								 'NM_TABLE'=>'TBL_CUSTOMER',
+								 'ACCESS_GROUP'=>$dataHeader[0],
+								 'STORE_ID'=>$store_id,
+								 'PRIMARIKEY_VAL'=>$customerId,
+								 'TYPE_ACTION'=>$val->TYPE_ACTION
+							])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+							if($modelSimpan AND $paramlUUID){
+								$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+								$modelSimpan->save();
+							}
+						}							
+					}
+				}
 				$modelView=Customer::find()->Where(['CUSTOMER_ID'=>$customerId])->one();
 			}elseif($cntStore AND !$customerId){
 				$modelView=Customer::find()->where(['STORE_ID'=>$store_id])->all();

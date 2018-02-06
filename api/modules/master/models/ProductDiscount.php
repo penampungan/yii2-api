@@ -31,7 +31,7 @@ class ProductDiscount extends \yii\db\ActiveRecord
     {
         return [
 			[['PRODUCT_ID','PERIODE_TGL1','PERIODE_TGL2','START_TIME','DISCOUNT'], 'required','on'=>self::SCENARIO_CREATE],
-            [['PERIODE_TGL1', 'PERIODE_TGL2', 'START_TIME', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
+            [['PERIODE_TGL1', 'PERIODE_TGL2', 'START_TIME', 'CREATE_AT', 'UPDATE_AT','END_TIME'], 'safe'],
             [['DISCOUNT'], 'number'],
             [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['DCRP_DETIL'], 'string'],
@@ -55,6 +55,7 @@ class ProductDiscount extends \yii\db\ActiveRecord
             'PERIODE_TGL1' => 'Periode  Tgl1',
             'PERIODE_TGL2' => 'Periode  Tgl2',
             'START_TIME' => 'Start  Time',
+            'END_TIME' => 'END_TIME',
             'DISCOUNT' => 'Discount',
             'CREATE_BY' => 'Create  By',
             'CREATE_AT' => 'Create  At',
@@ -90,6 +91,9 @@ class ProductDiscount extends \yii\db\ActiveRecord
 			},
 			'START_TIME'=>function($model){
 				return $model->START_TIME;
+			},
+			'END_TIME'=>function($model){
+				return $model->END_TIME;
 			},
 			'DISCOUNT'=>function($model){
 				return $model->DISCOUNT;

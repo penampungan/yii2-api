@@ -111,6 +111,8 @@ class TransPenjualanDetailController extends ActiveController
 		$prdQty				= isset($paramsBody['PRODUCT_QTY'])!=''?$paramsBody['PRODUCT_QTY']:'';
 		$prdUnitId			= isset($paramsBody['UNIT_ID'])!=''?$paramsBody['UNIT_ID']:'';
 		$prdUnitNM			= isset($paramsBody['UNIT_NM'])!=''?$paramsBody['UNIT_NM']:'';
+		$hpp				= isset($paramsBody['HPP'])!=''?$paramsBody['HPP']:'';
+		$ppn				= isset($paramsBody['PPN'])!=''?$paramsBody['PPN']:'';
 		$hargaJual			= isset($paramsBody['HARGA_JUAL'])!=''?$paramsBody['HARGA_JUAL']:'';
 		$discount			= isset($paramsBody['DISCOUNT'])!=''?$paramsBody['DISCOUNT']:'';
 		$promo				= isset($paramsBody['PROMO'])!=''?$paramsBody['PROMO']:'';
@@ -179,6 +181,8 @@ class TransPenjualanDetailController extends ActiveController
 				if ($prdQty<>''){$modelNew->PRODUCT_QTY=$prdQty;};
 				if ($prdUnitId<>''){$modelNew->UNIT_ID=$prdUnitId;};
 				if ($prdUnitNM<>''){$modelNew->UNIT_NM=$prdUnitNM;};
+				if ($hpp<>''){$modelNew->HPP=$hpp;};
+				if ($ppn<>''){$modelNew->PPN=$ppn;};
 				if ($hargaJual<>''){$modelNew->HARGA_JUAL=$hargaJual;};
 				if ($discount<>''){$modelNew->DISCOUNT=$discount;};
 				if ($promo<>''){$modelNew->PROMO=$promo;};		
