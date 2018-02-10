@@ -224,7 +224,7 @@ class AbsensiController extends ActiveController
 			if ($note<>''){$modelNew->DCRP_DETIL=$note;};
 			
 			if($modelNew->save()){
-				$rsltMax=HrdAbsen::find()->where(['KARYAWAN_ID'=>$karyawanID])->andWhere(['TGL'=>date('Y-m-d', strtotime($tgl))])->max(ABSEN_ID);				
+				$rsltMax=HrdAbsen::find()->where(['KARYAWAN_ID'=>$karyawanID])->andWhere(['TGL'=>date('Y-m-d', strtotime($tgl))])->max('ABSEN_ID');				
 				$modelImage=HrdAbsenImg::find()->where(['KARYAWAN_ID'=>$karyawanID,'ABSEN_ID'=>$rsltMax])->one();
 				if ($absenImage<>''){$modelImage->ABSEN_IMAGE=$absenImage;};
 				$modelImage->save();

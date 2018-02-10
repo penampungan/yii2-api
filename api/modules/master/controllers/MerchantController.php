@@ -18,7 +18,7 @@ use yii\web\HttpException;
 
 use api\modules\master\models\Store;
 use api\modules\master\models\StoreMerchant;
-
+use api\modules\master\models\SyncPoling;
 
 /**
   * @author 	: ptrnov  <piter@lukison.com>
@@ -132,6 +132,11 @@ class MerchantController extends ActiveController
 		//VALIDATION STORE
 		$cntStore= Store::find()->where(['STORE_ID'=>$store_id])->count();
 		
+		//POLING SYNC nedded ACCESS_ID
+		$accessID		= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$tblPooling		= isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		$paramlUUID		= isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
+		
 		if($metode=='POST'){
 			if($cntStore){
 				//Model
@@ -145,7 +150,7 @@ class MerchantController extends ActiveController
 				if ($merchantToken!=''){$modelMerchant->MERCHANT_TOKEN=$merchantToken;};
 				if ($merchantUrl!=''){$modelMerchant->MERCHANT_URL=$merchantUrl;};
 				if($modelMerchant->save()){			
-					$rsltMax=StoreMerchant::find()->where(['STORE_ID'=>$store_id])->max(MERCHANT_ID);
+					$rsltMax=StoreMerchant::find()->where(['STORE_ID'=>$store_id])->max('MERCHANT_ID');
 					$modelView=StoreMerchant::find()->where(['MERCHANT_ID'=>$rsltMax])->one();
 					return array('MERCHANT'=>$modelView);
 				}else{
@@ -156,6 +161,36 @@ class MerchantController extends ActiveController
 			}	
 		}elseif($metode=='GET'){
 			if($cntStore And $merchantId){
+					/*===========================
+					 *=== POLLING UPDATE UUID ===
+					 *===========================
+					*/
+					$dataHeader=explode('.',$store_id);
+					if ($tblPooling=='TBL_STORE_MERCHANT'){						
+						//==GET DATA POLLING
+						$modelPoling=SyncPoling::find()->where([
+							 'NM_TABLE'=>'TBL_STORE_MERCHANT',
+							 'ACCESS_GROUP'=>$dataHeader[0],
+							 'STORE_ID'=>$store_id,
+							 'PRIMARIKEY_VAL'=>$merchantId
+						])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+						//==UPDATE DATA POLLING UUID
+						if($modelPoling){							
+							foreach($modelPoling as $row => $val){
+								$modelSimpan=SyncPoling::find()->where([
+									 'NM_TABLE'=>'TBL_STORE_MERCHANT',
+									 'ACCESS_GROUP'=>$dataHeader[0],
+									 'STORE_ID'=>$store_id,
+									 'PRIMARIKEY_VAL'=>$merchantId,
+									 'TYPE_ACTION'=>$val->TYPE_ACTION
+								])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+								if($modelSimpan AND $paramlUUID){
+									$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+									$modelSimpan->save();
+								}
+							}							
+						}				
+					}
 				$modelView=StoreMerchant::find()->Where(['MERCHANT_ID'=>$merchantId])->one();
 			}elseif($cntStore AND !$merchantId){
 				$modelView=StoreMerchant::find()->where(['STORE_ID'=>$store_id])->all();

@@ -18,6 +18,7 @@ use yii\web\HttpException;
 
 use api\modules\master\models\Store;
 use api\modules\login\models\UserLogin;
+use api\modules\master\models\SyncPoling;
 
 /**
   * @author 	: ptrnov  <piter@lukison.com>
@@ -135,6 +136,11 @@ class StoreController extends ActiveController
 		//KOORDINAT
 		$lat					= isset($paramsBody['LATITUDE'])!=''?$paramsBody['LATITUDE']:'';
 		$long					= isset($paramsBody['LONGITUDE'])!=''?$paramsBody['LONGITUDE']:'';
+		
+		//POLING SYNC nedded ACCESS_ID
+		$accessID		= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$tblPooling		= isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		$paramlUUID		= isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
 				
 		if($metode=='POST'){
 			if($accessGroup){
@@ -158,7 +164,7 @@ class StoreController extends ActiveController
 					if ($lat!=''){$modelStore->LATITUDE=$lat;};
 					if ($long!=''){$modelStore->LONGITUDE=$long;};					
 					if ($modelStore->save()){
-						$rsltMax=Store::find()->where(['ACCESS_GROUP'=>$accessGroup])->max(STORE_ID);
+						$rsltMax=Store::find()->where(['ACCESS_GROUP'=>$accessGroup])->max('STORE_ID');
 						$modelView=Store::find()->where(['STORE_ID'=>$rsltMax])->one();
 						return array('store'=>$modelView);
 					}else{
@@ -172,6 +178,36 @@ class StoreController extends ActiveController
 			}
 		}elseif($metode=='GET'){
 			if($accessGroup And $storeID){
+					/*===========================
+					 *=== POLLING UPDATE UUID ===
+					 *===========================
+					*/
+					$dataHeader=explode('.',$storeID);
+					if ($tblPooling=='TBL_STORE'){						
+						//==GET DATA POLLING
+						$modelPoling=SyncPoling::find()->where([
+							 'NM_TABLE'=>'TBL_STORE',
+							 'ACCESS_GROUP'=>$dataHeader[0],
+							 'STORE_ID'=>$storeID,
+							 'PRIMARIKEY_VAL'=>$storeID
+						])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+						//==UPDATE DATA POLLING UUID
+						if($modelPoling){							
+							foreach($modelPoling as $row => $val){
+								$modelSimpan=SyncPoling::find()->where([
+									 'NM_TABLE'=>'TBL_STORE',
+									 'ACCESS_GROUP'=>$dataHeader[0],
+									 'STORE_ID'=>$storeID,
+									 'PRIMARIKEY_VAL'=>$storeID,
+									 'TYPE_ACTION'=>$val->TYPE_ACTION
+								])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+								if($modelSimpan AND $paramlUUID){
+									$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+									$modelSimpan->save();
+								}
+							}							
+						}				
+					}				
 				$modelView=Store::find()->Where(['STORE_ID'=>$storeID])->one();
 			}elseif($accessGroup AND !$storeID){
 				$modelView=Store::find()->where(['ACCESS_GROUP'=>$accessGroup])->all();

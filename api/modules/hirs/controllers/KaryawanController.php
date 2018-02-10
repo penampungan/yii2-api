@@ -17,6 +17,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
 
 use api\modules\hirs\models\Karyawan;
+use api\modules\master\models\SyncPoling;
 
 class KaryawanController extends ActiveController
 {
@@ -110,6 +111,11 @@ class KaryawanController extends ActiveController
 		$email			= isset($paramsBody['EMAIL'])!=''?$paramsBody['EMAIL']:'';
 		$note			= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['DCRP_DETIL']:'';
 		
+		//POLING SYNC nedded ACCESS_ID
+		$accessID		= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$tblPooling		= isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		$paramlUUID		= isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
+		
 		if($metode=='GET'){
 			/**
 			* @author 		: ptrnov  <piter@lukison.com>
@@ -127,6 +133,36 @@ class KaryawanController extends ActiveController
 					$modelCnt= Karyawan::find()->where(['KARYAWAN_ID'=>$karyawanID])->count();
 					$model= Karyawan::find()->where(['KARYAWAN_ID'=>$karyawanID])->one();		
 					if($modelCnt){
+						/*===========================
+						 *=== POLLING UPDATE UUID ===
+						 *===========================
+						*/
+						$dataHeader=explode('.',$store_id);
+						if ($tblPooling=='TBL_KARYAWAN'){						
+							//==GET DATA POLLING
+							$modelPoling=SyncPoling::find()->where([
+								 'NM_TABLE'=>'TBL_KARYAWAN',
+								 'ACCESS_GROUP'=>$dataHeader[0],
+								 'STORE_ID'=>$store_id,
+								 'PRIMARIKEY_VAL'=>$karyawanID
+							])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+							//==UPDATE DATA POLLING UUID
+							if($modelPoling){							
+								foreach($modelPoling as $row => $val){
+									$modelSimpan=SyncPoling::find()->where([
+										 'NM_TABLE'=>'TBL_KARYAWAN',
+										 'ACCESS_GROUP'=>$dataHeader[0],
+										 'STORE_ID'=>$store_id,
+										 'PRIMARIKEY_VAL'=>$karyawanID,
+										 'TYPE_ACTION'=>$val->TYPE_ACTION
+									])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+									if($modelSimpan AND $paramlUUID){
+										$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+										$modelSimpan->save();
+									}
+								}							
+							}				
+						}
 						return array('LIST_KARYAWAN'=>$model);
 					}else{
 						return array('error'=>$model->errors);
@@ -181,7 +217,7 @@ class KaryawanController extends ActiveController
 			if ($email<>''){$modelNew->EMAIL=$email;};
 			if ($note<>''){$modelNew->DCRP_DETIL=$note;};
 			if($modelNew->save()){
-				$rsltMax=Karyawan::find()->where(['STORE_ID'=>$store_id])->max(KARYAWAN_ID);
+				$rsltMax=Karyawan::find()->where(['STORE_ID'=>$store_id])->max('KARYAWAN_ID');
 				$modelView=Karyawan::find()->where(['KARYAWAN_ID'=>$rsltMax])->one();
 				return array('LIST_KARYAWAN'=>$modelView);
 			}else{

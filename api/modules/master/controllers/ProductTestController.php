@@ -285,7 +285,7 @@ class ProductTestController extends ActiveController
 				 if ($paramlUUID<>''){$modelNew->CREATE_UUID=$paramlUUID;};
 				 if ($accessID<>''){$modelNew->CREATE_BY=$accessID;};
 				 if($modelNew->save()){
-					$rsltMax=Product::find()->where(['STORE_ID'=>$store_id])->max(PRODUCT_ID);
+					$rsltMax=Product::find()->where(['STORE_ID'=>$store_id])->max('PRODUCT_ID');
 					$modelView=Product::find()->where(['PRODUCT_ID'=>$rsltMax])->one();
 					return array('LIST_PRODUCT'=>$modelView);
 				 }else{

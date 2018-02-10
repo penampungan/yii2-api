@@ -15,9 +15,11 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
+
 use api\modules\login\models\UserOps;
 use api\modules\master\models\Store;
 use api\modules\login\models\User;
+use api\modules\master\models\SyncPoling;
 
 /**
   * @author 	: ptrnov  <piter@lukison.com>
@@ -112,19 +114,69 @@ class UserOperationalController extends ActiveController
 		$paramsBody 			= Yii::$app->request->bodyParams;
 		$storeId				= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';
 		
-		if($storeId){
-			$cntStore= Store::find()->where(['STORE_ID'=>$storeId])->count();
-			if($cntStore){
-				//return array('result'=>'Show UserOps store');	
-				$modalStore= Store::find()->where(['STORE_ID'=>$storeId])->one();
-				$modalUserOps= UserOps::find()->where("FIND_IN_SET(ACCESS_ID,'".$modalStore->ACCESS_ID."') AND ACCESS_LEVEL!='OWNER'")->all();				
-				return array('LIST_User'=>$modalUserOps); 
-			}else{
-				return array('result'=>'Store-Not-Exist');
+		//==POLING SYNC ===
+		$metode					= isset($paramsBody['METHODE'])!=''?$paramsBody['METHODE']:'';
+		$accessID				= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$in_username			= isset($paramsBody['username'])!=''?$paramsBody['username']:'';
+		$in_password			= isset($paramsBody['password'])!=''?$paramsBody['password']:'';
+		$tblPooling				=isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		$paramlUUID				=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';		
+		
+		
+		if($metode=='GET'){
+			if($accessID<>''){				
+				$modelCnt= User::find()->where(['ACCESS_ID'=>$accessID])->count();
+				$model= User::find()->where(['ACCESS_ID'=>$accessID])->one();			
+				if($modelCnt){
+					/*===========================
+					 *=== POLLING UPDATE UUID ===
+					 *===========================
+					*/
+					if ($tblPooling=='TBL_USER_OPERATIONAL'){
+						$modelPoling=SyncPoling::find()->where([
+							 'NM_TABLE'=>'TBL_USER_OPERATIONAL',
+							 'ACCESS_GROUP'=>'',
+							 'STORE_ID'=>'',
+							 'PRIMARIKEY_VAL'=>$accessID
+						])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+						//==UPDATE DATA POLLING UUID
+						if($modelPoling){							
+							foreach($modelPoling as $row => $val){
+								$modelSimpan=SyncPoling::find()->where([
+									 'NM_TABLE'=>'TBL_USER_OPERATIONAL',
+									 'ACCESS_GROUP'=>'',
+									 'STORE_ID'=>'',
+									 'PRIMARIKEY_VAL'=>$accessID,
+									 'TYPE_ACTION'=>$val->TYPE_ACTION
+								])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+								if($modelSimpan AND $paramlUUID){
+									$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+									$modelSimpan->save();
+								}
+							}							
+						}
+					}
+					return array('PROFILE'=>$model);
+				}else{
+					return array('result'=>'data-empty');
+				}	
 			}
 		}else{
-			return array('result'=>'Store-Empty');
+			if($storeId){
+				$cntStore= Store::find()->where(['STORE_ID'=>$storeId])->count();
+				if($cntStore){
+					//return array('result'=>'Show UserOps store');	
+					$modalStore= Store::find()->where(['STORE_ID'=>$storeId])->one();
+					$modalUserOps= UserOps::find()->where("FIND_IN_SET(ACCESS_ID,'".$modalStore->ACCESS_ID."') AND ACCESS_LEVEL!='OWNER'")->all();				
+					return array('LIST_User'=>$modalUserOps); 
+				}else{
+					return array('result'=>'Store-Not-Exist');
+				}
+			}else{
+				return array('result'=>'Store-Empty');
+			}			
 		}
+		
 	}
 	
 	public function actionUpdate()

@@ -207,7 +207,7 @@ class ProductDiscountController extends ActiveController
 					if ($prdNote<>''){$modelNew->DCRP_DETIL=$prdNote;};
 					if($modelNew->save()){
 						//$modelView=ProductDiscount::find()->where(['PRODUCT_ID'=>$productId])->all();
-						$rsltMax=ProductDiscount::find()->where(['PRODUCT_ID'=>$productId])->max(ID);
+						$rsltMax=ProductDiscount::find()->where(['PRODUCT_ID'=>$productId])->max('ID');
 						$modelView=ProductDiscount::find()->where(['ID'=>$rsltMax])->one();
 						return array('LIST_PRODUCT_DISCOUNT'=>$modelView);
 					}else{

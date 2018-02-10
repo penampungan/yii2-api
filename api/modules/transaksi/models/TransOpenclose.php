@@ -34,7 +34,7 @@ class TransOpenclose extends \yii\db\ActiveRecord
             [['STORE_ID','ACCESS_ID','TGL_OPEN','CASHINDRAWER'], 'required','on'=>self::SCENARIO_CREATE],
             [['OPENCLOSE_ID','TGL_CLOSE','SELLCASH','TOTALCASH_ACTUAL','STATUS'], 'required','on'=>self::SCENARIO_UPDATE],
             [['TGL_OPEN','TGL_CLOSE', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
-            [['CASHINDRAWER', 'ADDCASH', 'SELLCASH', 'TOTALCASH', 'TOTALCASH_ACTUAL'], 'number'],
+            [['CASHINDRAWER', 'ADDCASH', 'SELLCASH', 'TOTALCASH', 'TOTALCASH_ACTUAL','TOTALREFUND','TOTALDONASI'], 'safe'],
             [['STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
             [['DCRP_DETIL'], 'string'],
             [['ACCESS_GROUP', 'ACCESS_ID'], 'string', 'max' => 15],
@@ -107,6 +107,12 @@ class TransOpenclose extends \yii\db\ActiveRecord
 			},
 			'TOTALCASH'=>function($model){
 				return $model->TOTALCASH;
+			},			
+			'TOTALREFUND'=>function($model){
+				return $model->TOTALREFUND;
+			},
+			'TOTALDONASI'=>function($model){
+				return $model->TOTALDONASI;
 			},
 			'TOTALCASH_ACTUAL'=>function($model){
 				return $model->TOTALCASH_ACTUAL;

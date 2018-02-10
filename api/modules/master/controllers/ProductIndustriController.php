@@ -17,7 +17,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
 
 use api\modules\master\models\Industri;
-
+use api\modules\master\models\SyncPoling;
 
 /**
   * @author 	: ptrnov  <piter@lukison.com>
@@ -107,6 +107,11 @@ class ProductIndustriController extends ActiveController
 		//PROPERTY
 		$industriNm		= isset($paramsBody['INDUSTRY_NM'])!=''?$paramsBody['INDUSTRY_NM']:'';
 		
+		//==POLING SYNC ===
+		$accessID		=isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$tblPooling		=isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		$paramlUUID		=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
+		
 		if($metode=='GET'){
 			/**
 			  * @author 	: ptrnov  <piter@lukison.com>
@@ -125,6 +130,34 @@ class ProductIndustriController extends ActiveController
 					$modelCnt= Industri::find()->where(['INDUSTRY_GRP_ID'=>$industriGrpId,'INDUSTRY_ID'=>$industriId])->count();
 					$model= Industri::find()->where(['INDUSTRY_GRP_ID'=>$industriGrpId,'INDUSTRY_ID'=>$industriId])->one();				
 					if($modelCnt){
+						/*===========================
+						 *=== POLLING UPDATE UUID ===
+						 *===========================
+						*/
+						if ($tblPooling=='TBL_PRODUCT_INDUSTRI'){
+							$modelPoling=SyncPoling::find()->where([
+								 'NM_TABLE'=>'TBL_PRODUCT_INDUSTRI',
+								 'ACCESS_GROUP'=>'',
+								 'STORE_ID'=>'',
+								 'PRIMARIKEY_VAL'=>$industriId
+							])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+							//==UPDATE DATA POLLING UUID
+							if($modelPoling){							
+								foreach($modelPoling as $row => $val){
+									$modelSimpan=SyncPoling::find()->where([
+										 'NM_TABLE'=>'TBL_PRODUCT_INDUSTRI',
+										 'ACCESS_GROUP'=>'',
+										 'STORE_ID'=>'',
+										 'PRIMARIKEY_VAL'=>$industriId,
+										 'TYPE_ACTION'=>$val->TYPE_ACTION
+									])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+									if($modelSimpan AND $paramlUUID){
+										$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+										$modelSimpan->save();
+									}
+								}							
+							}
+						}
 						return array('LIST_INDUSTRI'=>$model);
 					}else{
 						return array('result'=>'data-empty');
@@ -147,6 +180,34 @@ class ProductIndustriController extends ActiveController
 					$modelCnt= Industri::find()->where(['INDUSTRY_ID'=>$industriId])->count();
 					$model= Industri::find()->where(['INDUSTRY_ID'=>$industriId])->one();				
 					if($modelCnt){
+						/*===========================
+						 *=== POLLING UPDATE UUID ===
+						 *===========================
+						*/
+						if ($tblPooling=='TBL_PRODUCT_INDUSTRI'){
+							$modelPoling=SyncPoling::find()->where([
+								 'NM_TABLE'=>'TBL_PRODUCT_INDUSTRI',
+								 'ACCESS_GROUP'=>'',
+								 'STORE_ID'=>'',
+								 'PRIMARIKEY_VAL'=>$industriId
+							])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+							//==UPDATE DATA POLLING UUID
+							if($modelPoling){							
+								foreach($modelPoling as $row => $val){
+									$modelSimpan=SyncPoling::find()->where([
+										 'NM_TABLE'=>'TBL_PRODUCT_INDUSTRI',
+										 'ACCESS_GROUP'=>'',
+										 'STORE_ID'=>'',
+										 'PRIMARIKEY_VAL'=>$industriId,
+										 'TYPE_ACTION'=>$val->TYPE_ACTION
+									])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+									if($modelSimpan AND $paramlUUID){
+										$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+										$modelSimpan->save();
+									}
+								}							
+							}
+						}
 						return array('LIST_INDUSTRI'=>$model);
 					}else{
 						return array('result'=>'data-empty');

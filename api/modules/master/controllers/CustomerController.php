@@ -140,7 +140,7 @@ class CustomerController extends ActiveController
 				$modelCustomer->STATUS=1;
 				if ($dcript!=''){$modelCustomer->DCRP_DETIL=$dcript;};
 				if($modelCustomer->save()){			
-					$rsltMax=Customer::find()->max(CUSTOMER_ID);
+					$rsltMax=Customer::find()->max('CUSTOMER_ID');
 					$modelView=Customer::find()->where(['CUSTOMER_ID'=>$rsltMax])->one();
 					return array('CUSTOMER'=>$modelView);
 				}else{

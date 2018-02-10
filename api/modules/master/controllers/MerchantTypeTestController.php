@@ -158,7 +158,7 @@ class MerchantTypeTestController extends ActiveController
 			 if ($accessID<>''){$modelNew->CREATE_BY=$accessID;};
 			 if ($paramlUUID<>''){$modelNew->CREATE_UUID=$paramlUUID;};
 			 if($modelNew->save()){
-				$rsltMax=MerchantType::find()->max(TYPE_PAY_ID);
+				$rsltMax=MerchantType::find()->max('TYPE_PAY_ID');
 				$modelView=MerchantType::find()->where(['TYPE_PAY_ID'=>$rsltMax])->one();
 				return array('LIST_TYPE_PAY'=>$modelView);
 			 }else{

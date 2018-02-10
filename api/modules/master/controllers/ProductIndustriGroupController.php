@@ -17,7 +17,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
 
 use api\modules\master\models\IndustriGroup;
-
+use api\modules\master\models\SyncPoling;
 
 /**
   * @author 	: ptrnov  <piter@lukison.com>
@@ -106,6 +106,11 @@ class ProductIndustriGroupController extends ActiveController
 		//PROPERTY
 		$industriGrpNm	= isset($paramsBody['INDUSTRY_GRP_NM'])!=''?$paramsBody['INDUSTRY_GRP_NM']:'';
 		
+		//==POLING SYNC ===
+		$accessID		=isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$tblPooling		=isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		$paramlUUID		=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';		
+		
 		if($metode=='GET'){
 			/**
 			  * @author 	: ptrnov  <piter@lukison.com>
@@ -120,9 +125,36 @@ class ProductIndustriGroupController extends ActiveController
 			if($industriGrpId<>''){				
 				//Model Per-INDUSTRI GROUP
 				$modelCnt= IndustriGroup::find()->where(['INDUSTRY_GRP_ID'=>$industriGrpId])->count();
-				$model= IndustriGroup::find()->where(['INDUSTRY_GRP_ID'=>$industriGrpId])->one();		
-				
+				$model= IndustriGroup::find()->where(['INDUSTRY_GRP_ID'=>$industriGrpId])->one();					
 				if($modelCnt){
+					/*===========================
+					 *=== POLLING UPDATE UUID ===
+					 *===========================
+					*/
+					if ($tblPooling=='TBL_PRODUCT_INDUSTRIGROUP'){
+						$modelPoling=SyncPoling::find()->where([
+							 'NM_TABLE'=>'TBL_PRODUCT_INDUSTRIGROUP',
+							 'ACCESS_GROUP'=>'',
+							 'STORE_ID'=>'',
+							 'PRIMARIKEY_VAL'=>$industriGrpId
+						])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+						//==UPDATE DATA POLLING UUID
+						if($modelPoling){							
+							foreach($modelPoling as $row => $val){
+								$modelSimpan=SyncPoling::find()->where([
+									 'NM_TABLE'=>'TBL_PRODUCT_INDUSTRIGROUP',
+									 'ACCESS_GROUP'=>'',
+									 'STORE_ID'=>'',
+									 'PRIMARIKEY_VAL'=>$industriGrpId,
+									 'TYPE_ACTION'=>$val->TYPE_ACTION
+								])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+								if($modelSimpan AND $paramlUUID){
+									$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+									$modelSimpan->save();
+								}
+							}							
+						}
+					}
 					return array('LIST_INDUSTRI_GROUP'=>$model);
 				}else{
 					return array('result'=>'data-empty');

@@ -15,8 +15,9 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
-use api\modules\login\models\UserProfile;
 
+use api\modules\login\models\UserProfile;
+use api\modules\master\models\SyncPoling;
 /**
   * @author 	: ptrnov  <piter@lukison.com>
   * @since 		: 1.2
@@ -141,6 +142,72 @@ class UserProfileController extends ActiveController
 		}else{
 			return array('result'=>'Not Exist ACCESS_ID');
 		}
+	}
+	
+	public function actionCreate()
+    {        
+		/**
+		  * @author 	: ptrnov  <piter@lukison.com>
+		  * @since 		: 1.2
+		  * Subject		: UPDATE USER PROFILE
+		  * Metode		: POST
+		  * URL			: http://production.kontrolgampang.com/login/user-profiles
+		  * Body Param	: ACCESS_ID (key) 
+		*/ 
+		$paramsBody 			= Yii::$app->request->bodyParams;
+		//==POLING SYNC ===
+		$metode			= isset($paramsBody['METHODE'])!=''?$paramsBody['METHODE']:'';	
+		$accessID		=isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$tblPooling		=isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		$paramlUUID		=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';		
+		
+		if($metode=='GET'){
+			/**
+			  * @author 	: ptrnov  <piter@lukison.com>
+			  * @since 		: 1.2
+			  * Subject		: UPDATE USER PROFILE
+			  * Metode		: GET (VIEW)
+			  * URL			: http://production.kontrolgampang.com/login/user-profiles
+			  * Body Param	: ACCESS_ID (key)
+			*/ 
+			if($accessID<>''){				
+				$modelCnt= UserProfile::find()->where(['ACCESS_ID'=>$accessID])->count();
+				$model= UserProfile::find()->where(['ACCESS_ID'=>$accessID])->one();			
+				if($modelCnt){
+					/*===========================
+					 *=== POLLING UPDATE UUID ===
+					 *===========================
+					*/
+					if ($tblPooling=='TBL_USER_PROFILE'){
+						$modelPoling=SyncPoling::find()->where([
+							 'NM_TABLE'=>'TBL_USER_PROFILE',
+							 'ACCESS_GROUP'=>'',
+							 'STORE_ID'=>'',
+							 'PRIMARIKEY_VAL'=>$accessID
+						])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+						//==UPDATE DATA POLLING UUID
+						if($modelPoling){							
+							foreach($modelPoling as $row => $val){
+								$modelSimpan=SyncPoling::find()->where([
+									 'NM_TABLE'=>'TBL_USER_PROFILE',
+									 'ACCESS_GROUP'=>'',
+									 'STORE_ID'=>'',
+									 'PRIMARIKEY_VAL'=>$accessID,
+									 'TYPE_ACTION'=>$val->TYPE_ACTION
+								])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+								if($modelSimpan AND $paramlUUID){
+									$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+									$modelSimpan->save();
+								}
+							}							
+						}
+					}
+					return array('PROFILE'=>$model);
+				}else{
+					return array('result'=>'data-empty');
+				}		
+			}			
+		}	
 	}
 }
 

@@ -120,6 +120,8 @@ class ProductController extends ActiveController
 		//Industri
 		$prdIndustriId	= isset($paramsBody['INDUSTRY_ID'])!=''?$paramsBody['INDUSTRY_ID']:'';
 		$crnStock		= isset($paramsBody['CURRENT_STOCK'])!=''?$paramsBody['CURRENT_STOCK']:'';
+		$crnHpp			= isset($paramsBody['CURRENT_HPP'])!=''?$paramsBody['CURRENT_HPP']:'';
+		$crnPpn			= isset($paramsBody['CURRENT_PPN'])!=''?$paramsBody['CURRENT_PPN']:'';
 		$crnPrice		= isset($paramsBody['CURRENT_PRICE'])!=''?$paramsBody['CURRENT_PRICE']:'';
 		//Releatiship (check by date)
         //-harga;-Discount;-stock;-Promo
@@ -329,11 +331,13 @@ class ProductController extends ActiveController
 				 if ($prdUnitJual<>''){$modelNew->UNIT_ID=$prdUnitJual;};
 				 if ($prdIndustriId<>''){$modelNew->INDUSTRY_ID=$prdIndustriId;};
 				 if ($crnStock<>''){$modelNew->CURRENT_STOCK=$crnStock;};
+				 if ($crnHpp<>''){$modelNew->CURRENT_HPP=$crnHpp;};
+				 if ($crnPpn<>''){$modelNew->CURRENT_PPN=$crnPpn;};
 				 if ($crnPrice<>''){$modelNew->CURRENT_PRICE=$crnPrice;};
 				 if ($paramlUUID<>''){$modelNew->CREATE_UUID=$paramlUUID;};
 				 if ($accessID<>''){$modelNew->CREATE_BY=$accessID;};
 				 if($modelNew->save()){
-					$rsltMax=Product::find()->where(['STORE_ID'=>$store_id])->max(PRODUCT_ID);
+					$rsltMax=Product::find()->where(['STORE_ID'=>$store_id])->max('PRODUCT_ID');
 					$modelView=Product::find()->where(['PRODUCT_ID'=>$rsltMax])->one();
 					return array('LIST_PRODUCT'=>$modelView);
 				 }else{
@@ -384,7 +388,10 @@ class ProductController extends ActiveController
 		$prdIndustriId	= isset($paramsBody['INDUSTRY_ID'])!=''?$paramsBody['INDUSTRY_ID']:'';
 		$stt			= isset($paramsBody['STATUS'])!=''?$paramsBody['STATUS']:'';
 		$crnStock		= isset($paramsBody['CURRENT_STOCK'])!=''?$paramsBody['CURRENT_STOCK']:'';
+		$crnHpp			= isset($paramsBody['CURRENT_HPP'])!=''?$paramsBody['CURRENT_HPP']:'';
+		$crnPpn			= isset($paramsBody['CURRENT_PPN'])!=''?$paramsBody['CURRENT_PPN']:'';		
 		$crnPrice		= isset($paramsBody['CURRENT_PRICE'])!=''?$paramsBody['CURRENT_PRICE']:'';
+		
 		
 		//POLLING & LOG SYSTEM
 		$paramlUUID=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
@@ -406,6 +413,8 @@ class ProductController extends ActiveController
 				 if ($prdIndustriId<>''){$modelEdit->INDUSTRY_ID=$prdIndustriId;};
 				 if ($stt<>''){$modelEdit->STATUS=$stt;};
 				 if ($crnStock<>''){$modelEdit->CURRENT_STOCK=$crnStock;};
+				 if ($crnHpp<>''){$modelEdit->CURRENT_HPP=$crnHpp;};
+				 if ($crnPpn<>''){$modelEdit->CURRENT_PPN=$crnPpn;};
 				 if ($crnPrice<>''){$modelEdit->CURRENT_PRICE=$crnPrice;};
 				 if ($paramlUUID<>''){$modelEdit->UPDATE_UUID=$paramlUUID;};
 				 if ($accessID<>''){$modelEdit->UPDATE_BY=$accessID;};

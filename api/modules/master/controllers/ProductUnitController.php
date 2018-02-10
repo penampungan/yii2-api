@@ -130,28 +130,33 @@ class ProductUnitController extends ActiveController
 			 */
 			if($unitIdGrp<>''){	 
 				if($unitID<>''){
-					//==GET DATA POLLING
-					$modelPoling=SyncPoling::find()->where([
-						 'NM_TABLE'=>'TBL_PRODUCT_UNIT',
-						 'ACCESS_GROUP'=>'',
-						 'STORE_ID'=>'',
-						 'PRIMARIKEY_VAL'=>$unitID
-					])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
-					//==UPDATE DATA POLLING UUID
-					if($modelPoling){							
-						foreach($modelPoling as $row => $val){
-							$modelSimpan=SyncPoling::find()->where([
-								 'NM_TABLE'=>'TBL_PRODUCT_UNIT',
-								 'ACCESS_GROUP'=>'',
-								 'STORE_ID'=>'',
-								 'PRIMARIKEY_VAL'=>$unitID,
-								 'TYPE_ACTION'=>$val->TYPE_ACTION
-							])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
-							if($modelSimpan AND $paramlUUID){
-								$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
-								$modelSimpan->save();
-							}
-						}							
+					/*===========================
+					 *=== POLLING UPDATE UUID ===
+					 *===========================
+					*/
+					if ($tblPooling=='TBL_PRODUCT_UNIT'){	
+						$modelPoling=SyncPoling::find()->where([
+							 'NM_TABLE'=>'TBL_PRODUCT_UNIT',
+							 'ACCESS_GROUP'=>'',
+							 'STORE_ID'=>'',
+							 'PRIMARIKEY_VAL'=>$unitID
+						])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+						//==UPDATE DATA POLLING UUID
+						if($modelPoling){							
+							foreach($modelPoling as $row => $val){
+								$modelSimpan=SyncPoling::find()->where([
+									 'NM_TABLE'=>'TBL_PRODUCT_UNIT',
+									 'ACCESS_GROUP'=>'',
+									 'STORE_ID'=>'',
+									 'PRIMARIKEY_VAL'=>$unitID,
+									 'TYPE_ACTION'=>$val->TYPE_ACTION
+								])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+								if($modelSimpan AND $paramlUUID){
+									$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+									$modelSimpan->save();
+								}
+							}							
+						}
 					}
 					//Model Per-UNIT
 					$modelCnt= ProductUnit::find()->where(['UNIT_ID'=>$unitID,'UNIT_ID_GRP'=>$unitIdGrp])->count();
@@ -176,28 +181,33 @@ class ProductUnitController extends ActiveController
 				}
 			}else{
 				if($unitID<>''){	
-					//==GET DATA POLLING
-					$modelPoling=SyncPoling::find()->where([
-						 'NM_TABLE'=>'TBL_PRODUCT_UNIT',
-						 'ACCESS_GROUP'=>'',
-						 'STORE_ID'=>'',
-						 'PRIMARIKEY_VAL'=>$unitID
-					])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
-					//==UPDATE DATA POLLING UUID
-					if($modelPoling){							
-						foreach($modelPoling as $row => $val){
-							$modelSimpan=SyncPoling::find()->where([
-								 'NM_TABLE'=>'TBL_PRODUCT_UNIT',
-								 'ACCESS_GROUP'=>'',
-								 'STORE_ID'=>'',
-								 'PRIMARIKEY_VAL'=>$unitID,
-								 'TYPE_ACTION'=>$val->TYPE_ACTION
-							])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
-							if($modelSimpan AND $paramlUUID){
-								$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
-								$modelSimpan->save();
-							}
-						}							
+					/*===========================
+					 *=== POLLING UPDATE UUID ===
+					 *===========================
+					*/
+					if ($tblPooling=='TBL_PRODUCT_UNIT'){
+						$modelPoling=SyncPoling::find()->where([
+							 'NM_TABLE'=>'TBL_PRODUCT_UNIT',
+							 'ACCESS_GROUP'=>'',
+							 'STORE_ID'=>'',
+							 'PRIMARIKEY_VAL'=>$unitID
+						])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+						//==UPDATE DATA POLLING UUID
+						if($modelPoling){							
+							foreach($modelPoling as $row => $val){
+								$modelSimpan=SyncPoling::find()->where([
+									 'NM_TABLE'=>'TBL_PRODUCT_UNIT',
+									 'ACCESS_GROUP'=>'',
+									 'STORE_ID'=>'',
+									 'PRIMARIKEY_VAL'=>$unitID,
+									 'TYPE_ACTION'=>$val->TYPE_ACTION
+								])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+								if($modelSimpan AND $paramlUUID){
+									$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+									$modelSimpan->save();
+								}
+							}							
+						}
 					}
 					//Model Per-UNIT
 					$modelCnt= ProductUnit::find()->where(['UNIT_ID'=>$unitID])->count();
@@ -238,7 +248,7 @@ class ProductUnitController extends ActiveController
 				 if ($unitNote<>''){$modelNew->DCRP_DETIL=$unitNote;};
 				 if ($unitIdGrp<>''){$modelNew->UNIT_ID_GRP=$unitIdGrp;};
 				 if($modelNew->save()){
-					$rsltMax=ProductUnit::find()->max(UNIT_ID);
+					$rsltMax=ProductUnit::find()->max('UNIT_ID');
 					$modelView=ProductUnit::find()->where(['UNIT_ID'=>$rsltMax])->one();
 					return array('LIST_PRODUCT_UNIT'=>$modelView);
 				 }else{

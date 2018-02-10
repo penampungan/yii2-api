@@ -146,7 +146,7 @@ class UserModulController extends ActiveController
 		$model->SORT=$mdlSrt;
 		$model->MODUL_DCRP =$msdDscp;
 		if ($model->save()){
-			$rsltMax=AppModul::find()->max(MODUL_ID);
+			$rsltMax=AppModul::find()->max('MODUL_ID');
 			$modelView=AppModul::find()->where(['MODUL_ID'=>$rsltMax])->one();
 			return array('LIST_MODUL'=>$modelView);
 		}else{

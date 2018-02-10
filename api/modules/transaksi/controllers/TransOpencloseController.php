@@ -104,6 +104,8 @@ class TransOpencloseController extends ActiveController
 		//PROPERTY
 		$caseInPeti		= isset($paramsBody['CASHINDRAWER'])!=''?$paramsBody['CASHINDRAWER']:'';
 		$caseAdd		= isset($paramsBody['ADDCASH'])!=''?$paramsBody['ADDCASH']:'';
+		$ttlRefund		= isset($paramsBody['TOTALREFUND'])!=''?$paramsBody['TOTALREFUND']:'';
+		$ttlDonasi		= isset($paramsBody['TOTALDONASI'])!=''?$paramsBody['TOTALDONASI']:'';
 		
 		if($metode=='GET'){
 			/**
@@ -169,6 +171,8 @@ class TransOpencloseController extends ActiveController
 				if ($tglOpen<>''){$modelNew->TGL_OPEN=date('Y-m-d H:i:s', strtotime($tglOpen));};
 				if ($caseInPeti<>''){$modelNew->CASHINDRAWER=$caseInPeti;};
 				if ($caseAdd<>''){$modelNew->ADDCASH=$caseAdd;};
+				if ($ttlRefund<>''){$modelNew->TOTALREFUND=$ttlRefund;};
+				if ($ttlDonasi<>''){$modelNew->TOTALDONASI=$ttlDonasi;};				
 				if ($stt<>''){$modelNew->STATUS=$stt;};
 				if($modelNew->save()){
 					$modelView=TransOpenclose::find()->where(['STORE_ID'=>$store_id])->orderBy(['ID' => SORT_DESC])->limit(1)->one();
@@ -203,6 +207,8 @@ class TransOpencloseController extends ActiveController
 		$caseAdd		= isset($paramsBody['ADDCASH'])!=''?$paramsBody['ADDCASH']:'';
 		$caseSell		= isset($paramsBody['SELLCASH'])!=''?$paramsBody['SELLCASH']:'';
 		$caseActual		= isset($paramsBody['TOTALCASH_ACTUAL'])!=''?$paramsBody['TOTALCASH_ACTUAL']:'';
+		$ttlRefund		= isset($paramsBody['TOTALREFUND'])!=''?$paramsBody['TOTALREFUND']:'';
+		$ttlDonasi		= isset($paramsBody['TOTALDONASI'])!=''?$paramsBody['TOTALDONASI']:'';
 		$caseNote		= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['DCRP_DETIL']:'';
 	
 		$modelEdit = TransOpenclose::find()->where(['OPENCLOSE_ID'=>$opencloseID])->one();
@@ -214,6 +220,8 @@ class TransOpencloseController extends ActiveController
 			if ($caseAdd<>''){$modelEdit->ADDCASH=$caseAdd;};			
 			if ($caseSell<>''){$modelEdit->SELLCASH=$caseSell;};			
 			if ($caseActual<>''){$modelEdit->TOTALCASH_ACTUAL=$caseActual;};			
+			if ($ttlRefund<>''){$modelEdit->TOTALREFUND=$ttlRefund;};			
+			if ($ttlDonasi<>''){$modelEdit->TOTALDONASI=$ttlDonasi;};			
 			if ($caseNote<>''){$modelEdit->DCRP_DETIL=$caseNote;};	
 			$modelEdit->scenario = "update";			
 			if($modelEdit->save()){

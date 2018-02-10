@@ -105,6 +105,8 @@ class TransPenjualanHeaderController extends ActiveController
 		$totalHarga			= isset($paramsBody['TOTAL_HARGA'])!=''?$paramsBody['TOTAL_HARGA']:'';
 		$subTotalHarga		= isset($paramsBody['SUB_TOTAL_HARGA'])!=''?$paramsBody['SUB_TOTAL_HARGA']:'';
 		$ppnPajak			= isset($paramsBody['PPN'])!=''?$paramsBody['PPN']:'';		
+		$dokem				= isset($paramsBody['DO_KEM'])!=''?$paramsBody['DO_KEM']:'';		
+		$dokemType			= isset($paramsBody['DO_KEM_TYPE'])!=''?$paramsBody['DO_KEM_TYPE']:'';		
 		$cunsumerId			= isset($paramsBody['CONSUMER_ID'])!=''?$paramsBody['CONSUMER_ID']:'';
 		$cunsumerNm			= isset($paramsBody['CONSUMER_NM'])!=''?$paramsBody['CONSUMER_NM']:'';
 		$cunsumerEmail		= isset($paramsBody['CONSUMER_EMAIL'])!=''?$paramsBody['CONSUMER_EMAIL']:'';
@@ -183,6 +185,8 @@ class TransPenjualanHeaderController extends ActiveController
 				if ($totalHarga<>''){$modelNew->TOTAL_HARGA=$totalHarga;};
 				if ($subTotalHarga<>''){$modelNew->SUB_TOTAL_HARGA=$subTotalHarga;};
 				if ($ppnPajak<>''){$modelNew->PPN=$ppnPajak;};
+				if ($dokem<>''){$modelNew->DO_KEM=$dokem;};
+				if ($dokemType<>''){$modelNew->DO_KEM_TYPE=$dokemType;};
 				if ($cunsumerId<>''){$modelNew->CONSUMER_ID=$cunsumerId;};
 				if ($cunsumerNm<>''){$modelNew->CONSUMER_NM=$cunsumerNm;};
 				if ($cunsumerEmail<>''){$modelNew->CONSUMER_EMAIL=$cunsumerEmail;};
@@ -223,7 +227,9 @@ class TransPenjualanHeaderController extends ActiveController
 		$ttlProduct			= isset($paramsBody['TOTAL_PRODUCT'])!=''?$paramsBody['TOTAL_PRODUCT']:'';
 		$totalHarga			= isset($paramsBody['TOTAL_HARGA'])!=''?$paramsBody['TOTAL_HARGA']:'';
 		$subTotalHarga		= isset($paramsBody['SUB_TOTAL_HARGA'])!=''?$paramsBody['SUB_TOTAL_HARGA']:'';
-		$ppnPajak			= isset($paramsBody['PPN'])!=''?$paramsBody['PPN']:'';		
+		$ppnPajak			= isset($paramsBody['PPN'])!=''?$paramsBody['PPN']:'';
+		$dokem				= isset($paramsBody['DO_KEM'])!=''?$paramsBody['DO_KEM']:'';		
+		$dokemType			= isset($paramsBody['DO_KEM_TYPE'])!=''?$paramsBody['DO_KEM_TYPE']:'';			
 		$cunsumerId			= isset($paramsBody['CONSUMER_ID'])!=''?$paramsBody['CONSUMER_ID']:'';
 		$cunsumerNm			= isset($paramsBody['CONSUMER_NM'])!=''?$paramsBody['CONSUMER_NM']:'';
 		$cunsumerEmail		= isset($paramsBody['CONSUMER_EMAIL'])!=''?$paramsBody['CONSUMER_EMAIL']:'';
@@ -241,6 +247,8 @@ class TransPenjualanHeaderController extends ActiveController
 			if ($totalHarga<>''){$modelEdit->TOTAL_HARGA=$totalHarga;};
 			if ($subTotalHarga<>''){$modelEdit->SUB_TOTAL_HARGA=$subTotalHarga;};
 			if ($ppnPajak<>''){$modelEdit->PPN=$ppnPajak;};
+			if ($dokem<>''){$modelEdit->DO_KEM=$dokem;};
+			if ($dokemType<>''){$modelEdit->DO_KEM_TYPE=$dokemType;};		
 			if ($cunsumerId<>''){$modelEdit->CONSUMER_ID=$cunsumerId;};
 			if ($cunsumerNm<>''){$modelEdit->CONSUMER_NM=$cunsumerNm;};
 			if ($cunsumerEmail<>''){$modelEdit->CONSUMER_EMAIL=$cunsumerEmail;};

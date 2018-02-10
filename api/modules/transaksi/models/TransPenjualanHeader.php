@@ -33,8 +33,8 @@ class TransPenjualanHeader extends \yii\db\ActiveRecord
             [['STORE_ID','ACCESS_ID','TRANS_DATE'], 'required','on'=>self::SCENARIO_CREATE],
 			[['TRANS_ID','TOTAL_PRODUCT'], 'required','on'=>self::SCENARIO_UPDATE],
 			[['TRANS_DATE', 'CREATE_AT', 'UPDATE_AT','MERCHANT_ID','TRANS_ID','CONSUMER_ID','OPENCLOSE_ID'], 'safe'],
-            [['TOTAL_PRODUCT', 'SUB_TOTAL_HARGA', 'PPN', 'TOTAL_HARGA'], 'number'],
-            [['TYPE_PAY_ID', 'BANK_ID', 'STATUS', 'YEAR_AT', 'MONTH_AT'], 'integer'],
+            [['TOTAL_PRODUCT', 'SUB_TOTAL_HARGA', 'PPN', 'TOTAL_HARGA','DO_KEM'], 'safe'],
+            [['TYPE_PAY_ID', 'BANK_ID', 'STATUS', 'YEAR_AT', 'MONTH_AT','DO_KEM_TYPE'], 'integer'],
             [['DCRP_DETIL'], 'string'],
             [['ACCESS_GROUP', 'ACCESS_ID'], 'string', 'max' => 15],
             [['STORE_ID'], 'string', 'max' => 20],
@@ -124,6 +124,12 @@ class TransPenjualanHeader extends \yii\db\ActiveRecord
 			},
 			'TOTAL_HARGA'=>function($model){
 				return $model->TOTAL_HARGA;
+			},
+			'DO_KEM'=>function($model){
+				return $model->DO_KEM;
+			},
+			'DO_KEM_TYPE'=>function($model){
+				return $model->DO_KEM_TYPE;
 			},
 			'MERCHANT_ID'=>function($model){
 				return $model->MERCHANT_ID;

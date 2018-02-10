@@ -208,7 +208,7 @@ class ProductPromoController extends ActiveController
 					if ($prdNote<>''){$modelNew->DCRP_DETIL=$prdNote;};
 					if($modelNew->save()){
 						//$modelView=ProductPromo::find()->where(['PRODUCT_ID'=>$productId])->all();
-						$rsltMax=ProductPromo::find()->where(['PRODUCT_ID'=>$productId])->max(ID);
+						$rsltMax=ProductPromo::find()->where(['PRODUCT_ID'=>$productId])->max('ID');
 						$modelView=ProductPromo::find()->where(['ID'=>$rsltMax])->one();
 						return array('LIST_PRODUCT_PROMO'=>$modelView);
 					}else{

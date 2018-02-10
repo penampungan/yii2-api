@@ -17,7 +17,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
 
 use api\modules\master\models\ProductUnitGroup;
-
+use api\modules\master\models\SyncPoling;
 
 /**
   * @author 	: ptrnov  <piter@lukison.com>
@@ -107,6 +107,11 @@ class ProductUnitGroupController extends ActiveController
 		$unitGrpNm		= isset($paramsBody['UNIT_NM_GRP'])!=''?$paramsBody['UNIT_NM_GRP']:'';
 		$unitGrpNote	= isset($paramsBody['DCRP_DETIL'])!=''?$paramsBody['NOTE']:'';
 		
+		//POLING SYNC nedded ACCESS_ID
+		$accessID		= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$tblPooling		= isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		$paramlUUID		= isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
+		
 		if($metode=='GET'){
 			/**
 			  * @author 	: ptrnov  <piter@lukison.com>
@@ -121,9 +126,36 @@ class ProductUnitGroupController extends ActiveController
 			if($unitIdGrp<>''){				
 				//Model Per-UNIT GROUP
 				$modelCnt= ProductUnitGroup::find()->where(['UNIT_ID_GRP'=>$unitIdGrp])->count();
-				$model= ProductUnitGroup::find()->where(['UNIT_ID_GRP'=>$unitIdGrp])->one();		
-				
+				$model= ProductUnitGroup::find()->where(['UNIT_ID_GRP'=>$unitIdGrp])->one();				
 				if($modelCnt){
+					/*===========================
+					 *=== POLLING UPDATE UUID ===
+					 *===========================
+					*/
+					if ($tblPooling=='TBL_PRODUCT_UNITGROUP'){	
+						$modelPoling=SyncPoling::find()->where([
+							 'NM_TABLE'=>'TBL_PRODUCT_UNITGROUP',
+							 'ACCESS_GROUP'=>'',
+							 'STORE_ID'=>'',
+							 'PRIMARIKEY_VAL'=>$unitIdGrp
+						])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+						//==UPDATE DATA POLLING UUID
+						if($modelPoling){							
+							foreach($modelPoling as $row => $val){
+								$modelSimpan=SyncPoling::find()->where([
+									 'NM_TABLE'=>'TBL_PRODUCT_UNITGROUP',
+									 'ACCESS_GROUP'=>'',
+									 'STORE_ID'=>'',
+									 'PRIMARIKEY_VAL'=>$unitIdGrp,
+									 'TYPE_ACTION'=>$val->TYPE_ACTION
+								])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+								if($modelSimpan AND $paramlUUID){
+									$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+									$modelSimpan->save();
+								}
+							}							
+						}
+					}
 					return array('LIST_PRODUCT_UNIT-GROUP'=>$model);
 				}else{
 					return array('result'=>'data-empty');
