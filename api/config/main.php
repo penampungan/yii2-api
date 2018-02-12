@@ -31,6 +31,10 @@ return [
 		'ppob' => [
             'basePath' => '@app/modules/ppob',
             'class' => 'api\modules\ppob\Module',
+        ],
+		'pembayaran' => [
+            'basePath' => '@app/modules/pembayaran',
+            'class' => 'api\modules\pembayaran\Module',
         ]
     ],
     'components' => [
@@ -165,6 +169,32 @@ return [
 							'GET,HEAD' => 'index',
 							'{id}' => 'options',
 							'' => 'options',
+						]
+                ],
+				[
+                        'class' => 'yii\rest\UrlRule',
+                        'controller' =>[
+							'pembayaran/store-kasir',
+							'pembayaran/store-invoice',
+							'pembayaran/store-payment'
+						],
+						'patterns' => [
+							'PUT,PATCH' => 'update',
+							'DELETE {id}' => 'delete',
+							'GET,HEAD {id}' => 'view',
+							'POST' => 'create',
+							'GET,HEAD' => 'index',
+							'{id}' => 'options',
+							'' => 'options',
+						],
+						'extraPatterns' => [
+							'POST list-paket' => 'list-paket',
+							'POST list-payment-methode' => 'list-payment-methode',
+							'POST list-auto-debet' => 'list-auto-debet',
+							'POST payment-metode' => 'payment-metode',
+							'POST ganti-perangkat' => 'ganti-perangkat',
+							'POST setting-pembayaran' => 'setting-pembayaran',
+							
 						]
                 ],
 				[
