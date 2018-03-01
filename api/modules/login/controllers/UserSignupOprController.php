@@ -125,30 +125,34 @@ class UserSignupOprController extends ActiveController
 				if($cntStore){
 					$cntUser= UserLogin::find()->where(['username'=>$in_username])->count();
 					if(!$cntUser){
-						$model= new UserLogin();
-						//$model->scenario = 'createuserapi';
-						$model->username=$in_username;
-						$model->ACCESS_LEVEL='OPS';
-						$model->ACCESS_GROUP=$accessGroup;
-						$model->create_at=date('Y-m-d H:i:s');
-						$model->password_hash = Yii::$app->security->generatePasswordHash($in_password);
-						$model->auth_key = Yii::$app->security->generateRandomString();						
-						if ($model->save()){
-							$modelUser= UserLogin::find()->where(['username'=>$in_username])->one();
-							$modelStore= Store::find()->where(['STORE_ID'=>$storeId])->one();
-							//penambahan array pada store->ACCESS_ID [user penguna store];
-							$modelStore->ACCESS_ID=$modelStore->ACCESS_ID.','.$modelUser->ACCESS_ID;
-							// $modelStore->save();
-							// return array('result'=>$modelStore->errors);
-							if($modelStore->save()){
-								return array('result'=>$modelUser->attributes);								
+						if($in_password<>''){
+							$model= new UserLogin();
+							//$model->scenario = 'createuser_oprs';
+							$model->username=$in_username;
+							$model->ACCESS_LEVEL='OPS';
+							$model->ACCESS_GROUP=$accessGroup;
+							$model->create_at=date('Y-m-d H:i:s');
+							$model->password_hash = Yii::$app->security->generatePasswordHash($in_password);
+							$model->auth_key = Yii::$app->security->generateRandomString();						
+							if ($model->save()){
+								$modelUser= UserLogin::find()->where(['username'=>$in_username])->one();
+								$modelStore= Store::find()->where(['STORE_ID'=>$storeId])->one();
+								//penambahan array pada store->ACCESS_ID [user penguna store];
+								$modelStore->ACCESS_ID=$modelStore->ACCESS_ID.','.$modelUser->ACCESS_ID;
+								// $modelStore->save();
+								// return array('result'=>$modelStore->errors);
+								if($modelStore->save()){
+									return array('result'=>$modelUser->attributes);								
+								}else{
+									return array('result'=>'Unregister-User-Store');
+									//return array('result'=>$modelStore->attributes);
+								}	 		
 							}else{
-								return array('result'=>'Unregister-User-Store');
-								//return array('result'=>$modelStore->attributes);
-							}	 		
+								return array('result'=>$model->errors);
+							} 	
 						}else{
-							return array('result'=>$model->errors);
-						} 					
+							return array('result'=>'password-required');
+						}
 					}else{
 						return array('result'=>'User Already Exist');
 					}

@@ -26,13 +26,13 @@ class StorePerangkatKasir extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['KASIR_ID'], 'required'],
+            //[['KASIR_ID'], 'required'],
             [['KASIR_STT', 'DOMPET_AUTODEBET', 'PAKET_ID', 'STATUS','PAYMENT_METHODE'], 'integer'],
             [['DATE_START', 'DATE_END', 'KONTRAK_DATE', 'CREATE_AT', 'UPDATE_AT'], 'safe'],
             [['KASIR_ID', 'PERANGKAT_UUID','PAYMENT_METHODE_NM'], 'string', 'max' => 100],
             [['KASIR_NM', 'ACCESS_GROUP', 'STORE_ID', 'KASIR_STT_NM','DOMPET_AUTODEBET_NM', 'CREATE_BY', 'UPDATE_BY'], 'string', 'max' => 50],
             [['KONTRAK_DURASI'], 'string', 'max' => 255],
-            [['KASIR_ID', 'ACCESS_GROUP', 'STORE_ID'], 'unique', 'targetAttribute' => ['ACCESS_GROUP', 'STORE_ID']],
+           // [['KASIR_ID', 'ACCESS_GROUP', 'STORE_ID'], 'unique', 'targetAttribute' => ['ACCESS_GROUP', 'STORE_ID']],
             [['KASIR_ID'], 'unique'],
         ];
     }
@@ -119,7 +119,10 @@ class StorePerangkatKasir extends \yii\db\ActiveRecord
 				$sttNm=$model->STATUS==0?'disable':($model->STATUS==1?'Enable':'Delete');
 				return $sttNm;
 			},
-			'PAKET_PROPERTIES'=>function(){
+			'PAKET_ID'=>function($model){
+				return $model->PAKET_ID;
+			},				
+			'PAKET_ATRIBUT'=>function(){
 				return $this->storeInvoicePaketTbl;
 			}				
 			

@@ -1,6 +1,6 @@
 <?php
 
-namespace api\modules\master\controllers;
+namespace api\modules\pembayaran\controllers;
 
 use yii;
 use yii\helpers\Json;
@@ -16,21 +16,13 @@ use yii\web\Response;
 use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
 
-use api\modules\master\models\MerchantBank;
+use api\modules\pembayaran\models\DompetSaldo;
 use api\modules\master\models\SyncPoling;
 
-/**
-  * @author 	: ptrnov  <piter@lukison.com>
-  * @since 		: 1.2
-  * Subject		: MERCHANT BANK LIST
-  * Metode		: POST (Views)
-  * URL			: http://production.kontrolgampang.com/master/merchant-banks
-  * Body Param	: No Field.
- */
-class MerchantBankController extends ActiveController
-{	
-    //public $modelClass = 'common\models\User';
-    public $modelClass = 'api\modules\login\models\MerchantBank';
+class DompetController extends ActiveController
+{
+
+	public $modelClass = 'api\modules\pembayaran\models\DompetSaldo';
 
 	/**
      * Behaviors
@@ -89,7 +81,7 @@ class MerchantBankController extends ActiveController
 			], */
         ]);		
     }
-
+	
 	public function actions()
 	{
 		$actions = parent::actions();
@@ -101,63 +93,66 @@ class MerchantBankController extends ActiveController
 	public function actionCreate()
     {        
 		/**
-		  * @author 	: ptrnov  <piter@lukison.com>
-		  * @since 		: 1.2
-		  * Subject		: MERCHANT BANK LIST
-		  * Metode		: POST (Views)
-		  * URL			: http://production.kontrolgampang.com/master/merchant-banks
-		  * Body Param	: No Field.
-		 */	
+		  * @author 		: ptrnov  <piter@lukison.com>
+		  * @since 			: 1.2
+		  * Subject			: DOMPET SALDO
+		  * Metode			: POST 
+		  * URL				: http://production.kontrolgampang.com/pembayaran/dompets
+		  * param Metode	: POST & GET
+		  * Param KEY		: ACCESS_GROUP 
+		  * Param Create	:  
+		 */
 		$paramsBody 	= Yii::$app->request->bodyParams;		
 		$metode			= isset($paramsBody['METHODE'])!=''?$paramsBody['METHODE']:'';
-		$bankId			= isset($paramsBody['BANK_ID'])!=''?$paramsBody['BANK_ID']:'';
-		//==POLING SYNC ===
-		$accessID		=isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
-		$tblPooling		=isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
-		$paramlUUID		=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
+		$accessGroup	= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';	
+		
+		//POLING SYNC nedded ACCESS_ID
+		$accessID=isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$tblPooling=isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		$paramlUUID=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
+		
+		//VALIDATION STORE
+		$cntDompetSaldo= DompetSaldo::find()->where(['ACCESS_GROUP'=>$accessGroup])->count();
 		
 		if($metode=='GET'){
-			if($bankId<>''){
-				$modelView=MerchantBank::find()->where(['BANK_ID'=>$bankId])->one();
-				//==GET DATA POLLING
-				$modelPoling=SyncPoling::find()->where([
-					'NM_TABLE'=>'TBL_MERCHANT_BANK',
-					 'ACCESS_GROUP'=>'',
-					 'STORE_ID'=>'',
-					 'PRIMARIKEY_VAL'=>$bankId
-				])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
-				//==UPDATE DATA POLLING UUID
-				if($modelPoling){							
-					foreach($modelPoling as $row => $val){
-						$modelSimpan=SyncPoling::find()->where([
-							 'NM_TABLE'=>'TBL_MERCHANT_BANK',
-							 'ACCESS_GROUP'=>'',
-							 'STORE_ID'=>'',
-							 'PRIMARIKEY_VAL'=>$bankId,
-							 'TYPE_ACTION'=>$val->TYPE_ACTION
-						])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
-						if($modelSimpan AND $paramlUUID){
-							$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
-							$modelSimpan->save();
-						}
-					}							
+			if($cntDompetSaldo){				
+				if ($tblPooling=='TBL_SYNC_DOMPET'){						
+					//==GET DATA POLLING
+					$modelPoling=SyncPoling::find()->where([
+						 'NM_TABLE'=>'TBL_SYNC_DOMPET',
+						 'ACCESS_GROUP'=>$accessGroup,
+						 'PRIMARIKEY_VAL'=>$accessGroup,
+					])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->all();
+					//==UPDATE DATA POLLING UUID
+					if($modelPoling){							
+						foreach($modelPoling as $row => $val){
+							$modelSimpan=SyncPoling::find()->where([
+								 'NM_TABLE'=>'TBL_SYNC_DOMPET',
+								 'ACCESS_GROUP'=>$accessGroup,
+								 'PRIMARIKEY_VAL'=>$accessGroup,
+								 'TYPE_ACTION'=>$val->TYPE_ACTION
+							])->andWhere("FIND_IN_SET('".$paramlUUID."',ARY_UUID)=0")->one();
+							if($modelSimpan AND $paramlUUID){
+								$modelSimpan->ARY_UUID=$modelSimpan->ARY_UUID.','.$paramlUUID;
+								$modelSimpan->save();
+							}
+						}							
+					}
 				}
-				return array('MERCHANT_BANK'=>$modelView);
+				$modelView=DompetSaldo::find()->Where(['ACCESS_GROUP'=>$accessGroup])->one();
+			}elseif($cntDompetSaldo){
+				$modelView=DompetSaldo::find()->where(['ACCESS_GROUP'=>$accessGroup])->all();
 			}else{
-				$modelView=MerchantBank::find()->all();
-				return array('MERCHANT_BANK'=>$modelView);
-			}		
+				return array('result'=>'Dompet-Not-Exist');
+			}
+			return array('DOMPET'=>$modelView);
 		}else{
-			$modelView=MerchantBank::find()->all();
-			return array('MERCHANT_BANK'=>$modelView);
+			return array('result'=>'POST-or-GET');
 		}
-		
-		
-		
-		
-	}
-	
-	
+	}	
 }
-
-
+    
+	
+	
+	
+	

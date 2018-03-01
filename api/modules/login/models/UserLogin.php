@@ -15,7 +15,7 @@ class UserLogin extends \yii\db\ActiveRecord
 //class Userlogintest extends ActiveRecord implements IdentityInterface
 {
 	
-	const SCENARIO_USER = 'createuser';
+	//const SCENARIO_USER_OPRS = 'createuser_oprs';
 	public static function getDb()
 	{
 		/* Author -ptr.nov- : HRD | Dashboard I */
@@ -32,6 +32,7 @@ class UserLogin extends \yii\db\ActiveRecord
     {
         return [
 			//[['username', 'ACCESS_ID','ACCESS_GROUP'], 'required'],
+			//[['username','password_hash'], 'required','on'=>self::SCENARIO_USER_OPRS],
             [['auth_key'], 'string'],
             [['UUID'], 'safe'],
             [['status', 'ACCESS_SITE', 'ONLINE', 'lft', 'rgt', 'lvl', 'icon_type', 'YEAR_AT', 'MONTH_AT'], 'integer'],

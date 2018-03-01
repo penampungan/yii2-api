@@ -19,6 +19,7 @@ use yii\web\HttpException;
 use api\modules\pembayaran\models\StorePerangkatKasir;
 use api\modules\master\models\SyncPoling;
 use api\modules\pembayaran\models\StoreInvoicePaket;
+use api\modules\pembayaran\models\Store;
 
 class StoreKasirController extends ActiveController
 {
@@ -100,8 +101,7 @@ class StoreKasirController extends ActiveController
 		  * Metode			: POST 
 		  * URL				: http://production.kontrolgampang.com/pembayaran/store-kasirs
 		  * param Metode	: POST & GET
-		  * Param View		:  
-		  * Param Create	:  
+		  * Key				: METHODE,STORE_ID,KASIR_ID
 		 */
 		$paramsBody 	= Yii::$app->request->bodyParams;		
 		$metode			= isset($paramsBody['METHODE'])!=''?$paramsBody['METHODE']:'';
@@ -201,17 +201,114 @@ class StoreKasirController extends ActiveController
 		return $ary;
 	}
 	
+	
+	/* ================================
+	 * === ADD NEW PERANGKAT KASIR ===
+	 * ================================
+	 * URL 		: http://production.kontrolgampang.com/pembayaran/store-kasirs/tambah-perangkat
+	 * METHODE	: POST
+	 * Key		: 
+	 * Param	: STORE_ID,PERANGKAT_UUID,ACCESS_ID
+	**/
+    public function actionTambahPerangkat(){
+		
+		$paramsBody 	= Yii::$app->request->bodyParams;		
+		$storeId		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';			
+		$accessID		= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$perangkatUuid	= isset($paramsBody['PERANGKAT_UUID'])!=''?$paramsBody['PERANGKAT_UUID']:'';
+		$dataHeader=explode('.',$storeId);
+		$modelStoreKasir= new StorePerangkatKasir();
+		if ($accessID!=''){$modelStoreKasir->UPDATE_BY=$accessID;};
+		if ($perangkatUuid!=''){$modelStoreKasir->PERANGKAT_UUID=$perangkatUuid;};
+		if ($storeId!=''){$modelStoreKasir->STORE_ID=$storeId;};
+		if ($modelStoreKasir->save()){
+			$rsltMax=StorePerangkatKasir::find()->where([
+				'STORE_ID'=>$storeId,
+				'ACCESS_GROUP'=>$dataHeader[0],
+			])->max('KASIR_ID');
+			$modelView=StorePerangkatKasir::find()->where([
+					'STORE_ID'=>$storeId,'ACCESS_GROUP'=>$dataHeader[0],'KASIR_ID'=>$rsltMax
+			])->one();				
+			return array('STORE_KASIR'=>$modelView);
+		}else{
+			return array('result'=>$modelStoreKasir->errors);
+		}
+			
+	}
+	
+	/* ========================
+	 * === LIST UUID STORE  ===
+	 * ========================
+	 * 	URL 		: http://production.kontrolgampang.com/pembayaran/store-kasirs/list-uuid
+	 * 	METHODE		: POST
+	 *	PARAM KRY	: STORE_ID
+	*/
+	public function actionListUuid()
+	{
+		$paramsBody 	= Yii::$app->request->bodyParams;		
+		$storeId		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';
+		$modelStore		= Store::find()->where(['STORE_ID'=>$storeId])->one();
+		if($modelStore){
+			$modelStoreUUID=$modelStore['UUID'];
+			$modelStorId=$modelStore['STORE_ID'];
+			$modelStorNm=$modelStore['STORE_NM'];
+			$modelPerangkatUuid=$modelStore['storeUuid'];
+				$explodeUUid = explode(',',$modelStoreUUID);
+				foreach ($explodeUUid as $row){
+					if ($row <> 'undefined' AND $row <> ''){
+					$aryUuid[]=$row;
+					}				
+				};			
+			$dataUuid=[
+				'STORE_ID'=>$modelStorId,
+				'STORE_NM'=>$modelStorNm,
+				'UUID'=>$aryUuid,
+				'PERANGKAT_UUID'=>$modelPerangkatUuid
+			];
+			return array('LIST_UUID'=>$dataUuid);
+		}else{
+			return array('result'=>'Store-uuid-Not-Exist');
+		};			
+		
+	}
 	/* ================================
 	 * === Update Setting Perangkat ===
 	 * ================================
 	 * URL 		: http://production.kontrolgampang.com/pembayaran/store-kasirs/ganti-perangkat
 	 * METHODE	: POST
 	 * Key		: STORE_ID, KASIR_ID
-	 * Param	: PERANGKAT_UUID
+	 * Param	: PERANGKAT_UUID,ACCESS_ID
 	**/
     public function actionGantiPerangkat(){
 		
-		return 'perangkat';
+		$paramsBody 	= Yii::$app->request->bodyParams;		
+		$storeId		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';		
+		$kasirId		= isset($paramsBody['KASIR_ID'])!=''?$paramsBody['KASIR_ID']:'';	
+		$accessID		= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$perangkatUuid	= isset($paramsBody['PERANGKAT_UUID'])!=''?$paramsBody['PERANGKAT_UUID']:'';
+		$dataHeader=explode('.',$storeId);
+		$modelStoreKasir= StorePerangkatKasir::find()->where([
+			'KASIR_ID'=>$kasirId,
+			'STORE_ID'=>$storeId,
+			'ACCESS_GROUP'=>$dataHeader[0],
+		])->one();
+		if($modelStoreKasir){
+			//$modelMerchant->BANK_NM='ok zone1';
+			if ($accessID!=''){$modelStoreKasir->UPDATE_BY=$accessID;};
+			if ($perangkatUuid!=''){$modelStoreKasir->PERANGKAT_UUID=$perangkatUuid;};
+			if ($modelStoreKasir->save()){
+				$modelView=StorePerangkatKasir::find()->where([
+					'KASIR_ID'=>$kasirId,
+					'STORE_ID'=>$storeId,
+					'ACCESS_GROUP'=>$dataHeader[0],
+				])->one();			
+				return array('STORE_KASIR'=>$modelView);
+			}else{
+				return array('result'=>$modelStoreKasir->errors);
+			}
+		}else{
+			return array('result'=>'KasirId-Not-Exist');
+		};			
 	}
 	
 	/* ===============================================
@@ -220,11 +317,42 @@ class StoreKasirController extends ActiveController
 	 * URL 		: http://production.kontrolgampang.com/pembayaran/store-kasirs/setting-pembayaran
 	 * METHODE	: POST
 	 * Key		: STORE_ID, KASIR_ID
-	 * Param	: DOMPET_AUTODEBET, PAYMENT_METHODE,PAKET_ID
+	 * Param	: DOMPET_AUTODEBET, PAYMENT_METHODE,PAKET_ID,ACCESS_ID
 	**/
-    public function actionSettingPembayaran(){
+    public function actionSettingPembayaran(){		
+		$paramsBody 	= Yii::$app->request->bodyParams;		
+		$storeId		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';		
+		$kasirId		= isset($paramsBody['KASIR_ID'])!=''?$paramsBody['KASIR_ID']:'';	
+		$sutodebet		= isset($paramsBody['DOMPET_AUTODEBET'])!=''?$paramsBody['DOMPET_AUTODEBET']:'';
+		$payMethode		= isset($paramsBody['PAYMENT_METHODE'])!=''?$paramsBody['PAYMENT_METHODE']:'';
+		$paketId		= isset($paramsBody['PAKET_ID'])!=''?$paramsBody['PAKET_ID']:'';
+		$accessID		= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
 		
-		return 'pembayaran';
+		$dataHeader=explode('.',$storeId);
+		$modelStoreKasir= StorePerangkatKasir::find()->where([
+			'KASIR_ID'=>$kasirId,
+			'STORE_ID'=>$storeId,
+			'ACCESS_GROUP'=>$dataHeader[0],
+		])->one();
+		if($modelStoreKasir){
+			//$modelMerchant->BANK_NM='ok zone1';
+			if ($accessID!=''){$modelStoreKasir->UPDATE_BY=$accessID;};
+			if ($sutodebet!=''){$modelStoreKasir->DOMPET_AUTODEBET=$sutodebet;};
+			if ($payMethode!=''){$modelStoreKasir->PAYMENT_METHODE=$payMethode;};
+			if ($paketId!=''){$modelStoreKasir->PAKET_ID=$paketId;};
+			if ($modelStoreKasir->save()){
+				$modelView=StorePerangkatKasir::find()->where([
+					'KASIR_ID'=>$kasirId,
+					'STORE_ID'=>$storeId,
+					'ACCESS_GROUP'=>$dataHeader[0],
+				])->one();			
+				return array('STORE_KASIR'=>$modelView);
+			}else{
+				return array('result'=>$modelStoreKasir->errors);
+			}
+		}else{
+			return array('result'=>'KasirId-Not-Exist');
+		};			
 	}
 
 	

@@ -95,17 +95,17 @@ class StoreInvoiceController extends ActiveController
 	 * http://production.kontrolgampang.com/pembayaran/store-invoices/list-paket
 	 * TYPE : POST
 	*/
-	public function actionListPaket()
+	/* public function actionListPaket()
 	{
 		$model= StoreInvoicePaket::find()->all();
 		return $model;
-	}
+	} */
 	
 	/*
 	 * http://production.kontrolgampang.com/pembayaran/store-invoices/payment-metode
 	 * TYPE : POST
 	*/
-	public function actionPaymentMetode()
+	/* public function actionPaymentMetode()
 	{
 		$ary=[
 		 ['PAYMENT_METHODE' =>1,'PAYMENT_METHODE_NM'=>'Dompet KG'],
@@ -114,7 +114,7 @@ class StoreInvoiceController extends ActiveController
 		];		
 		//$valAry = ArrayHelper::map($ary, 'PAYMENT_METHODE', 'PAYMENT_METHODE_NM');
 		return $ary;
-	}
+	} */
 	
 	public function actionCreate()
     {        
@@ -124,9 +124,9 @@ class StoreInvoiceController extends ActiveController
 		  * Subject			: PEMBAYARAN STORE-KASIR
 		  * Metode			: POST 
 		  * URL				: http://production.kontrolgampang.com/pembayaran/store-invoices
-		  * param Metode	: POST & GET
+		  * param Metode	: POST
 		  * Param View		:  
-		  * Param Create	: METHODE,STORE_ID,KASIR_ID
+		  * Param Create	: METHODE='GET',STORE_ID,KASIR_ID
 		 */
 		$paramsBody 	= Yii::$app->request->bodyParams;		
 		$metode			= isset($paramsBody['METHODE'])!=''?$paramsBody['METHODE']:'';
@@ -134,15 +134,16 @@ class StoreInvoiceController extends ActiveController
 		$kasirId		= isset($paramsBody['KASIR_ID'])!=''?$paramsBody['KASIR_ID']:'';		
 		
 		//POLING SYNC nedded ACCESS_ID
-		$accessID=isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
-		$tblPooling=isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
-		$perangkatUuid=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';
+		$accessID		= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
+		$tblPooling		= isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		$paramlUUID		= isset($paramsBody['PERANGKAT_UUID'])!=''?$paramsBody['PERANGKAT_UUID']:'';
 		
 		//VALIDATION STORE
-		$cntStoreInvoice= StoreInvoice::find()->where(['STORE_ID'=>$storeId])->count();
+		$cntStoreInvoiceStore= StoreInvoice::find()->where(['STORE_ID'=>$storeId])->count();
+		$cntStoreInvoiceKasir= StoreInvoice::find()->where(['STORE_ID'=>$storeId,'KASIR_ID'=>$kasirId])->count();
 		
 		if($metode=='GET'){
-			if($cntStoreInvoice And $kasirId){				
+			if($cntStoreInvoiceStore And $cntStoreInvoiceKasir){				
 				if ($tblPooling=='TBL_STORE_INVOICE'){						
 					//==GET DATA POLLING
 					$dataHeader=explode('.',$storeId);
@@ -170,7 +171,7 @@ class StoreInvoiceController extends ActiveController
 					}
 				}
 				$modelView=StoreInvoice::find()->Where(['KASIR_ID'=>$kasirId])->one();
-			}elseif($cntStoreInvoice){
+			}elseif($cntStoreInvoiceStore){
 				$modelView=StoreInvoice::find()->where(['STORE_ID'=>$storeId])->all();
 			}else{
 				return array('result'=>'Store-Invoice-Not-Exist');

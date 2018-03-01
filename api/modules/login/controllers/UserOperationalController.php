@@ -20,6 +20,8 @@ use api\modules\login\models\UserOps;
 use api\modules\master\models\Store;
 use api\modules\login\models\User;
 use api\modules\master\models\SyncPoling;
+use api\modules\login\models\UserLogin;
+
 
 /**
   * @author 	: ptrnov  <piter@lukison.com>
@@ -113,16 +115,16 @@ class UserOperationalController extends ActiveController
 		 */
 		$paramsBody 			= Yii::$app->request->bodyParams;
 		$storeId				= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';
+		$accessGroup			= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';
 		
 		//==POLING SYNC ===
 		$metode					= isset($paramsBody['METHODE'])!=''?$paramsBody['METHODE']:'';
 		$accessID				= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
 		$in_username			= isset($paramsBody['username'])!=''?$paramsBody['username']:'';
 		$in_password			= isset($paramsBody['password'])!=''?$paramsBody['password']:'';
-		$tblPooling				=isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
-		$paramlUUID				=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';		
-		
-		
+		$tblPooling				= isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
+		$paramlUUID				= isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';		
+
 		if($metode=='GET'){
 			if($accessID<>''){				
 				$modelCnt= User::find()->where(['ACCESS_ID'=>$accessID])->count();
@@ -160,7 +162,58 @@ class UserOperationalController extends ActiveController
 				}else{
 					return array('result'=>'data-empty');
 				}	
+			}else{
+				$model= User::find()->where(['ACCESS_GROUP'=>$accessGroup])->all();
+				return array('LIST_User'=>$model); 
 			}
+		}if($metode=='POST'){
+			if($accessGroup){
+				$cntOwner= UserLogin::find()->where(['ACCESS_GROUP'=>$accessGroup])->count();
+				if($cntOwner){
+					$cntStore= Store::find()->where(['STORE_ID'=>$storeId])->count();
+					if($cntStore){
+						$cntUser= UserLogin::find()->where(['username'=>$in_username])->count();
+						if(!$cntUser){
+							if($in_password<>''){
+								$model= new UserLogin();
+								//$model->scenario = 'createuser_oprs';
+								$model->username=$in_username;
+								$model->ACCESS_LEVEL='OPS';
+								$model->ACCESS_GROUP=$accessGroup;
+								$model->create_at=date('Y-m-d H:i:s');
+								$model->password_hash = Yii::$app->security->generatePasswordHash($in_password);
+								$model->auth_key = Yii::$app->security->generateRandomString();						
+								if ($model->save()){
+									$modelUser= UserLogin::find()->where(['username'=>$in_username])->one();
+									$modelStore= Store::find()->where(['STORE_ID'=>$storeId])->one();
+									//penambahan array pada store->ACCESS_ID [user penguna store];
+									$modelStore->ACCESS_ID=$modelStore->ACCESS_ID.','.$modelUser->ACCESS_ID;
+									// $modelStore->save();
+									// return array('result'=>$modelStore->errors);
+									if($modelStore->save()){
+										return array('result'=>$modelUser->attributes);								
+									}else{
+										return array('result'=>'Unregister-User-Store');
+										//return array('result'=>$modelStore->attributes);
+									}	 		
+								}else{
+									return array('result'=>$model->errors);
+								} 	
+							}else{
+								return array('result'=>'password-required');
+							}
+						}else{
+							return array('result'=>'User Already Exist');
+						}
+					}else{
+						return array('result'=>'Not Exist Store');
+					}			
+				}else{
+					return array('result'=>'Not Exist Owner');
+				}
+			}else{
+				return array('result'=>'Not Exist access_group');
+			}			
 		}else{
 			if($storeId){
 				$cntStore= Store::find()->where(['STORE_ID'=>$storeId])->count();
@@ -200,19 +253,23 @@ class UserOperationalController extends ActiveController
 		if($accessId){
 			$cntUser= User::find()->where(['ACCESS_ID'=>$accessId,'username'=>$in_username])->count();
 			if($cntUser){
-				$modalUser = User::find()->where(['ACCESS_ID'=>$accessId])->one();				
-				$modalUser->password_hash = Yii::$app->security->generatePasswordHash($in_password);
-				if($modalUser->save()){
-					$modalView = User::find()->where(['ACCESS_ID'=>$accessId])->one();
-					return array('LIST_USER'=>$modalView);	
+				if($in_password<>''){				
+					$modalUser = User::find()->where(['ACCESS_ID'=>$accessId])->one();				
+					$modalUser->password_hash = Yii::$app->security->generatePasswordHash($in_password);
+					if($modalUser->save()){
+						$modalView = User::find()->where(['ACCESS_ID'=>$accessId])->one();
+						return array('LIST_USER'=>$modalView);	
+					}else{
+						return array('result'=>'failed-save');
+					}	
 				}else{
-					return array('result'=>'failed-save');
-				}				
+					return array('result'=>'password-required');
+				}	
 			}else{
-				return array('result'=>'User-Not-Exist');
+				return array('result'=>'Not Exist Store');
 			}
 		}else{
-			return array('result'=>'ACCESS_ID-Empty');
+				return array('result'=>'ACCESS_ID-Empty');
 		}
 	}
 	//PR [update (password,staus) ]

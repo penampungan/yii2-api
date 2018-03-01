@@ -176,7 +176,8 @@ return [
                         'controller' =>[
 							'pembayaran/store-kasir',
 							'pembayaran/store-invoice',
-							'pembayaran/store-payment'
+							'pembayaran/store-payment',
+							'pembayaran/dompet',
 						],
 						'patterns' => [
 							'PUT,PATCH' => 'update',
@@ -192,8 +193,10 @@ return [
 							'POST list-payment-methode' => 'list-payment-methode',
 							'POST list-auto-debet' => 'list-auto-debet',
 							'POST payment-metode' => 'payment-metode',
+							'POST list-uuid' => 'list-uuid',
 							'POST ganti-perangkat' => 'ganti-perangkat',
 							'POST setting-pembayaran' => 'setting-pembayaran',
+							'POST tambah-perangkat' => 'tambah-perangkat',
 							
 						]
                 ],
@@ -221,7 +224,8 @@ return [
 							'laporan/trans-rpt1',
 							'laporan/trans-rpt2',
 							'laporan/trans-rpt-test',
-							'laporan/trans-rpt-absensi'
+							'laporan/trans-rpt-absensi',
+							'laporan/counter',
 						],
 						'patterns' => [
 							'PUT,PATCH' => 'update',
@@ -231,6 +235,10 @@ return [
 							'GET,HEAD' => 'index',
 							'{id}' => 'options',
 							'' => 'options',
+						],
+						'extraPatterns' => [
+							'POST per-access-group' => 'per-access-group',
+							'POST per-store' => 'per-store'						
 						]
                 ],
 				[
