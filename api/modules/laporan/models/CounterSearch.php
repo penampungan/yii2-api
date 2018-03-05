@@ -27,16 +27,19 @@ class CounterSearch extends \yii\base\DynamicModel
 		$sql="
 			SELECT 
 				STORE_ID,STORE_NM,
+				CNT_STORE,
 				CNT_STORE_AKTIF,
-				CNT_STORE_NONAKTIF,
+				CNT_PERNGKAT,
 				CNT_PERNGKAT_AKTIF,
-				CNT_PERNGKAT_NONAKTIF,
 				CNT_PRODUK,
+				CNT_KARYAWAN,
 				CNT_KARYAWAN_AKTIF,
-				CNT_KARYAWAN_NONAKTIF,
 				CNT_USER_OPS,
 				CNT_CUS_MEMBER,
-				CNT_JUMLAH_TRANSAKSI
+				CNT_JUMLAH_TRANSAKSI,
+				CNT_PENJUALAN_HARIAN,
+				CNT_PENJUALAN_MINGGUAN,
+				CNT_PENJUALAN_BULANAN
 			FROM ptr_store_count; 		
 		";		
 		$qrySql= Yii::$app->production_api->createCommand($sql)->queryAll(); 		

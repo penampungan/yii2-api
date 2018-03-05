@@ -67,6 +67,9 @@ return [
 		'rpt' => [
             'class' =>'common\components\Reporting'
         ],
+		'arrayBantuan' =>[
+            'class'=>'components\ArrayBantuan',
+        ],
         // 'errorHandler' => [
             // 'errorAction' => 'site/error',
         // ],
@@ -226,6 +229,7 @@ return [
 							'laporan/trans-rpt-test',
 							'laporan/trans-rpt-absensi',
 							'laporan/counter',
+							'laporan/sales-chart'
 						],
 						'patterns' => [
 							'PUT,PATCH' => 'update',
@@ -238,7 +242,9 @@ return [
 						],
 						'extraPatterns' => [
 							'POST per-access-group' => 'per-access-group',
-							'POST per-store' => 'per-store'						
+							'POST per-store' => 'per-store',		
+							'POST frek-trans-day-group' => 'frek-trans-day-group',						
+							'POST frek-trans-day-store' => 'frek-trans-day-store'						
 						]
                 ],
 				[
