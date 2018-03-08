@@ -6,7 +6,7 @@
  * Time: 19:44
  */
 
-namespace common\components;
+namespace api\components;
 use Yii;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;

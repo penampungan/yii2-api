@@ -19,6 +19,7 @@ use yii\web\HttpException;
 
 use api\modules\laporan\models\FrkTransHarianStore;
 use api\modules\laporan\models\FrkTransHarianGrp;
+use api\modules\laporan\models\BulananSalesGrp;
 use api\modules\laporan\models\TransPenjualanHeader;
 
 class SalesChartController extends ActiveController
@@ -135,6 +136,21 @@ class SalesChartController extends ActiveController
 		];		
 		$modelFrkTransHarianStore= new FrkTransHarianStore($param);
 		return $modelFrkTransHarianStore;
+	}		
+	
+	public function actionSalesBulananGroup()
+	{
+		$paramsBody		= Yii::$app->request->bodyParams;
+		$ACCESS_GROUP	= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';	
+		$STORE_ID		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';	
+		$tgl			= isset($paramsBody['TGL'])!=''?$paramsBody['TGL']:'';	
+		$param=[
+			'ACCESS_GROUP'=>$ACCESS_GROUP,
+			'STORE_ID'=>$STORE_ID,
+			'TGL'=>$tgl,
+		];		
+		$modelSalesBulananGroup= new BulananSalesGrp($param);
+		return $modelSalesBulananGroup;
 	}	
 }
     
