@@ -13,7 +13,7 @@ use yii\debug\components\search\Filter;
 use yii\debug\components\search\matchers;
 use api\modules\laporan\models\Store;
 
-class FrkTransHarianStore extends DynamicModel
+class FrkProdukHarianStore extends DynamicModel
 {
 	// public $ACCESS_GROUP;
 	// public $STORE_ID;
@@ -32,11 +32,11 @@ class FrkTransHarianStore extends DynamicModel
 			'chart'=>function($model){
 				return self::chartlabel();
 			},
-			'categories'=>function(){
-				return [
-					self::categorieslabel()
-				];
-			},
+			// 'categories'=>function(){
+				// return [
+					// self::categorieslabel()
+				// ];
+			// },
 			'dataset'=>function($model){
 				return self::frekuensiTransaksiHarianToko();
 			}
@@ -49,17 +49,23 @@ class FrkTransHarianStore extends DynamicModel
 		$modelStore=Store::find()->where(['ACCESS_GROUP'=>$valAccessGoup])->all();
 		foreach($modelStore as $rowStore => $valStore){
 			$sql="
-				#==PER-STORE===
 				SELECT 
-					ACCESS_GROUP,STORE_ID,
-					VAL1,VAL2,VAL3,VAL4,VAL5,VAL6,VAL7,VAL8,VAL9,VAL10,VAL11,VAL12,
-					VAL13,VAL14,VAL15,VAL16,VAL17,VAL18,VAL19,VAL20,VAL21,VAL22,VAL23,VAL24
-				FROM ptr_kasir_th1_hour
-				#WHERE ACCESS_GROUP='".$valAccessGoup."' AND STORE_ID='".$valStore['STORE_ID']."' AND TGL=CURRENT_DATE()
-				WHERE ACCESS_GROUP='".$valAccessGoup."' AND STORE_ID='".$valStore['STORE_ID']."' AND TGL='2018-01-29'				
-				GROUP BY ACCESS_GROUP,STORE_ID; 
-			";		
-			
+					a1.ACCESS_GROUP,a1.STORE_ID,a1.TAHUN,a1.BULAN,a1.TGL,
+					a1.PRODUCT_ID,a2.PRODUCT_NM,a1.PRODUK_SUBTTL_QTY
+				FROM 
+				(
+					SELECT 
+						ACCESS_GROUP,STORE_ID,TAHUN,BULAN,TGL,
+						PRODUCT_ID,SUM(PRODUK_SUBTTL_QTY) AS PRODUK_SUBTTL_QTY
+					FROM ptr_kasir_td1a
+					#WHERE ACCESS_GROUP='170726220936' AND STORE_ID='170726220936.0001' AND TGL='2018-01-26'	
+					WHERE ACCESS_GROUP='".$valAccessGoup."' AND STORE_ID='".$valStore['STORE_ID']."' AND TGL='2018-01-26'						
+					GROUP BY ACCESS_GROUP,STORE_ID,PRODUCT_ID
+				) a1 LEFT JOIN product a2 
+				ON a2.ACCESS_GROUP=a1.ACCESS_GROUP AND 
+				   a2.STORE_ID=a1.STORE_ID AND 
+				   a2.PRODUCT_ID=a1.PRODUCT_ID
+			";					
 			$qrySql= Yii::$app->production_api->createCommand($sql)->queryAll(); 		
 			$dataProvider= new ArrayDataProvider([	
 				'allModels'=>$qrySql,	
@@ -74,31 +80,27 @@ class FrkTransHarianStore extends DynamicModel
 			// $dataProvider->allModels = $filter->filter($qrySql);
 		   // return ['Frekuensi_Transaksi_Harian'=>$dataProvider->getModels()];
 		   
-			$modelHour=$dataProvider->getModels();
-			if ($modelHour){	
-				foreach ($modelHour as $row => $val){
+			$modelProduk=$dataProvider->getModels();
+			if ($modelProduk){	
+				foreach ($modelProduk as $row => $val){
 					$rslt1['seriesname']=$valStore['STORE_NM'];
-					$dataval1=[];
+					//$dataval1=[];
 					//=[3]==LOOPING 24 hour
-					for( $i= 1 ; $i <= 24 ; $i++ ) {
-						$dataval1[]=['label'=>$i,'value'=>$val['VAL'.$i],'anchorBgColor'=>'#00fd83'];
-					}
+					//for( $i= 1 ; $i <= 24 ; $i++ ) {
+						$dataval1[]=['label'=>$val['PRODUCT_NM'],'value'=>$val['PRODUK_SUBTTL_QTY'],'anchorBgColor'=>'#00fd83'];
+					//}
 				
 					//=[4]==SETTING ARRAY
-					$rslt1['data']=$dataval1;	
-					//$rsltDataSet1[]=$rslt1;
+					
+					//$rsltDataSet1['data']=$dataval1;
 				}
-				$dataset=$rslt1;//$rsltDataSet1;	
-			}else{
-				//=[6]== SCENARIO DATA KOSONG				
-				$dataset=[
-						"seriesname"=>$valStore['STORE_NM'],//"Tidak ditemukan data",
-						"data"=>"null"					
-				];
+				$rslt1['data']=$dataval1;	
 			}
-			unset($dataProvider);
-			$datasetRslt[]=$dataset;
+			$datasetRslt[]=$rslt1;
+			
 		}
+		//return $datasetRslt;
+		
 		return $datasetRslt;
 	} 
 
@@ -108,45 +110,35 @@ class FrkTransHarianStore extends DynamicModel
 		$varTgl			= $this->TGL!=''?date('Y-m-d',strtotime($this->TGL)):date('Y-m-d');		
 		$nmBulan=date('F', strtotime($varTahun.'-'.'0'.$varBulan.'-01')); // Nama Bulan
 		$chart=[
-			// ==LOGO==
-			// "logoURL"=>"https://image.kontrolgampang.com/brand/kg.jpg",
-			// "logoAlpha"=> "3",
-			// "logoScale"=> "90",
-			// "logoPosition"=> "TR",
-			//==TOOLS TIPS==
-			"showToolTip"=> "1",
-			"caption"=> " TRAFFIC TRANSAKSI HARIAN PER-TOKO",
-			"subCaption"=>"Tanggal ".$varTgl,
+			"caption"=> "Jumlah Produk Terjual",
+			"subCaption"=> "Tanggal ".$varTgl,
 			"captionFontSize"=> "12",
 			"subcaptionFontSize"=> "10",
 			"subcaptionFontBold"=> "0",
-			"paletteColors"=> "#0000ff,#ff4040,#7fff00,#ff7f24,#ff7256,#ffb90f,#006400,#030303,#ff69b4,#8b814c,#3f6b52,#744f4f,#6fae93,#858006,#426506,#055c5a,#a7630d,#4d8a9c,#449f9c,#8da9ab,#c4dfdd,#bf7793,#559e96,#afca84,#608e97,#806d88,#688b94,#b5dfe7,#b29cba,#83adb5,#c7bbc9,#2d5867,#e1e9b7,#bcd2d0,#f96161,#c9bbbb,#bfc5ce,#8f6d4d,#a87f99,#62909b,#a0acc0,#94b9b8",
+			"showShadow"=> "0",
+			"enableSmartLabels"=> "0",
+			"startingAngle"=> "180",
+			"showLabels"=> "1",
+			"pieRadius"=> "80",
+			"theme"=> "0",
+		    "useDataPlotColorForLabels"=> "0",	
 			"bgcolor"=> "#ffffff",
 			"showBorder"=> "0",
 			"showShadow"=> "0",
-			"usePlotGradientColor"=> "0",			
-			"showAxisLines"=> "0",
-			"showAlternateHGridColor"=> "0",
-			"divlineThickness"=> "1",
-			"divLineIsDashed"=> "0",
-			"divLineDashLen"=> "1",
-			"divLineGapLen"=> "1",
-			"vDivLineDashed"=> "0",
-			"numVDivLines"=> "6",
-			"vDivLineThickness"=> "1",			
-			"anchorradius"=> "5",
+			"usePlotGradientColor"=> "0",					
 			"plotHighlightEffect"=> "fadeout|color=#f6f5fd, alpha=60",
-			"showValues"=> "0",
-			"rotateValues"=> "0",
-			"placeValuesInside"=> "0",
+			//===Tools Tips ==
+			"showValues"=> "1",
+			"rotateValues"=> "1",
+			"placeValuesInside"=> "1",
 			"formatNumberScale"=> "0",
 			"decimalSeparator"=> ",",
 			"thousandSeparator"=> ".",
 			"numberPrefix"=> "",
 			"ValuePadding"=> "0",
 			//==TITLE==
-			"xAxisName"=> "24 Hour",
-			"yAxisName"=> "Jumlah Transaction",
+			"xAxisName"=> "Produk",
+			"yAxisName"=> "Qty Transaksi Produk",
 			"yAxisNameBorderColor"=> "#6666FF",
 			"yAxisNameBorderAlpha"=> "50",
 			"yAxisNameBorderPadding"=> "6",
@@ -166,10 +158,18 @@ class FrkTransHarianStore extends DynamicModel
 			"yAxisValuesStep"=> "1",
 			"xAxisValuesStep"=> "0",
 			"yAxisMinValue"=> "0",
-			"numDivLines"=> "10",
-			"xAxisNamePadding"=> "30",
-			"showHoverEffect"=> "1",
-			"animation"=> "1",
+			//== grid dalam ==
+			"numDivLines"=> "1",
+			"showAxisLines"=> "1",
+			"showAlternateHGridColor"=> "1",
+			"divlineThickness"=> "0",
+			"divLineIsDashed"=> "0",
+			"divLineDashLen"=> "0",
+			"divLineGapLen"=> "0",
+			"vDivLineDashed"=> "0",
+			"numVDivLines"=> "0",
+			"vDivLineThickness"=> "0",	
+			"xAxisNamePadding"=> "0",			
 			//==LEGEND==
 			//"legendBorderAlpha"=> "0",
 			"legendShadow"=> "0",
@@ -182,7 +182,6 @@ class FrkTransHarianStore extends DynamicModel
 			//"legendCaptionFont"=> "Arial",
 			//"legendCaptionFontSize"=> "10",
 			//"legendCaptionFontColor"=> "#333333"
-					
 		];
 		return $chart;
 	}

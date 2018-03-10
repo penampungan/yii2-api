@@ -116,10 +116,10 @@ class FrkTransHarianGrp extends DynamicModel
 		$nmBulan=date('F', strtotime($varTahun.'-'.'0'.$varBulan.'-01')); // Nama Bulan
 		$chart=[
 			//==LOGO==
-			"logoURL"=>"https://image.kontrolgampang.com/brand/kg.jpg",
-			"logoAlpha"=> "3",
-			"logoScale"=> "90",
-			"logoPosition"=> "TR",
+			// "logoURL"=>"https://image.kontrolgampang.com/brand/kg.jpg",
+			// "logoAlpha"=> "3",
+			// "logoScale"=> "90",
+			// "logoPosition"=> "TR",
 			//==TOOLS TIPS==
 			"showToolTip"=> "1",
 			"caption"=> " TRAFFIC TRANSAKSI HARIAN",
@@ -141,7 +141,7 @@ class FrkTransHarianGrp extends DynamicModel
 			"vDivLineDashed"=> "0",
 			"numVDivLines"=> "6",
 			"vDivLineThickness"=> "1",			
-			"anchorradius"=> "3",
+			"anchorradius"=> "5",
 			"plotHighlightEffect"=> "fadeout|color=#f6f5fd, alpha=60",
 			"showValues"=> "0",
 			"rotateValues"=> "0",
@@ -189,6 +189,10 @@ class FrkTransHarianGrp extends DynamicModel
 			"xAxisNameBorderDashed"=> "1",
 			"xAxisNameBorderDashLen"=> "4",
 			"xAxisNameBorderDashGap"=> "2",
+			//== Exprort Chart ==
+			"exportEnabled"=>"1",
+			"exportFileName"=>"RINGKASAN-BULANAN",
+			"exportAtClientSide"=>"1",
 			
 			
 		];

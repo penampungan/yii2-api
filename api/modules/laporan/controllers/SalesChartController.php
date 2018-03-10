@@ -20,6 +20,7 @@ use yii\web\HttpException;
 use api\modules\laporan\models\FrkTransHarianStore;
 use api\modules\laporan\models\FrkTransHarianGrp;
 use api\modules\laporan\models\BulananSalesGrp;
+use api\modules\laporan\models\FrkProdukHarianStore;
 use api\modules\laporan\models\TransPenjualanHeader;
 
 class SalesChartController extends ActiveController
@@ -107,6 +108,12 @@ class SalesChartController extends ActiveController
         ];
     } */
 	
+	
+	/* =========================================================
+	 * ==== FREKUENSI TRANSAKSI HARIAN GROUP BY ACCESS_GROUP ===
+	 * ==== Create By ptr.nov@gmail.com                      ===
+	 * =========================================================
+	*/
 	public function actionFrekTransDayGroup()
 	{
 		$paramsBody		= Yii::$app->request->bodyParams;
@@ -123,6 +130,11 @@ class SalesChartController extends ActiveController
 		return $modelFrkTransHarianGrp;
 	}	
 	
+	/* =============================================
+	 * ==== FREKUENSI TRANSAKSI HARIAN PER-STORE ===
+	 * ==== Create By ptr.nov@gmail.com          ===
+	 * =============================================
+	*/
 	public function actionFrekTransDayStore()
 	{
 		$paramsBody		= Yii::$app->request->bodyParams;
@@ -138,6 +150,31 @@ class SalesChartController extends ActiveController
 		return $modelFrkTransHarianStore;
 	}		
 	
+	/* =============================================
+	 * ====  TRANSAKSI PRODUK HARIAN PER-STORE   ===
+	 * ==== Create By ptr.nov@gmail.com          ===
+	 * =============================================
+	*/
+	public function actionProdukDailyTransaksi()
+	{
+		$paramsBody		= Yii::$app->request->bodyParams;
+		$ACCESS_GROUP	= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';	
+		$STORE_ID		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';	
+		$tgl			= isset($paramsBody['TGL'])!=''?$paramsBody['TGL']:'';	
+		$param=[
+			'ACCESS_GROUP'=>$ACCESS_GROUP,
+			'STORE_ID'=>$STORE_ID,
+			'TGL'=>$tgl,
+		];		
+		$modelFrkProdukHarianStore= new FrkProdukHarianStore($param);
+		return $modelFrkProdukHarianStore;
+	}	
+	
+	/* =====================================================
+	 * ==== SALES  BULANAN  HARIAN GROUP BY ACCESS_GROUP ===
+	 * ==== Create By ptr.nov@gmail.com                  ===
+	 * =====================================================
+	*/
 	public function actionSalesBulananGroup()
 	{
 		$paramsBody		= Yii::$app->request->bodyParams;
