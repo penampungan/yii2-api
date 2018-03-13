@@ -18,6 +18,7 @@ use yii\web\HttpException;
 
 
 use api\modules\laporan\models\CounterSearch;
+use api\modules\laporan\models\CounterGroup;
 use api\modules\laporan\models\TransPenjualanHeader;
 
 class CounterController extends ActiveController
@@ -114,8 +115,9 @@ class CounterController extends ActiveController
 		$param=["CounterSearch"=>Yii::$app->request->bodyParams];
 		$searchModel = new CounterSearch();
 		return $searchModel->searchPerStore($param);
-	}	
+	}
 	
+	/* 
 	public function actionPerAccessGroup()
 	{
 		//?STORE_ID=170726220936.0001&TRANS_DATE=2017-09-29
@@ -125,6 +127,30 @@ class CounterController extends ActiveController
 		$param=["CounterSearch"=>Yii::$app->request->bodyParams];
 		$searchModel = new CounterSearch();
 		return $searchModel->searchPerAccessGroup($param);
+	}	 */
+	
+	public function actionPerAccessGroup()
+	{
+		//?STORE_ID=170726220936.0001&TRANS_DATE=2017-09-29
+		//$params     	= $_REQUEST;
+		//$paramsHeader	= Yii::$app->request->headers;	
+		// $param=["PenjualanHeaderSearch"=>Yii::$app->request->queryParams];
+		// $param=["CounterSearch"=>Yii::$app->request->bodyParams];
+		// $searchModel = new CounterSearch();
+		// return $searchModel->searchPerAccessGroup($param);
+		
+		
+		$paramsBody		= Yii::$app->request->bodyParams;
+		$ACCESS_GROUP	= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';	
+		//$STORE_ID		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';	
+		$thn			= isset($paramsBody['THN'])!=''?$paramsBody['THN']:'';	
+		$param=[
+			'ACCESS_GROUP'=>$ACCESS_GROUP,
+			//'STORE_ID'=>$STORE_ID,
+			'THN'=>$thn,
+		];		
+		$modelCounterGroup= new CounterGroup($param);
+		return $modelCounterGroup;
 	}	
 }
     
