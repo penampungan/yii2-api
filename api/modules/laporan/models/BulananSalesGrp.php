@@ -20,7 +20,7 @@ class BulananSalesGrp extends DynamicModel
 	public function rules()
     {
         return [
-            [['ACCESS_GROUP','STORE_ID','TGL'], 'safe'],
+            [['ACCESS_GROUP','STORE_ID','THN'], 'safe'],
 		];	
     }
 
@@ -42,14 +42,14 @@ class BulananSalesGrp extends DynamicModel
 	}
 	
 	public function salesBulananGroup(){
-		$varTgl=$this->TGL!=''?$this->TGL:date('Y-m-d');
-		$valAccessGoup=$this->ACCESS_GROUP!=''?$this->ACCESS_GROUP:'1';
+		$varThn=$this->THN!=''?$this->THN:date('Y');
+		$valAccessGoup=$this->ACCESS_GROUP!=''?$this->ACCESS_GROUP:'';
 		//return ['aa'=>$this->ACCESS_GROUP];
 		$sqlthn="
 			#==GROUPING===
 			SELECT	TAHUN
 			FROM ptr_kasir_td3c
-			WHERE ACCESS_GROUP=".$valAccessGoup."
+			WHERE ACCESS_GROUP=".$valAccessGoup." AND TAHUN='".$varThn."'
 			GROUP BY ACCESS_GROUP,TAHUN
 			ORDER BY TAHUN ASC;
 		";		
@@ -61,13 +61,14 @@ class BulananSalesGrp extends DynamicModel
 			],			
 		]);
 		$modelTahun=$dataProviderThn->getModels();
+		$datasetRslt[]=[];
 		foreach($modelTahun as $rowThn => $valThn){
 			$sql="
 				#==GROUPING===
 				SELECT	ACCESS_GROUP,STORE_ID,BULAN,TAHUN,
 						sum(PRODUK_TTL_JUALPPNDISCOUNT) AS PRODUK_TTL_JUALPPNDISCOUNT
 				FROM ptr_kasir_td3c
-				WHERE ACCESS_GROUP=".$valAccessGoup." AND TAHUN=".$valThn['TAHUN']."
+				WHERE ACCESS_GROUP=".$valAccessGoup." AND TAHUN='".$valThn['TAHUN']."'
 					#ACCESS_GROUP='170726220936' AND TAHUN=YEAR('2018-02-01')
 				GROUP BY ACCESS_GROUP,BULAN; 	
 			";		
@@ -79,7 +80,7 @@ class BulananSalesGrp extends DynamicModel
 				],			
 			]);
 			$modelMonth=$dataProvider->getModels();
-			if ($modelMonth){	
+			if($modelMonth){	
 				foreach ($modelMonth as $row => $val){
 					$rslt1['seriesname']=$valThn['TAHUN'];
 					$dataval1=[];
@@ -106,8 +107,8 @@ class BulananSalesGrp extends DynamicModel
 						"data"=>"null"					
 				];
 			}
-			unset($modelMonth);
-			unset($dataProvider);
+			// unset($modelMonth);
+			// unset($dataProvider);
 			$datasetRslt[]=$dataset;
 			
 		}
@@ -115,17 +116,20 @@ class BulananSalesGrp extends DynamicModel
 	}
 	
 	private function chartlabel(){
-		$varTahun		= $this->TGL!=''?date('Y',strtotime($this->TGL)):date('Y');
-		$varBulan		= $this->TGL!=''?date('m',strtotime($this->TGL)):date('m');
-		$varTgl			= $this->TGL!=''?date('Y-m-d',strtotime($this->TGL)):date('Y-m-d');		
-		$nmBulan		= date('F', strtotime($varTahun.'-'.str_pad($varBulan, 2, '0', STR_PAD_LEFT).'-01')); // Nama Bulan
+		// $varTahun		= $this->TGL!=''?date('Y',strtotime($this->TGL)):date('Y');
+		// $varBulan		= $this->TGL!=''?date('m',strtotime($this->TGL)):date('m');
+		// $varTgl			= $this->TGL!=''?date('Y-m-d',strtotime($this->TGL)):date('Y-m-d');		
+		// $nmBulan		= date('F', strtotime($varTahun.'-'.str_pad($varBulan, 2, '0', STR_PAD_LEFT).'-01')); // Nama Bulan
+		$varTahun		= $this->THN!=''?$this->THN:date('Y');
+		
+		
 		$chart=[
 			"caption"=>"RINGKASAN PENJUALAN BULANAN",
-			"subCaption"=>"TAHUN ".$varTahun.', '.$nmBulan,
+			"subCaption"=>"TAHUN ".$varTahun,
 			"captionFontSize"=>"12",
 			"subcaptionFontSize"=>"10",
 			"subcaptionFontBold"=>"0",
-			"paletteColors"=> "#0000ff,#ff4040,#7fff00,#ff7f24,#ff7256,#ffb90f",
+			"paletteColors"=> "#ff4040,#0000ff,#7fff00,#ff7f24,#ff7256,#ffb90f",
 			"bgcolor"=>"#ffffff",
 			"showBorder"=>"1",
 			"showShadow"=>"0",				

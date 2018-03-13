@@ -13,7 +13,7 @@ use yii\debug\components\search\Filter;
 use yii\debug\components\search\matchers;
 use api\modules\laporan\models\Store;
 
-class FrkProdukHarianStore extends DynamicModel
+class FrkProdukHarianRefundStore extends DynamicModel
 {
 	// public $ACCESS_GROUP;
 	// public $STORE_ID;
@@ -45,30 +45,29 @@ class FrkProdukHarianStore extends DynamicModel
 	
 	public function frekuensiTransaksiHarianToko(){
 		$varTgl=$this->TGL!=''?$this->TGL:date('Y-m-d');
-		$valAccessGoup=$this->ACCESS_GROUP!=''?$this->ACCESS_GROUP:'1';
-		$valStoreId=$this->STORE_ID!=''?$this->STORE_ID:'';
+		$valAccessGoup=$this->ACCESS_GROUP!=''?$this->ACCESS_GROUP:'';
+		$valStoreId=$this->STORE_ID!=''?$this->STORE_ID:'';		
 		$modelStore=Store::find()->where(['ACCESS_GROUP'=>$valAccessGoup,'STORE_ID'=>$valStoreId])->all();
-		//foreach($modelStore as $rowStore => $valStore){
-			$sql="
+			$sql="				
 				SELECT 
 					a1.ACCESS_GROUP,a1.STORE_ID,a1.TAHUN,a1.BULAN,a1.TGL,
-					a1.PRODUCT_ID,a2.PRODUCT_NM,a1.PRODUK_SUBTTL_QTY
+					a1.PRODUCT_ID,a2.PRODUCT_NM,a1.REFUND_SUBTTL_QTY
 				FROM 
 				(
 					SELECT 
 						ACCESS_GROUP,STORE_ID,TAHUN,BULAN,TGL,
-						PRODUCT_ID,SUM(PRODUK_SUBTTL_QTY) AS PRODUK_SUBTTL_QTY
+						PRODUCT_ID,SUM(REFUND_SUBTTL_QTY) AS REFUND_SUBTTL_QTY
 					FROM ptr_kasir_td1a
 					#WHERE ACCESS_GROUP='170726220936' AND STORE_ID='170726220936.0001' AND TGL='2018-01-26'	
 					WHERE ACCESS_GROUP='".$valAccessGoup."' AND 
 					      STORE_ID='".$valStoreId."' 
-						  AND TGL='".$varTgl."'							
+						  AND TGL='".$varTgl."'						
 					GROUP BY ACCESS_GROUP,STORE_ID,PRODUCT_ID
 				) a1 LEFT JOIN product a2 
 				ON a2.ACCESS_GROUP=a1.ACCESS_GROUP AND 
 				   a2.STORE_ID=a1.STORE_ID AND 
-				   a2.PRODUCT_ID=a1.PRODUCT_ID
-			";					
+				   a2.PRODUCT_ID=a1.PRODUCT_ID				   
+			";		
 			$qrySql= Yii::$app->production_api->createCommand($sql)->queryAll(); 		
 			$dataProvider= new ArrayDataProvider([	
 				'allModels'=>$qrySql,	
@@ -76,33 +75,23 @@ class FrkProdukHarianStore extends DynamicModel
 					'pageSize' =>1000,
 				],			
 			]);
-			
-			// $filter = new Filter();
-			// $this->addCondition($filter, 'ACCESS_GROUP', true);	
-			// $this->addCondition($filter, 'STORE_ID', true);	
-			// $dataProvider->allModels = $filter->filter($qrySql);
-		   // return ['Frekuensi_Transaksi_Harian'=>$dataProvider->getModels()];
-		   
 			$modelProduk=$dataProvider->getModels();
 			if ($modelProduk){	
 				foreach ($modelProduk as $row => $val){
 					$rslt1['seriesname']=$modelStore[0]['STORE_NM'];
 					//$dataval1=[];
-					$dataval1[]=['label'=>$val['PRODUCT_NM'],'value'=>(int)$val['PRODUK_SUBTTL_QTY'],'anchorBgColor'=>'#00fd83'];
-					$rslt1['data']=$dataval1;
+					$dataval1[]=['label'=>$val['PRODUCT_NM'],'value'=>(int)$val['REFUND_SUBTTL_QTY'],'anchorBgColor'=>'#00fd83'];
+					$rslt1['data']=$dataval1;	
 				}
 				$dataset=$rslt1;
 			}else{
 				//=[6]== SCENARIO DATA KOSONG				
 				$dataset=[
-						"seriesname"=>'none',//"Tidak ditemukan data",
+						"seriesname"=>$modelStore[0]['STORE_NM'],//"Tidak ditemukan data",
 						"data"=>""					
 				];
 			}
-			$datasetRslt[]=$dataset;
-			
-		//}
-		//return $datasetRslt;
+			$datasetRslt[]=$dataset;			
 		unset($dataProvider);
 		return $datasetRslt;
 	} 
@@ -113,7 +102,7 @@ class FrkProdukHarianStore extends DynamicModel
 		$varTgl			= $this->TGL!=''?date('Y-m-d',strtotime($this->TGL)):date('Y-m-d');		
 		$nmBulan=date('F', strtotime($varTahun.'-'.'0'.$varBulan.'-01')); // Nama Bulan
 		$chart=[
-			"caption"=> "Jumlah Produk Terjual",
+			"caption"=> "Jumlah Produk Refund",
 			"subCaption"=> "Tanggal ".$varTgl,
 			"captionFontSize"=> "12",
 			"subcaptionFontSize"=> "10",
@@ -130,8 +119,6 @@ class FrkProdukHarianStore extends DynamicModel
 			"showShadow"=> "0",
 			"usePlotGradientColor"=> "0",					
 			"plotHighlightEffect"=> "fadeout|color=#f6f5fd, alpha=60",
-			"manageResize"=> "1",
-			"autoScale"=> "1",
 			//== grid dalam ==		
 			"showAlternateVGridColor"=> "0",			// Vertikal warna antar garis	
 			"showAlternateHGridColor"=> "0",			// Horizontal warna antar garis
@@ -203,6 +190,7 @@ class FrkProdukHarianStore extends DynamicModel
 			"exportEnabled"=>"1",
 			"exportFileName"=>"RINGKASAN-BULANAN",
 			"exportAtClientSide"=>"1",
+			
 		];
 		return $chart;
 	}

@@ -55,8 +55,8 @@ class FrkTransHarianStore extends DynamicModel
 					VAL1,VAL2,VAL3,VAL4,VAL5,VAL6,VAL7,VAL8,VAL9,VAL10,VAL11,VAL12,
 					VAL13,VAL14,VAL15,VAL16,VAL17,VAL18,VAL19,VAL20,VAL21,VAL22,VAL23,VAL24
 				FROM ptr_kasir_th1_hour
-				#WHERE ACCESS_GROUP='".$valAccessGoup."' AND STORE_ID='".$valStore['STORE_ID']."' AND TGL=CURRENT_DATE()
-				WHERE ACCESS_GROUP='".$valAccessGoup."' AND STORE_ID='".$valStore['STORE_ID']."' AND TGL='2018-01-29'				
+				#WHERE ACCESS_GROUP='".$valAccessGoup."' AND STORE_ID='".$valStore['STORE_ID']."' AND TGL='2018-01-29'	
+				WHERE ACCESS_GROUP='".$valAccessGoup."' AND STORE_ID='".$valStore['STORE_ID']."' AND TGL='".$varTgl."'				
 				GROUP BY ACCESS_GROUP,STORE_ID; 
 			";		
 			
@@ -181,7 +181,11 @@ class FrkTransHarianStore extends DynamicModel
 			//"legendCaptionBold"=> "1",
 			//"legendCaptionFont"=> "Arial",
 			//"legendCaptionFontSize"=> "10",
-			//"legendCaptionFontColor"=> "#333333"
+			//"legendCaptionFontColor"=> "#333333",
+			//== Exprort Chart ==
+			"exportEnabled"=>"1",
+			"exportFileName"=>"RINGKASAN-BULANAN",
+			"exportAtClientSide"=>"1",
 					
 		];
 		return $chart;

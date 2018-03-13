@@ -82,6 +82,7 @@ class CounterSearch extends \yii\base\DynamicModel
 				SUM(CNT_PENJUALAN_MINGGUAN) AS CNT_PENJUALAN_MINGGUAN,
 				SUM(CNT_PENJUALAN_BULANAN) AS CNT_PENJUALAN_BULANAN
 			FROM ptr_store_count
+			WHERE ACCESS_GROUP='".$this->ACCESS_GROUP."'
 			GROUP BY ACCESS_GROUP; 		
 		";		
 		$qrySql= Yii::$app->production_api->createCommand($sql)->queryAll(); 		
@@ -103,7 +104,29 @@ class CounterSearch extends \yii\base\DynamicModel
  		$this->addCondition($filter, 'ACCESS_GROUP', true);	
 		$this->addCondition($filter, 'STORE_ID', true);	
  		$dataProvider->allModels = $filter->filter($qrySql);
-        return ['PER_ACCESS_GROUP'=>$dataProvider->getModels()];//->getModels()[0];
+		if($dataProvider->getModels()){
+			 return ['PER_ACCESS_GROUP'=>$dataProvider->getModels()];//->getModels()[0];
+		}else{
+			return ['PER_ACCESS_GROUP'=>[
+				0=>[
+					'ACCESS_GROUP'=>$this->ACCESS_GROUP,
+					'CNT_STORE'=>'0',
+					'CNT_STORE_AKTIF'=>'0',
+					'CNT_PERNGKAT'=>'0',
+					'CNT_PERNGKAT_AKTIF'=>'0',
+					'CNT_PRODUK'=>'0',
+					'CNT_KARYAWAN'=>'0',
+					'CNT_KARYAWAN_AKTIF'=>'0',
+					'CNT_USER_OPS'=>'0',
+					'CNT_CUS_MEMBER'=>'0', 
+					'CNT_JUMLAH_TRANSAKSI'=>'0',
+					'CNT_PENJUALAN_HARIAN'=>'0',
+					'CNT_PENJUALAN_MINGGUAN'=>'0',
+					'CNT_PENJUALAN_BULANAN'=>'0'
+				]
+			]];
+		}
+       
 	}
 	
 	public function addCondition(Filter $filter, $attribute, $partial = false)

@@ -65,8 +65,8 @@ class FrkTransHarianGrp extends DynamicModel
 				SUM(VAL19) AS VAL19,SUM(VAL20) AS VAL20,SUM(VAL21) AS VAL21,SUM(VAL22) AS VAL22,SUM(VAL23) AS VAL23,SUM(VAL24) AS VAL24
 			FROM ptr_kasir_th1_hour
 			#WHERE TGL=CURRENT_DATE(); 		
-			WHERE ACCESS_GROUP=".$valAccessGoup." AND TGL='2018-02-01'
-			#WHERE ACCESS_GROUP=".$valAccessGoup." AND TGL=".$varTgl."
+			#WHERE ACCESS_GROUP=".$valAccessGoup." AND TGL='2018-02-01'
+			WHERE ACCESS_GROUP=".$valAccessGoup." AND TGL='".$varTgl."'
 			GROUP BY ACCESS_GROUP; 	
 		";		
 		$qrySql= Yii::$app->production_api->createCommand($sql)->queryAll(); 		
