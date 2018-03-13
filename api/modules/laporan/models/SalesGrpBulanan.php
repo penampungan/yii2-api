@@ -12,7 +12,7 @@ use \yii\base\DynamicModel;
 use yii\debug\components\search\Filter;
 use yii\debug\components\search\matchers;
 
-class BulananSalesGrp extends DynamicModel
+class SalesGrpBulanan extends DynamicModel
 {
 	// public $ACCESS_GROUP;
 	// public $STORE_ID;

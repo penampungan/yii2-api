@@ -96,7 +96,7 @@ class FrkProdukHarianStore extends DynamicModel
 				//=[6]== SCENARIO DATA KOSONG				
 				$dataset=[
 						"seriesname"=>'none',//"Tidak ditemukan data",
-						"data"=>""					
+						"data"=>[[]]				
 				];
 			}
 			$datasetRslt[]=$dataset;

@@ -246,6 +246,7 @@ return [
 							'POST frek-trans-day-group' => 'frek-trans-day-group',						
 							'POST frek-trans-day-store' => 'frek-trans-day-store',						
 							'POST sales-bulanan-group' => 'sales-bulanan-group',					
+							'POST sales-mingguan-group' => 'sales-mingguan-group',					
 							'POST produk-daily-transaksi' => 'produk-daily-transaksi',					
 							'POST produk-daily-refund' => 'produk-daily-refund'						
 						]

@@ -19,7 +19,8 @@ use yii\web\HttpException;
 
 use api\modules\laporan\models\FrkTransHarianStore;
 use api\modules\laporan\models\FrkTransHarianGrp;
-use api\modules\laporan\models\BulananSalesGrp;
+use api\modules\laporan\models\SalesGrpBulanan;
+use api\modules\laporan\models\SalesGrpMingguan;
 use api\modules\laporan\models\FrkProdukHarianStore;
 use api\modules\laporan\models\FrkProdukHarianRefundStore;
 use api\modules\laporan\models\TransPenjualanHeader;
@@ -206,8 +207,28 @@ class SalesChartController extends ActiveController
 			'STORE_ID'=>$STORE_ID,
 			'THN'=>$thn,
 		];		
-		$modelSalesBulananGroup= new BulananSalesGrp($param);
+		$modelSalesBulananGroup= new SalesGrpBulanan($param);
 		return $modelSalesBulananGroup;
+	}	
+	
+	/* =====================================================
+	 * ==== SALES  BULANAN  HARIAN GROUP BY ACCESS_GROUP ===
+	 * ==== Create By ptr.nov@gmail.com                  ===
+	 * =====================================================
+	*/
+	public function actionSalesMingguanGroup()
+	{
+		$paramsBody		= Yii::$app->request->bodyParams;
+		$ACCESS_GROUP	= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';	
+		$bln			= isset($paramsBody['BULAN'])!=''?$paramsBody['BULAN']:'';	
+		$thn			= isset($paramsBody['TAHUN'])!=''?$paramsBody['TAHUN']:'';	
+		$param=[
+			'ACCESS_GROUP'=>$ACCESS_GROUP,
+			'BULAN'=>$bln,
+			'TAHUN'=>$thn
+		];		
+		$modelSalesGrpMingguan= new SalesGrpMingguan($param);
+		return $modelSalesGrpMingguan;
 	}	
 }
     

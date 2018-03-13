@@ -19,13 +19,12 @@ class CounterGroup extends Model
 	public $STORE_ID;
 	public $THN;
 	
-	// public function rules()
-    // {
-        // return [
-            // [['ACCESS_GROUP','STORE_ID'], 'safe'],
-		// ];	
-
-    // }
+	public function rules()
+    {
+        return [
+            [['ACCESS_GROUP','STORE_ID'], 'safe'],
+		];	
+    }
 
 	public function fields()
 	{
@@ -54,8 +53,7 @@ class CounterGroup extends Model
 				SUM(CNT_PENJUALAN_MINGGUAN) AS CNT_PENJUALAN_MINGGUAN,
 				SUM(CNT_PENJUALAN_BULANAN) AS CNT_PENJUALAN_BULANAN
 			FROM ptr_store_count
-			WHERE ACCESS_GROUP='".$this->ACCESS_GROUP."' # //'171102132245'
-			#WHERE ACCESS_GROUP='171102132245'
+			WHERE ACCESS_GROUP='".$this->ACCESS_GROUP."'
 			GROUP BY ACCESS_GROUP; 		
 		";		
 		$qrySql= Yii::$app->production_api->createCommand($sql)->queryAll(); 		
@@ -85,24 +83,8 @@ class CounterGroup extends Model
 				]
 			];			 
 		}else{
-			$rslt= $modelData;//->getModels()[0];
+			$rslt= $modelData;
 		} 
        return $rslt;
 	}
-	
-	/* public function addCondition(Filter $filter, $attribute, $partial = false)
-    {
-        $value = $this->$attribute;
-
-        if (mb_strpos($value, '>') !== false) {
-            $value = intval(str_replace('>', '', $value));
-            $filter->addMatcher($attribute, new matchers\GreaterThan(['value' => $value]));
-
-        } elseif (mb_strpos($value, '<') !== false) {
-            $value = intval(str_replace('<', '', $value));
-            $filter->addMatcher($attribute, new matchers\LowerThan(['value' => $value]));
-        } else {
-            $filter->addMatcher($attribute, new matchers\SameAs(['value' => $value, 'partial' => $partial]));
-        }
-    } */
 }
