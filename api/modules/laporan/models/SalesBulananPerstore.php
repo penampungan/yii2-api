@@ -12,7 +12,7 @@ use \yii\base\DynamicModel;
 use yii\debug\components\search\Filter;
 use yii\debug\components\search\matchers;
 
-class SalesGrpBulanan extends DynamicModel
+class SalesBulananPerstore extends DynamicModel
 {
 	public function rules()
     {
@@ -44,10 +44,11 @@ class SalesGrpBulanan extends DynamicModel
 		//return ['aa'=>$this->ACCESS_GROUP];
 		$sqlthn="
 			#==GROUPING===
-			SELECT	TAHUN
+			SELECT	TAHUN,STORE_ID
 			FROM ptr_kasir_td3c
-			WHERE ACCESS_GROUP=".$valAccessGoup." AND TAHUN='".$varThn."'
-			GROUP BY ACCESS_GROUP,TAHUN
+			#WHERE ACCESS_GROUP=".$valAccessGoup." AND TAHUN='".$varThn."'
+			WHERE ACCESS_GROUP=".$valAccessGoup." 
+			GROUP BY ACCESS_GROUP,TAHUN,STORE_ID
 			ORDER BY TAHUN ASC;
 		";		
 		$qrySqlThn= Yii::$app->production_api->createCommand($sqlthn)->queryAll(); 		
@@ -65,7 +66,7 @@ class SalesGrpBulanan extends DynamicModel
 				SELECT	ACCESS_GROUP,STORE_ID,BULAN,TAHUN,
 						sum(PRODUK_TTL_JUALPPNDISCOUNT) AS PRODUK_TTL_JUALPPNDISCOUNT
 				FROM ptr_kasir_td3c
-				WHERE ACCESS_GROUP=".$valAccessGoup." AND TAHUN='".$valThn['TAHUN']."'
+				WHERE ACCESS_GROUP=".$valAccessGoup." AND TAHUN='".$valThn['TAHUN']."' AND STORE_ID='".$valThn['STORE_ID']."'
 					#ACCESS_GROUP='170726220936' AND TAHUN=YEAR('2018-02-01')
 				GROUP BY ACCESS_GROUP,BULAN; 	
 			";		
@@ -79,7 +80,7 @@ class SalesGrpBulanan extends DynamicModel
 			$modelMonth=$dataProvider->getModels();
 			if($modelMonth){	
 				foreach ($modelMonth as $row => $val){
-					$rslt1['seriesname']=$valThn['TAHUN'];
+					$rslt1['seriesname']=$valThn['STORE_ID'];
 					$dataval1=[];
 					$valData=[];
 					//=[3]==LOOPING 24 hour
@@ -132,7 +133,6 @@ class SalesGrpBulanan extends DynamicModel
 			"showShadow"=>"0",				
 			"usePlotGradientColor"=>"0",
 			"legendBorderAlpha"=>"0",
-			"legendShadow"=>"1",
 			"showAxisLines"=>"0",
 			"showAlternateHGridColor"=>"0",
 			"divlineThickness"=>"1",
@@ -142,7 +142,7 @@ class SalesGrpBulanan extends DynamicModel
 			"vDivLineDashed"=>"0",
 			"numVDivLines"=>"11",
 			"vDivLineThickness"=>"1",
-			"xAxisName"=>"Tahun",
+			"xAxisName"=>"Toko",
 			"yAxisName"=>"Rupiah",				
 			"anchorradius"=>"6",
 			"plotHighlightEffect"=>"fadeout|color=#f6f5fd, alpha=60",
@@ -164,7 +164,12 @@ class SalesGrpBulanan extends DynamicModel
 			"exportEnabled"=>"1",
 			"exportFileName"=>"RINGKASAN-BULANAN",
 			"exportAtClientSide"=>"1",
-			"showValues"=>"1"				
+			"showValues"=>"1",
+			//==LEGEND==
+			//"legendBorderAlpha"=> "0",
+			"legendShadow"=> "1",
+			 //"legendAllowDrag"=> "0",			//=== DRAG POSITION LEGEND
+			 "legendPosition"=>"right",			//=== POSISI LEGEND			
 		];
 		return $chart;
 	}

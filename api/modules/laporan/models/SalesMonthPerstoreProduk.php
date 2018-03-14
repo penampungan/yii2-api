@@ -13,15 +13,12 @@ use yii\debug\components\search\Filter;
 use yii\debug\components\search\matchers;
 use api\modules\laporan\models\Store;
 
-class FrkProdukHarianRefundStore extends DynamicModel
+class SalesMonthPerstoreProduk extends DynamicModel
 {
-	// public $ACCESS_GROUP;
-	// public $STORE_ID;
-	
 	public function rules()
     {
         return [
-            [['ACCESS_GROUP','STORE_ID','TGL'], 'safe'],
+            [['ACCESS_GROUP','STORE_ID','TAHUN','BULAN'], 'safe'],
 		];	
 
     }
@@ -38,73 +35,74 @@ class FrkProdukHarianRefundStore extends DynamicModel
 				// ];
 			// },
 			'dataset'=>function($model){
-				return self::frekuensiTransaksiHarianToko();
+				return self::salesBulananProdukStore();
 			}
 		];
 	}
 	
-	public function frekuensiTransaksiHarianToko(){
-		$varTgl=$this->TGL!=''?$this->TGL:date('Y-m-d');
-		$valAccessGoup=$this->ACCESS_GROUP!=''?$this->ACCESS_GROUP:'';
-		$valStoreId=$this->STORE_ID!=''?$this->STORE_ID:'';		
+	public function salesBulananProdukStore(){
+		$valAccessGoup=$this->ACCESS_GROUP!=''?$this->ACCESS_GROUP:'1';
+		$valStoreId=$this->STORE_ID!=''?$this->STORE_ID:'';
 		$modelStore=Store::find()->where(['ACCESS_GROUP'=>$valAccessGoup,'STORE_ID'=>$valStoreId])->all();
-			$sql="				
+		//foreach($modelStore as $rowStore => $valStore){
+			$sql="
 				SELECT 
-					a1.ACCESS_GROUP,a1.STORE_ID,a1.TAHUN,a1.BULAN,a1.TGL,
-					a1.PRODUCT_ID,a2.PRODUCT_NM,a1.REFUND_SUBTTL_QTY
+					a1.ACCESS_GROUP,a1.STORE_ID,a1.TAHUN,a1.BULAN,
+					a1.PRODUCT_ID,a2.PRODUCT_NM,a1.PRODUK_SUBTTL_QTY
 				FROM 
 				(
 					SELECT 
-						ACCESS_GROUP,STORE_ID,TAHUN,BULAN,TGL,
-						PRODUCT_ID,SUM(REFUND_SUBTTL_QTY) AS REFUND_SUBTTL_QTY
-					FROM ptr_kasir_td1a
-					#WHERE ACCESS_GROUP='170726220936' AND STORE_ID='170726220936.0001' AND TGL='2018-01-26'	
-					WHERE TRANS_TYPE<=1 AND
-						  ACCESS_GROUP='".$valAccessGoup."' AND 
-					      STORE_ID='".$valStoreId."' 
-						  AND TGL='".$varTgl."'						
-					GROUP BY ACCESS_GROUP,STORE_ID,PRODUCT_ID
+						ACCESS_GROUP,STORE_ID,TAHUN,BULAN,
+						PRODUCT_ID,SUM(PRODUK_SUBTTL_QTY) AS PRODUK_SUBTTL_QTY
+					FROM ptr_kasir_td1c
+					WHERE ACCESS_GROUP='".$valAccessGoup."'  
+					      AND STORE_ID='".$valStoreId."' 
+						  AND TAHUN='".$this->TAHUN."'							
+						  AND BULAN='".$this->BULAN."'							
+					GROUP BY ACCESS_GROUP,STORE_ID,TAHUN,BULAN,PRODUCT_ID
 				) a1 LEFT JOIN product a2 
 				ON a2.ACCESS_GROUP=a1.ACCESS_GROUP AND 
 				   a2.STORE_ID=a1.STORE_ID AND 
-				   a2.PRODUCT_ID=a1.PRODUCT_ID				   
-			";		
+				   a2.PRODUCT_ID=a1.PRODUCT_ID
+				ORDER BY a1.PRODUK_SUBTTL_QTY DESC
+			";					
 			$qrySql= Yii::$app->production_api->createCommand($sql)->queryAll(); 		
 			$dataProvider= new ArrayDataProvider([	
 				'allModels'=>$qrySql,	
 				'pagination' => [
-					'pageSize' =>10000,
+					'pageSize' =>1000,
 				],			
-			]);
-			$modelProduk=$dataProvider->getModels();
-			if ($modelProduk){	
-				foreach ($modelProduk as $row => $val){
+			]);			   
+			$modelMonthProduk=$dataProvider->getModels();
+			
+			if($modelMonthProduk){	
+				foreach ($modelMonthProduk as $row => $val){
 					$rslt1['seriesname']=$modelStore[0]['STORE_NM'];
 					//$dataval1=[];
-					$dataval1[]=['label'=>$val['PRODUCT_NM'],'value'=>(int)$val['REFUND_SUBTTL_QTY'],'anchorBgColor'=>'#00fd83'];
-					$rslt1['data']=$dataval1;	
+					$dataval1[]=['label'=>$val['PRODUCT_NM'],'value'=>(int)$val['PRODUK_SUBTTL_QTY'],'anchorBgColor'=>'#00fd83'];
+					$rslt1['data']=$dataval1;
 				}
 				$dataset=$rslt1;
 			}else{
 				//=[6]== SCENARIO DATA KOSONG				
 				$dataset=[
-						"seriesname"=>"none",//"Tidak ditemukan data",
-						"data"=>[[]]					
+						"seriesname"=>'none',//"Tidak ditemukan data",
+						"data"=>[[]]				
 				];
 			}
 			$datasetRslt[]=$dataset;			
-		unset($dataProvider);
+			
+		//unset($dataProvider);
 		return $datasetRslt;
 	} 
 
 	private function chartlabel(){
-		$varTahun		= $this->TGL!=''?date('Y',strtotime($this->TGL)):date('Y');
-		$varBulan		= $this->TGL!=''?date('m',strtotime($this->TGL)):date('m');
-		$varTgl			= $this->TGL!=''?date('Y-m-d',strtotime($this->TGL)):date('Y-m-d');		
-		$nmBulan=date('F', strtotime($varTahun.'-'.'0'.$varBulan.'-01')); // Nama Bulan
+		$varTahun		= $this->TAHUN!=''?$this->TAHUN:date('Y');
+		$varBulan		= $this->BULAN!=''?$this->BULAN:date('m');
+		$nmBulan		= date('F', strtotime($varTahun.'-'.$varBulan.'-01')); // Nama Bulan
 		$chart=[
-			"caption"=> "Jumlah Produk Refund",
-			"subCaption"=> "Tanggal ".$varTgl,
+			"caption"=> "Jumlah Produk Terjual",
+			"subCaption"=> $varTahun."-".$nmBulan,
 			"captionFontSize"=> "12",
 			"subcaptionFontSize"=> "10",
 			"subcaptionFontBold"=> "0",
@@ -120,6 +118,8 @@ class FrkProdukHarianRefundStore extends DynamicModel
 			"showShadow"=> "0",
 			"usePlotGradientColor"=> "0",					
 			"plotHighlightEffect"=> "fadeout|color=#f6f5fd, alpha=60",
+			"manageResize"=> "1",
+			"autoScale"=> "1",
 			//== grid dalam ==		
 			"showAlternateVGridColor"=> "0",			// Vertikal warna antar garis	
 			"showAlternateHGridColor"=> "0",			// Horizontal warna antar garis
@@ -191,7 +191,6 @@ class FrkProdukHarianRefundStore extends DynamicModel
 			"exportEnabled"=>"1",
 			"exportFileName"=>"RINGKASAN-BULANAN",
 			"exportAtClientSide"=>"1",
-			
 		];
 		return $chart;
 	}
