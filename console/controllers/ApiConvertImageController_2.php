@@ -107,7 +107,7 @@ class ApiConvertImageController extends Controller
 		 // $img1 = str_replace('charset=utf-8','',$img);
 		 // $img2 = str_replace(' ', '+', $img1);
 		 //----------------- cara2 ---
-		list($type, $dataImgScr1) = explode(';', $dataImgScr);
+		list($type, $dataImgScr) = explode(';', $dataImgScr);
 		list(,$extension) = explode('/',$type);
 		//list(,$dataImgScr2)      = explode(',', $dataImgScr);
 		$img = str_replace($type.';base64,','',trim($dataImgScr));   //PR OTHER EXTENTION [png,bmp]

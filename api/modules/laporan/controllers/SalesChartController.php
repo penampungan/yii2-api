@@ -20,10 +20,13 @@ use yii\web\HttpException;
 use api\modules\laporan\models\FrkTransHarianStore;
 use api\modules\laporan\models\FrkTransHarianGrp;
 use api\modules\laporan\models\SalesGrpBulanan;
+use api\modules\laporan\models\SalesBulananPerstore;
 use api\modules\laporan\models\SalesMonthPerstoreProduk;
 use api\modules\laporan\models\SalesMonthPerstoreProdukrefund;
 use api\modules\laporan\models\SalesGrpMingguan;
-use api\modules\laporan\models\SalesBulananPerstore;
+use api\modules\laporan\models\SalesMingguanPerstore;
+use api\modules\laporan\models\SalesWeekPerstoreProduk;
+use api\modules\laporan\models\SalesWeekPerstoreProdukrefund;
 use api\modules\laporan\models\FrkProdukHarianStore;
 use api\modules\laporan\models\FrkProdukHarianRefundStore;
 use api\modules\laporan\models\TransPenjualanHeader;
@@ -124,11 +127,12 @@ class SalesChartController extends ActiveController
 		$paramsBody		= Yii::$app->request->bodyParams;
 		$ACCESS_GROUP	= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';	
 		$STORE_ID		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';	
+		$uuid			= isset($paramsBody['PERANGKAT'])!=''?$paramsBody['PERANGKAT']:'';
 		$tgl			= isset($paramsBody['TGL'])!=''?$paramsBody['TGL']:'';	
 		$param=[
 			'ACCESS_GROUP'=>$ACCESS_GROUP,
 			'STORE_ID'=>$STORE_ID,
-			//'TGL'=>$tgl,	
+			'PERANGKAT'=>$uuid,	
 			'TGL'=>$tgl,	
 		];		
 		$modelFrkTransHarianGrp= new FrkTransHarianGrp($param);
@@ -204,10 +208,12 @@ class SalesChartController extends ActiveController
 		$paramsBody		= Yii::$app->request->bodyParams;
 		$ACCESS_GROUP	= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';	
 		$STORE_ID		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';	
+		$perangkat		= isset($paramsBody['PERANGKAT'])!=''?$paramsBody['PERANGKAT']:'';	
 		$thn			= isset($paramsBody['THN'])!=''?$paramsBody['THN']:'';	
 		$param=[
 			'ACCESS_GROUP'=>$ACCESS_GROUP,
 			'STORE_ID'=>$STORE_ID,
+			'PERANGKAT'=>$perangkat,
 			'THN'=>$thn,
 		];		
 		$modelSalesBulananGroup= new SalesGrpBulanan($param);
@@ -277,10 +283,10 @@ class SalesChartController extends ActiveController
 		return $modelSalesMonthPerstoreProdukrefund;
 	}	
 	
-	/* =====================================================
-	 * ==== SALES  BULANAN  HARIAN GROUP BY ACCESS_GROUP ===
-	 * ==== Create By ptr.nov@gmail.com                  ===
-	 * =====================================================
+	/* =============================================
+	 * ==== SALES  MINGGU  GROUP BY ACCESS_GROUP ===
+	 * ==== Create By ptr.nov@gmail.com          ===
+	 * =============================================
 	*/
 	public function actionSalesMingguanGroup()
 	{
@@ -295,6 +301,67 @@ class SalesChartController extends ActiveController
 		];		
 		$modelSalesGrpMingguan= new SalesGrpMingguan($param);
 		return $modelSalesGrpMingguan;
+	}	
+	/* ========================================
+	 * ==== SALES  MINGGU  PER-STORE 		===
+	 * ==== Create By ptr.nov@gmail.com     ===
+	 * ========================================
+	*/
+	public function actionSalesMingguanPerstore()
+	{
+		$paramsBody		= Yii::$app->request->bodyParams;
+		$ACCESS_GROUP	= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';	
+		$bln			= isset($paramsBody['BULAN'])!=''?$paramsBody['BULAN']:'';	
+		$thn			= isset($paramsBody['TAHUN'])!=''?$paramsBody['TAHUN']:'';	
+		$param=[
+			'ACCESS_GROUP'=>$ACCESS_GROUP,
+			'BULAN'=>$bln,
+			'TAHUN'=>$thn
+		];		
+		$modelSalesMingguanPerstore= new SalesMingguanPerstore($param);
+		return $modelSalesMingguanPerstore;
+	}	
+	/* =========================================
+	 * ==== PRODAK TRANSAKSI MINGGU MINGGUAN ===
+	 * ==== Create By ptr.nov@gmail.com      ===
+	 * =========================================
+	*/
+	public function actionSalesMingguanProdukPerstore()
+	{
+		$paramsBody		= Yii::$app->request->bodyParams;
+		$ACCESS_GROUP	= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';
+		$STORE_ID		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';
+		$bln			= isset($paramsBody['BULAN'])!=''?$paramsBody['BULAN']:'';	
+		$thn			= isset($paramsBody['TAHUN'])!=''?$paramsBody['TAHUN']:'';	
+		$param=[
+			'ACCESS_GROUP'=>$ACCESS_GROUP,
+			'STORE_ID'=>$STORE_ID,
+			'BULAN'=>$bln,
+			'TAHUN'=>$thn
+		];		
+		$modelSalesWeekPerstoreProduk= new SalesWeekPerstoreProduk($param);
+		return $modelSalesWeekPerstoreProduk;
+	}	
+	/* =======================================
+	 * ==== PRODAK REFUND MINGGU MINGGUAN  ===
+	 * ==== Create By ptr.nov@gmail.com    ===
+	 * =======================================
+	*/
+	public function actionSalesMingguanProdukrefundPerstore()
+	{
+		$paramsBody		= Yii::$app->request->bodyParams;
+		$ACCESS_GROUP	= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';
+		$STORE_ID		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';		
+		$bln			= isset($paramsBody['BULAN'])!=''?$paramsBody['BULAN']:'';	
+		$thn			= isset($paramsBody['TAHUN'])!=''?$paramsBody['TAHUN']:'';	
+		$param=[
+			'ACCESS_GROUP'=>$ACCESS_GROUP,
+			'STORE_ID'=>$STORE_ID,
+			'BULAN'=>$bln,
+			'TAHUN'=>$thn
+		];		
+		$modelSalesWeekPerstoreProdukrefund= new SalesWeekPerstoreProdukrefund($param);
+		return $modelSalesWeekPerstoreProdukrefund;
 	}	
 }
     

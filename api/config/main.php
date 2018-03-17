@@ -229,7 +229,8 @@ return [
 							'laporan/trans-rpt-test',
 							'laporan/trans-rpt-absensi',
 							'laporan/counter',
-							'laporan/sales-chart'
+							'laporan/sales-chart',
+							'laporan/polling-chart'
 						],
 						'patterns' => [
 							'PUT,PATCH' => 'update',
@@ -241,6 +242,8 @@ return [
 							'' => 'options',
 						],
 						'extraPatterns' => [
+							'POST polling-group' => 'polling-group',
+							'POST polling-perstore' => 'polling-perstore',
 							'POST per-access-group' => 'per-access-group',
 							'POST per-store' => 'per-store',		
 							'POST frek-trans-day-group' => 'frek-trans-day-group',						
@@ -250,6 +253,9 @@ return [
 							'POST sales-bulanan-produk-perstore' => 'sales-bulanan-produk-perstore',							
 							'POST sales-bulanan-produkrefund-perstore' => 'sales-bulanan-produkrefund-perstore',							
 							'POST sales-mingguan-group' => 'sales-mingguan-group',					
+							'POST sales-mingguan-perstore' => 'sales-mingguan-perstore',					
+							'POST sales-mingguan-produkrefund-perstore' => 'sales-mingguan-produkrefund-perstore',					
+							'POST sales-mingguan-produk-perstore' => 'sales-mingguan-produk-perstore',					
 							'POST produk-daily-transaksi' => 'produk-daily-transaksi',					
 							'POST produk-daily-refund' => 'produk-daily-refund'						
 						]

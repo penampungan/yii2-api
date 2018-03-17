@@ -20,7 +20,7 @@ class FrkTransHarianGrp extends DynamicModel
 	public function rules()
     {
         return [
-            [['ACCESS_GROUP','STORE_ID','TGL'], 'safe'],
+            [['ACCESS_GROUP','STORE_ID','PERANGKAT','TGL'], 'safe'],
 		];	
 
     }
@@ -38,6 +38,33 @@ class FrkTransHarianGrp extends DynamicModel
 			},
 			'dataset'=>function($model){
 				return self::frekuensiTransaksiHarian();
+			},
+			'trendlines'=>function(){
+				return [
+					[
+						"line"=> [
+							[
+								"startvalue"=> "2",
+								"color"=> "#fc2c33",
+								"valueOnRight"=> "1",
+								"displayvalue"=> "Rata2",
+								"thickness"=> "2",
+								"dashed"=> "1",
+								"dashLen"=> "4",
+								"dashGap"=> "4"
+							],
+							[
+								"startvalue"=>"100",
+								"color"=> "6baa01",
+								"displayvalue"=> "Target",
+								"thickness"=>"2"
+							
+							]
+
+						]
+					]
+					
+				];
 			}
 		];
 	}
@@ -45,7 +72,14 @@ class FrkTransHarianGrp extends DynamicModel
 	public function frekuensiTransaksiHarian(){
 		$varTgl=$this->TGL!=''?$this->TGL:date('Y-m-d');
 		$valAccessGoup=$this->ACCESS_GROUP!=''?$this->ACCESS_GROUP:'1';
-		//return ['aa'=>$this->ACCESS_GROUP];
+		//==UPDATE DEVICE HAVE SYNCRONIZE ===
+		Yii::$app->production_api->createCommand('
+			UPDATE ptr_dashboard_polling_group 
+			SET CHART_TRAFFICK_DAY=0,ARY_DEVICE=CONCAT(ARY_DEVICE,",'.$this->PERANGKAT.'") 
+			WHERE ACCESS_GROUP="'.$valAccessGoup.'" AND CHART_TRAFFICK_DAY<>0
+		')->execute(); 
+		
+		//=== DATA CHART ===
 		$sql="
 			#==PER-STORE===
 			#SELECT 
@@ -158,6 +192,13 @@ class FrkTransHarianGrp extends DynamicModel
 			"xAxisNamePadding"=> "30",
 			"showHoverEffect"=> "1",
 			"animation"=> "1",
+			//=== TREND LINES ===
+			"trendValueBorderColor"=> "ff0000",
+			"trendValueBorderAlpha"=> "50",
+			"trendValueBorderPadding"=> "0",
+			"trendValueBorderRadius"=> "5",
+			"trendValueBorderThickness"=> "2",
+			//"yaxismaxvalue"=>"50",
 			//==LEGEND==
 			"legendBorderAlpha"=> "0",
 			"legendShadow"=> "0",

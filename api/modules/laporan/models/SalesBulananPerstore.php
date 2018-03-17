@@ -17,7 +17,7 @@ class SalesBulananPerstore extends DynamicModel
 	public function rules()
     {
         return [
-            [['ACCESS_GROUP','STORE_ID','THN','BLN'], 'safe'],
+            [['ACCESS_GROUP','STORE_ID','PERANGKAT','THN','BLN'], 'safe'],
 		];	
     }
 

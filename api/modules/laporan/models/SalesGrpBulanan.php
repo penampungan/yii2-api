@@ -17,7 +17,7 @@ class SalesGrpBulanan extends DynamicModel
 	public function rules()
     {
         return [
-            [['ACCESS_GROUP','STORE_ID','THN','BLN'], 'safe'],
+            [['ACCESS_GROUP','STORE_ID','PERANGKAT','THN','BLN'], 'safe'],
 		];	
     }
 
@@ -41,7 +41,15 @@ class SalesGrpBulanan extends DynamicModel
 	public function salesBulananGroup(){
 		$varThn=$this->THN!=''?$this->THN:date('Y');
 		$valAccessGoup=$this->ACCESS_GROUP!=''?$this->ACCESS_GROUP:'';
-		//return ['aa'=>$this->ACCESS_GROUP];
+
+		//==UPDATE DEVICE HAVE SYNCRONIZE ===
+		Yii::$app->production_api->createCommand('
+			UPDATE ptr_dashboard_polling_group 
+			SET CHART_SALES_MONTH=0,ARY_DEVICE=CONCAT(ARY_DEVICE,",'.$this->PERANGKAT.'") 
+			WHERE ACCESS_GROUP="'.$valAccessGoup.'"  AND CHART_SALES_MONTH<>0
+		')->execute(); 
+		
+		//=== DATA CHART ===
 		$sqlthn="
 			#==GROUPING===
 			SELECT	TAHUN

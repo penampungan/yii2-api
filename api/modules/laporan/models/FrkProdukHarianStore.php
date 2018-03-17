@@ -60,7 +60,8 @@ class FrkProdukHarianStore extends DynamicModel
 						PRODUCT_ID,SUM(PRODUK_SUBTTL_QTY) AS PRODUK_SUBTTL_QTY
 					FROM ptr_kasir_td1a
 					#WHERE ACCESS_GROUP='170726220936' AND STORE_ID='170726220936.0001' AND TGL='2018-01-26'	
-					WHERE ACCESS_GROUP='".$valAccessGoup."' AND 
+					WHERE TRANS_TYPE<=1 AND
+						  ACCESS_GROUP='".$valAccessGoup."' AND 
 					      STORE_ID='".$valStoreId."' 
 						  AND TGL='".$varTgl."'							
 					GROUP BY ACCESS_GROUP,STORE_ID,PRODUCT_ID
@@ -68,6 +69,7 @@ class FrkProdukHarianStore extends DynamicModel
 				ON a2.ACCESS_GROUP=a1.ACCESS_GROUP AND 
 				   a2.STORE_ID=a1.STORE_ID AND 
 				   a2.PRODUCT_ID=a1.PRODUCT_ID
+				ORDER BY PRODUK_SUBTTL_QTY DESC
 			";					
 			$qrySql= Yii::$app->production_api->createCommand($sql)->queryAll(); 		
 			$dataProvider= new ArrayDataProvider([	
