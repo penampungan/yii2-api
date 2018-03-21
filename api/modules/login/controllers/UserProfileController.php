@@ -18,6 +18,7 @@ use yii\web\HttpException;
 
 use api\modules\login\models\UserProfile;
 use api\modules\master\models\SyncPoling;
+use api\modules\master\models\Store;
 /**
   * @author 	: ptrnov  <piter@lukison.com>
   * @since 		: 1.2
@@ -160,6 +161,8 @@ class UserProfileController extends ActiveController
 		$accessID		=isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
 		$tblPooling		=isset($paramsBody['NM_TABLE'])!=''?$paramsBody['NM_TABLE']:'';
 		$paramlUUID		=isset($paramsBody['UUID'])!=''?$paramsBody['UUID']:'';		
+		$accessGroup	=isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';		
+		$storeId		=isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';		
 		
 		if($metode=='GET'){
 			/**
@@ -206,6 +209,28 @@ class UserProfileController extends ActiveController
 				}else{
 					return array('result'=>'data-empty');
 				}		
+			}else{				
+				if($storeId<>''){
+					$modelStore=Store::find()->where(['STORE_ID'=>$storeId])->one();
+					//$modelUserProfile= UserProfile::find()->where("FIND_IN_SET('".$modelStore->ACCESS_ID."',ACCESS_ID)=0")->all();
+					$modelUserProfile= UserProfile::find()->where('ACCESS_ID IN ('.$modelStore->ACCESS_ID.')')->all();
+					return array('PROFILE'=>$modelUserProfile);
+				}else{
+					if($accessGroup<>''){					
+						//return array('result'=>'access-group');
+						$modelStoreGrp=Store::find()->where(['ACCESS_GROUP'=>$accessGroup])->all();
+						$storeLoop='';
+						foreach ($modelStoreGrp AS $row){
+							$accessget='';
+							$accessget=$row['ACCESS_ID'];						
+							$modelUserProfile= UserProfile::find()->where('ACCESS_ID IN ('.$row['ACCESS_ID'].')')->all();					
+							$storeLoop[$row['STORE_ID']]=$modelUserProfile;	
+						}					
+						return array('PROFILE'=>$storeLoop);							
+					}else{
+						return array('result'=>'accssgroup-not exist');
+					}
+				}				
 			}			
 		}	
 	}
