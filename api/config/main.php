@@ -272,7 +272,10 @@ return [
 							'POST produk-daily-transaksi' => 'produk-daily-transaksi',					
 							'POST produk-daily-refund' => 'produk-daily-refund',	
 							//=== PRODUK CHART ===
-							'POST top-produk' => 'top-produk'	
+							'POST bulanan-top-produk' => 'bulanan-top-produk',	
+							'POST mingguan-top-produk' => 'mingguan-top-produk',	
+							'POST harian-top-produk' => 'harian-top-produk',
+							'POST level-buffer-produk' => 'level-buffer-produk'	
 							
 						]
                 ],

@@ -18,7 +18,10 @@ use yii\web\HttpException;
 
 
 use api\modules\laporan\models\Store;
-use api\modules\laporan\models\GroupProdukTop;
+use api\modules\laporan\models\ChartProdukTopMonth;
+use api\modules\laporan\models\ChartProdukTopWeek;
+use api\modules\laporan\models\ChartProdukTopDay;
+use api\modules\laporan\models\ChartProdukLevelBuffer;
 
 class ProdukChartController extends ActiveController
 {
@@ -90,14 +93,16 @@ class ProdukChartController extends ActiveController
 	} 
 	
 		
-	/* ======================================
-	 * ==== 	PRODUK TOP  			  ===
-	 * ==== Create By ptr.nov@gmail.com   ===
-	 * ==== TYPE 	: ACCESS_GROUP		  ===
-	 * ==== PERIODE	: Day/Week/Month	  ===
-	 * ======================================
+	/* ==========================================
+	 * ==== 	PRODUK TOP  			  	  ===
+	 * ==== Create By ptr.nov@gmail.com  	  ===
+	 * ==== TYPE 	: ACCESS_GROUP/STORE_ID	  ===
+	 * ==== PERIODE	: Day/Week/Month	  	  ===
+	 * ==========================================
 	*/
-	public function actionTopProduk()
+	
+	//=== MONTHLY ===
+	public function actionBulananTopProduk()
 	{	
 		$paramsBody		= Yii::$app->request->bodyParams;
 		$accessGrp		= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';	
@@ -112,8 +117,68 @@ class ProdukChartController extends ActiveController
 			'TGL'=>$tgl,
 			'PILIH'=>$pilih
 		];		
-		$modelGroupProdukTop= new GroupProdukTop($param);
-		return $modelGroupProdukTop;
+		$modelChartProdukTopMonth= new ChartProdukTopMonth($param);
+		return $modelChartProdukTopMonth;
+	}	
+	
+	//=== WEEKLY ===
+	public function actionMingguanTopProduk()
+	{	
+		$paramsBody		= Yii::$app->request->bodyParams;
+		$accessGrp		= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';	
+		$storeId		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';	
+		$uuid			= isset($paramsBody['PERANGKAT'])!=''?$paramsBody['PERANGKAT']:'';				
+		$tgl			= isset($paramsBody['TGL'])!=''?$paramsBody['TGL']:'';	
+		$pilih			= isset($paramsBody['PILIH'])!=''?$paramsBody['PILIH']:'';	
+		$param=[
+			'ACCESS_GROUP'=>$accessGrp,
+			'STORE_ID'=>$storeId,
+			'PERANGKAT'=>$uuid,			
+			'TGL'=>$tgl,
+			'PILIH'=>$pilih
+		];		
+		$modelChartProdukTopWeek= new ChartProdukTopWeek($param);
+		return $modelChartProdukTopWeek;
+	}	
+	
+	//=== DAILY ===
+	public function actionHarianTopProduk()
+	{	
+		$paramsBody		= Yii::$app->request->bodyParams;
+		$accessGrp		= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';	
+		$storeId		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';	
+		$uuid			= isset($paramsBody['PERANGKAT'])!=''?$paramsBody['PERANGKAT']:'';				
+		$tgl			= isset($paramsBody['TGL'])!=''?$paramsBody['TGL']:'';	
+		$pilih			= isset($paramsBody['PILIH'])!=''?$paramsBody['PILIH']:'';	
+		$param=[
+			'ACCESS_GROUP'=>$accessGrp,
+			'STORE_ID'=>$storeId,
+			'PERANGKAT'=>$uuid,			
+			'TGL'=>$tgl,
+			'PILIH'=>$pilih
+		];		
+		$modelChartProdukTopDay= new ChartProdukTopDay($param);
+		return $modelChartProdukTopDay;
+	}
+	
+	//=== LEVEL BUFFER PRODUK ===
+	public function actionLevelBufferProduk()
+	{	
+		$paramsBody		= Yii::$app->request->bodyParams;
+		$accessGrp		= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';	
+		$storeId		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';	
+		$uuid			= isset($paramsBody['PERANGKAT'])!=''?$paramsBody['PERANGKAT']:'';				
+		$tgl			= isset($paramsBody['TGL'])!=''?$paramsBody['TGL']:'';	
+		$pilih			= isset($paramsBody['PILIH'])!=''?$paramsBody['PILIH']:'';	
+		$param=[
+			'ACCESS_GROUP'=>$accessGrp,
+			'STORE_ID'=>$storeId,
+			'PERANGKAT'=>$uuid,			
+			'TGL'=>$tgl,
+			'PILIH'=>$pilih
+		];		
+		$modelChartProdukLevelBuffer= new ChartProdukLevelBuffer($param);
+		return $modelChartProdukLevelBuffer;
 	}	
 	
 }
