@@ -48,24 +48,29 @@ class ChartProdukTopWeek extends DynamicModel
 		if($this->STORE_ID=='' OR $this->ACCESS_GROUP==$this->STORE_ID){
 			$sql="
 				#==GROUPING===
-				SELECT	td1c.ACCESS_GROUP,td1c.STORE_ID,td1c.TAHUN,td1c.BULAN,
-						td1c.PRODUCT_NM,td1c.PRODUK_SUBTTL_QTY,p1.CURRENT_HPP,p1.CURRENT_PRICE
-				FROM ptr_kasir_td1c  td1c 
-				LEFT JOIN product p1 on p1.PRODUCT_ID=td1c.PRODUCT_ID			
-				WHERE td1c.ACCESS_GROUP='".$valAccessGoup."' AND td1c.TAHUN=YEAR('".$this->TGL."') AND td1c.BULAN=MONTH('".$this->TGL."')
-				GROUP BY td1c.ACCESS_GROUP,td1c.TAHUN,td1c.BULAN,td1c.PRODUCT_ID
-				ORDER BY td1c.PRODUK_SUBTTL_QTY DESC LIMIT 10;
+				SELECT	td1b.ACCESS_GROUP,td1b.STORE_ID,td1b.TAHUN,td1b.BULAN,
+						td1b.PRODUCT_NM,td1b.PRODUK_SUBTTL_QTY,p1.CURRENT_HPP,p1.CURRENT_PRICE
+				FROM ptr_kasir_td1b  td1b 
+				LEFT JOIN product p1 on p1.PRODUCT_ID=td1b.PRODUCT_ID			
+				WHERE td1b.ACCESS_GROUP='".$valAccessGoup."' AND 
+					  td1b.TAHUN=YEAR('".$this->TGL."') AND 
+					  td1b.MINGGU=WEEK('".$this->TGL."')
+				GROUP BY td1b.ACCESS_GROUP,td1b.TAHUN,td1b.MINGGU,td1b.PRODUCT_ID
+				ORDER BY td1b.PRODUK_SUBTTL_QTY DESC LIMIT 10;
 			";	
 		}else{
 			$sql="
 				#==GROUPING===
-				SELECT	td1c.ACCESS_GROUP,td1c.STORE_ID,td1c.TAHUN,td1c.BULAN,
-						td1c.PRODUCT_NM,td1c.PRODUK_SUBTTL_QTY,p1.CURRENT_HPP,p1.CURRENT_PRICE
-				FROM ptr_kasir_td1c  td1c 
-				LEFT JOIN product p1 on p1.PRODUCT_ID=td1c.PRODUCT_ID			
-				WHERE td1c.ACCESS_GROUP='".$valAccessGoup."' AND td1c.STORE_ID='".$this->STORE_ID."' AND td1c.TAHUN=YEAR('".$this->TGL."') AND td1c.BULAN=MONTH('".$this->TGL."')
-				GROUP BY td1c.ACCESS_GROUP,td1c.STORE_ID,td1c.TAHUN,td1c.BULAN,td1c.PRODUCT_ID
-				ORDER BY td1c.PRODUK_SUBTTL_QTY DESC LIMIT 10;
+				SELECT	td1b.ACCESS_GROUP,td1b.STORE_ID,td1b.TAHUN,td1b.BULAN,
+						td1b.PRODUCT_NM,td1b.PRODUK_SUBTTL_QTY,p1.CURRENT_HPP,p1.CURRENT_PRICE
+				FROM ptr_kasir_td1b  td1b 
+				LEFT JOIN product p1 on p1.PRODUCT_ID=td1b.PRODUCT_ID			
+				WHERE td1b.ACCESS_GROUP='".$valAccessGoup."' AND 
+					  td1b.STORE_ID='".$this->STORE_ID."' AND 
+					  td1b.TAHUN=YEAR('".$this->TGL."') AND 
+					  td1b.MINGGU=WEEK('".$this->TGL."')
+				GROUP BY td1b.ACCESS_GROUP,td1b.STORE_ID,td1b.TAHUN,td1b.MINGGU,td1b.PRODUCT_ID
+				ORDER BY td1b.PRODUK_SUBTTL_QTY DESC LIMIT 10;
 			";	
 		}
 				
@@ -163,11 +168,11 @@ class ChartProdukTopWeek extends DynamicModel
 	
 	private function chartlabel(){
 		$nmBulan		= date('F', strtotime($this->TGL)); // Nama Bulan
-		$varTahun		= date('Y', strtotime($this->TGL));;
-				
+		$varTahun		= date('Y', strtotime($this->TGL));
+		$varMinggu		= (int)date('W', strtotime($this->TGL));	
 		$chartQty=[
 			"caption"=>"TOP 10 PRODUK",
-			"subCaption"=>"QTY BULANAN,  ".$nmBulan." ".$varTahun,
+			"subCaption"=>"Qty Minggu ke-".$varMinggu.",  ".$nmBulan." ".$varTahun,
 			"captionFontSize"=>"12",
 			"subcaptionFontSize"=>"10",
 			"subcaptionFontBold"=>"0",
@@ -178,7 +183,7 @@ class ChartProdukTopWeek extends DynamicModel
 			"xAxisname"=> "Produk",
 			//"yAxisName"=> "Revenue (In USD)",
 			//"numberPrefix"=> "$",
-			"paletteColors"=> "#0075c2,#ff7256,#ff7f24",
+			"paletteColors"=> "#f5d400,#ff7256,#ff7f24",
 			"borderAlpha"=> "20",
 			"showCanvasBorder"=> "0",
 			"usePlotGradientColor"=> "0",
@@ -209,7 +214,7 @@ class ChartProdukTopWeek extends DynamicModel
 		
 		$chartHppJual=[
 			"caption"=>"TOP 10 PRODUK ",
-			"subCaption"=>"HPP, HARGA JUAL, TAHUN,  ".$nmBulan." ".$varTahun,
+			"subCaption"=>"Hpp & Harga Jual, Minggu ke-".$varMinggu.",  ".$nmBulan." ".$varTahun,
 			"captionFontSize"=>"12",
 			"subcaptionFontSize"=>"10",
 			"subcaptionFontBold"=>"0",

@@ -48,24 +48,24 @@ class ChartProdukTopDay extends DynamicModel
 		if($this->STORE_ID=='' OR $this->ACCESS_GROUP==$this->STORE_ID){
 			$sql="
 				#==GROUPING===
-				SELECT	td1c.ACCESS_GROUP,td1c.STORE_ID,td1c.TAHUN,td1c.BULAN,
-						td1c.PRODUCT_NM,td1c.PRODUK_SUBTTL_QTY,p1.CURRENT_HPP,p1.CURRENT_PRICE
-				FROM ptr_kasir_td1c  td1c 
-				LEFT JOIN product p1 on p1.PRODUCT_ID=td1c.PRODUCT_ID			
-				WHERE td1c.ACCESS_GROUP='".$valAccessGoup."' AND td1c.TAHUN=YEAR('".$this->TGL."') AND td1c.BULAN=MONTH('".$this->TGL."')
-				GROUP BY td1c.ACCESS_GROUP,td1c.TAHUN,td1c.BULAN,td1c.PRODUCT_ID
-				ORDER BY td1c.PRODUK_SUBTTL_QTY DESC LIMIT 10;
+				SELECT	td1a.ACCESS_GROUP,td1a.STORE_ID,td1a.TAHUN,td1a.BULAN,
+						td1a.PRODUCT_NM,td1a.PRODUK_SUBTTL_QTY,p1.CURRENT_HPP,p1.CURRENT_PRICE
+				FROM ptr_kasir_td1a  td1a 
+				LEFT JOIN product p1 on p1.PRODUCT_ID=td1a.PRODUCT_ID			
+				WHERE td1a.ACCESS_GROUP='".$valAccessGoup."' AND td1a.TGL='".$this->TGL."'
+				GROUP BY td1a.ACCESS_GROUP,td1a.TGL,td1a.PRODUCT_ID
+				ORDER BY td1a.PRODUK_SUBTTL_QTY DESC LIMIT 10;
 			";	
 		}else{
 			$sql="
 				#==GROUPING===
-				SELECT	td1c.ACCESS_GROUP,td1c.STORE_ID,td1c.TAHUN,td1c.BULAN,
-						td1c.PRODUCT_NM,td1c.PRODUK_SUBTTL_QTY,p1.CURRENT_HPP,p1.CURRENT_PRICE
-				FROM ptr_kasir_td1c  td1c 
-				LEFT JOIN product p1 on p1.PRODUCT_ID=td1c.PRODUCT_ID			
-				WHERE td1c.ACCESS_GROUP='".$valAccessGoup."' AND td1c.STORE_ID='".$this->STORE_ID."' AND td1c.TAHUN=YEAR('".$this->TGL."') AND td1c.BULAN=MONTH('".$this->TGL."')
-				GROUP BY td1c.ACCESS_GROUP,td1c.STORE_ID,td1c.TAHUN,td1c.BULAN,td1c.PRODUCT_ID
-				ORDER BY td1c.PRODUK_SUBTTL_QTY DESC LIMIT 10;
+				SELECT	td1a.ACCESS_GROUP,td1a.STORE_ID,td1a.TAHUN,td1a.BULAN,
+						td1a.PRODUCT_NM,td1a.PRODUK_SUBTTL_QTY,p1.CURRENT_HPP,p1.CURRENT_PRICE
+				FROM ptr_kasir_td1a  td1a 
+				LEFT JOIN product p1 on p1.PRODUCT_ID=td1a.PRODUCT_ID			
+				WHERE td1a.ACCESS_GROUP='".$valAccessGoup."' AND td1a.STORE_ID='".$this->STORE_ID."' AND td1a.TGL='".$this->TGL."'
+				GROUP BY td1a.ACCESS_GROUP,td1a.STORE_ID,td1a.TGL,td1a.PRODUCT_ID
+				ORDER BY td1a.PRODUK_SUBTTL_QTY DESC LIMIT 10;
 			";	
 		}
 				
@@ -164,10 +164,11 @@ class ChartProdukTopDay extends DynamicModel
 	private function chartlabel(){
 		$nmBulan		= date('F', strtotime($this->TGL)); // Nama Bulan
 		$varTahun		= date('Y', strtotime($this->TGL));;
+		$varTgl			= date('d-m-Y', strtotime($this->TGL));
 				
 		$chartQty=[
 			"caption"=>"TOP 10 PRODUK",
-			"subCaption"=>"QTY BULANAN,  ".$nmBulan." ".$varTahun,
+			"subCaption"=>"QTY ".$varTgl,
 			"captionFontSize"=>"12",
 			"subcaptionFontSize"=>"10",
 			"subcaptionFontBold"=>"0",
@@ -178,7 +179,7 @@ class ChartProdukTopDay extends DynamicModel
 			"xAxisname"=> "Produk",
 			//"yAxisName"=> "Revenue (In USD)",
 			//"numberPrefix"=> "$",
-			"paletteColors"=> "#0075c2,#ff7256,#ff7f24",
+			"paletteColors"=> "#0cca15,#ff7256,#ff7f24",
 			"borderAlpha"=> "20",
 			"showCanvasBorder"=> "0",
 			"usePlotGradientColor"=> "0",
@@ -209,7 +210,7 @@ class ChartProdukTopDay extends DynamicModel
 		
 		$chartHppJual=[
 			"caption"=>"TOP 10 PRODUK ",
-			"subCaption"=>"HPP, HARGA JUAL, TAHUN,  ".$nmBulan." ".$varTahun,
+			"subCaption"=>"Hpp & Harga Jual,".$varTgl,
 			"captionFontSize"=>"12",
 			"subcaptionFontSize"=>"10",
 			"subcaptionFontBold"=>"0",

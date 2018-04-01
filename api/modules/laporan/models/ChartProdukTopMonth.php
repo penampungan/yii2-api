@@ -167,7 +167,7 @@ class ChartProdukTopMonth extends DynamicModel
 				
 		$chartQty=[
 			"caption"=>"TOP 10 PRODUK",
-			"subCaption"=>"QTY BULANAN,  ".$nmBulan." ".$varTahun,
+			"subCaption"=>"Qty Bulan ".$nmBulan." ".$varTahun,
 			"captionFontSize"=>"12",
 			"subcaptionFontSize"=>"10",
 			"subcaptionFontBold"=>"0",
@@ -178,7 +178,7 @@ class ChartProdukTopMonth extends DynamicModel
 			"xAxisname"=> "Produk",
 			//"yAxisName"=> "Revenue (In USD)",
 			//"numberPrefix"=> "$",
-			"paletteColors"=> "#0075c2,#ff7256,#ff7f24",
+			"paletteColors"=> "#54b8d9,#ff7256,#ff7f24",
 			"borderAlpha"=> "20",
 			"showCanvasBorder"=> "0",
 			"usePlotGradientColor"=> "0",
@@ -209,7 +209,7 @@ class ChartProdukTopMonth extends DynamicModel
 		
 		$chartHppJual=[
 			"caption"=>"TOP 10 PRODUK ",
-			"subCaption"=>"HPP, HARGA JUAL, TAHUN,  ".$nmBulan." ".$varTahun,
+			"subCaption"=>"Hpp & Harga Jual, Bulan ".$nmBulan." ".$varTahun,
 			"captionFontSize"=>"12",
 			"subcaptionFontSize"=>"10",
 			"subcaptionFontBold"=>"0",
