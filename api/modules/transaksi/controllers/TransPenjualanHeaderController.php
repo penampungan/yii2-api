@@ -99,6 +99,7 @@ class TransPenjualanHeaderController extends ActiveController
 		$transHeaderKey2	= isset($paramsBody['OFLINE_ID'])!=''?$paramsBody['OFLINE_ID']:'';
 		$transHeaderKey3	= isset($paramsBody['TRANS_REF'])!=''?$paramsBody['TRANS_REF']:'';
 		$tglTrans			= isset($paramsBody['TRANS_DATE'])!=''?$paramsBody['TRANS_DATE']:'';
+		$transType			= isset($paramsBody['TRANS_TYPE'])!=''?$paramsBody['TRANS_TYPE']:'';
 		$accessId			= isset($paramsBody['ACCESS_ID'])!=''?$paramsBody['ACCESS_ID']:'';
 		$opencloseId		= isset($paramsBody['OPENCLOSE_ID'])!=''?$paramsBody['OPENCLOSE_ID']:'';
 		//==PROPERTIES===
@@ -181,6 +182,7 @@ class TransPenjualanHeaderController extends ActiveController
 				if ($transHeaderKey2<>''){$modelNew->OFLINE_ID=$transHeaderKey2;};
 				if ($transHeaderKey3<>''){$modelNew->TRANS_REF=$transHeaderKey3;};
 				if ($tglTrans<>''){$modelNew->TRANS_DATE=date('Y-m-d H:i:s', strtotime($tglTrans));};
+				if ($transType<>''){$modelNew->TRANS_TYPE=$transType;};
 				if ($accessId<>''){$modelNew->ACCESS_ID=$accessId;};			
 				//==PROPERTIES=			
 				if ($ttlProduct<>''){$modelNew->TOTAL_PRODUCT=$ttlProduct;};
@@ -226,6 +228,7 @@ class TransPenjualanHeaderController extends ActiveController
 		$transHeaderKey2	= isset($paramsBody['OFLINE_ID'])!=''?$paramsBody['OFLINE_ID']:'';
 		$opencloseId		= isset($paramsBody['OPENCLOSE_ID'])!=''?$paramsBody['OPENCLOSE_ID']:'';
 		//==PROPERTIES===
+		$transType			= isset($paramsBody['TRANS_TYPE'])!=''?$paramsBody['TRANS_TYPE']:'';
 		$ttlProduct			= isset($paramsBody['TOTAL_PRODUCT'])!=''?$paramsBody['TOTAL_PRODUCT']:'';
 		$totalHarga			= isset($paramsBody['TOTAL_HARGA'])!=''?$paramsBody['TOTAL_HARGA']:'';
 		$subTotalHarga		= isset($paramsBody['SUB_TOTAL_HARGA'])!=''?$paramsBody['SUB_TOTAL_HARGA']:'';
@@ -250,7 +253,8 @@ class TransPenjualanHeaderController extends ActiveController
 			if ($subTotalHarga<>''){$modelEdit->SUB_TOTAL_HARGA=$subTotalHarga;};
 			if ($ppnPajak<>''){$modelEdit->PPN=$ppnPajak;};
 			if ($dokem<>''){$modelEdit->DO_KEM=$dokem;};
-			if ($dokemType<>''){$modelEdit->DO_KEM_TYPE=$dokemType;};		
+			if ($dokemType<>''){$modelEdit->DO_KEM_TYPE=$dokemType;};
+			if ($transType<>''){$modelEdit->TRANS_TYPE=$transType;};			
 			if ($cunsumerId<>''){$modelEdit->CONSUMER_ID=$cunsumerId;};
 			if ($cunsumerNm<>''){$modelEdit->CONSUMER_NM=$cunsumerNm;};
 			if ($cunsumerEmail<>''){$modelEdit->CONSUMER_EMAIL=$cunsumerEmail;};

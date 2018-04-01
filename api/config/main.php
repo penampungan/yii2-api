@@ -222,7 +222,9 @@ return [
 				[
                         'class' => 'yii\rest\UrlRule',
                         'controller' =>[
-							'laporan/rpt-penjualan',
+							'laporan/contoh-chart',
+							'laporan/rpt-penjualan',							
+							'laporan/store-map',							
 							'laporan/trans-rpt-trans',
 							'laporan/trans-rpt1',
 							'laporan/trans-rpt2',
@@ -230,7 +232,8 @@ return [
 							'laporan/trans-rpt-absensi',
 							'laporan/counter',
 							'laporan/sales-chart',
-							'laporan/polling-chart'
+							'laporan/polling-chart',
+							'laporan/produk-chart'
 						],
 						'patterns' => [
 							'PUT,PATCH' => 'update',
@@ -242,6 +245,16 @@ return [
 							'' => 'options',
 						],
 						'extraPatterns' => [
+							'POST angulargauge' => 'angulargauge',
+							'POST line' => 'line',
+							'POST column2d' => 'column2d',
+							'POST column2d-image' => 'column2d-image',
+							'POST mscombidy2d' => 'mscombidy2d',
+							'POST line-img' => 'line-img',
+							'POST pie3d' => 'pie3d',
+							'POST doughnut3d' => 'doughnut3d',
+							'POST stackedbar2d' => 'stackedbar2d',
+							'GET posisi-koordinat' => 'posisi-koordinat',
 							'POST polling-group' => 'polling-group',
 							'POST polling-perstore' => 'polling-perstore',
 							'POST per-access-group' => 'per-access-group',
@@ -257,7 +270,10 @@ return [
 							'POST sales-mingguan-produkrefund-perstore' => 'sales-mingguan-produkrefund-perstore',					
 							'POST sales-mingguan-produk-perstore' => 'sales-mingguan-produk-perstore',					
 							'POST produk-daily-transaksi' => 'produk-daily-transaksi',					
-							'POST produk-daily-refund' => 'produk-daily-refund'						
+							'POST produk-daily-refund' => 'produk-daily-refund',	
+							//=== PRODUK CHART ===
+							'POST top-produk' => 'top-produk'	
+							
 						]
                 ],
 				[
