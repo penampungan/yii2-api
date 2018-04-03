@@ -30,11 +30,16 @@ use api\modules\laporan\models\SalesWeekPerstoreProdukrefund;
 use api\modules\laporan\models\FrkProdukHarianStore;
 use api\modules\laporan\models\FrkProdukHarianRefundStore;
 use api\modules\laporan\models\TransPenjualanHeader;
+use api\modules\laporan\models\ChartDetailSalesBulanan;
+use api\modules\laporan\models\ChartDetailSalesBulananTunai;
+use api\modules\laporan\models\ChartDetailSalesHarian;
+use api\modules\laporan\models\ChartDetailSalesHarianTunai;
+use api\modules\laporan\models\Store;
 
 class SalesChartController extends ActiveController
 {
 
-	public $modelClass = 'api\modules\laporan\models\TransPenjualanHeader';
+	public $modelClass = 'api\modules\laporan\models\Store';
 
 	/**
      * Behaviors
@@ -342,6 +347,7 @@ class SalesChartController extends ActiveController
 		$modelSalesWeekPerstoreProduk= new SalesWeekPerstoreProduk($param);
 		return $modelSalesWeekPerstoreProduk;
 	}	
+	
 	/* =======================================
 	 * ==== PRODAK REFUND MINGGU MINGGUAN  ===
 	 * ==== Create By ptr.nov@gmail.com    ===
@@ -362,6 +368,94 @@ class SalesChartController extends ActiveController
 		];		
 		$modelSalesWeekPerstoreProdukrefund= new SalesWeekPerstoreProdukrefund($param);
 		return $modelSalesWeekPerstoreProdukrefund;
+	}	
+	
+	/* ====================================
+	 * ==== SALES BULANAN DETAIL  		===
+	 * ==== PENDAPATAN, PROFIT, MODAL 	===
+	 * ==== Create By ptr.nov@gmail.com ===
+	 * ====================================
+	*/
+	public function actionDetailSalesBulanan()
+	{
+		$paramsBody		= Yii::$app->request->bodyParams;
+		$accessGrp		= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';	
+		$storeId		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';	
+		$uuid			= isset($paramsBody['PERANGKAT'])!=''?$paramsBody['PERANGKAT']:'';				
+		$tgl			= isset($paramsBody['TGL'])!=''?$paramsBody['TGL']:'';	
+		$pilih			= isset($paramsBody['PILIH'])!=''?$paramsBody['PILIH']:'';	
+		$param=[
+			'ACCESS_GROUP'=>$accessGrp,
+			'STORE_ID'=>$storeId,
+			'PERANGKAT'=>$uuid,			
+			'TGL'=>$tgl,
+			'PILIH'=>$pilih
+		];		
+		$modelChartDetailSalesBulanan= new ChartDetailSalesBulanan($param);
+		return $modelChartDetailSalesBulanan;
+	}	
+	//==TUNAI & NONTUNAI
+	public function actionDetailSalesBulananTunai()
+	{
+		$paramsBody		= Yii::$app->request->bodyParams;
+		$accessGrp		= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';	
+		$storeId		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';	
+		$uuid			= isset($paramsBody['PERANGKAT'])!=''?$paramsBody['PERANGKAT']:'';				
+		$tgl			= isset($paramsBody['TGL'])!=''?$paramsBody['TGL']:'';	
+		$pilih			= isset($paramsBody['PILIH'])!=''?$paramsBody['PILIH']:'';	
+		$param=[
+			'ACCESS_GROUP'=>$accessGrp,
+			'STORE_ID'=>$storeId,
+			'PERANGKAT'=>$uuid,			
+			'TGL'=>$tgl,
+			'PILIH'=>$pilih
+		];		
+		$modelChartDetailSalesBulananTunai= new ChartDetailSalesBulananTunai($param);
+		return $modelChartDetailSalesBulananTunai;
+	}	
+	
+	/* ====================================
+	 * ==== SALES BULANAN DETAIL  		===
+	 * ==== PENDAPATAN, PROFIT, MODAL 	===
+	 * ==== Create By ptr.nov@gmail.com ===
+	 * ====================================
+	*/
+	public function actionDetailSalesHarian()
+	{
+		$paramsBody		= Yii::$app->request->bodyParams;
+		$accessGrp		= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';	
+		$storeId		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';	
+		$uuid			= isset($paramsBody['PERANGKAT'])!=''?$paramsBody['PERANGKAT']:'';				
+		$tgl			= isset($paramsBody['TGL'])!=''?$paramsBody['TGL']:'';	
+		$pilih			= isset($paramsBody['PILIH'])!=''?$paramsBody['PILIH']:'';	
+		$param=[
+			'ACCESS_GROUP'=>$accessGrp,
+			'STORE_ID'=>$storeId,
+			'PERANGKAT'=>$uuid,			
+			'TGL'=>$tgl,
+			'PILIH'=>$pilih
+		];		
+		$modelChartDetailSalesHarian= new ChartDetailSalesHarian($param);
+		return $modelChartDetailSalesHarian;
+	}	
+	//== HARIAN TUNAI
+	public function actionDetailSalesHarianTunai()
+	{
+		$paramsBody		= Yii::$app->request->bodyParams;
+		$accessGrp		= isset($paramsBody['ACCESS_GROUP'])!=''?$paramsBody['ACCESS_GROUP']:'';	
+		$storeId		= isset($paramsBody['STORE_ID'])!=''?$paramsBody['STORE_ID']:'';	
+		$uuid			= isset($paramsBody['PERANGKAT'])!=''?$paramsBody['PERANGKAT']:'';				
+		$tgl			= isset($paramsBody['TGL'])!=''?$paramsBody['TGL']:'';	
+		$pilih			= isset($paramsBody['PILIH'])!=''?$paramsBody['PILIH']:'';	
+		$param=[
+			'ACCESS_GROUP'=>$accessGrp,
+			'STORE_ID'=>$storeId,
+			'PERANGKAT'=>$uuid,			
+			'TGL'=>$tgl,
+			'PILIH'=>$pilih
+		];		
+		$modelChartDetailSalesHarianTunai= new ChartDetailSalesHarianTunai($param);
+		return $modelChartDetailSalesHarianTunai;
 	}	
 }
     

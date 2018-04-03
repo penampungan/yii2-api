@@ -743,7 +743,8 @@ class ContohChartController extends ActiveController
 				"numberPrefix"=> "",
 				"ValuePadding"=> "0",	
             ],
-            "categories"=> [[
+            "categories"=> [
+				[
                 "category"=> [
                     [ "label"=> "Jan" ], 
                     [ "label"=> "Feb" ], 
@@ -835,7 +836,7 @@ class ContohChartController extends ActiveController
 		*/
 		$pie3d=[
 			"chart"=>[
-                "caption"=>"Age profile of website visitors",
+                "caption"=>"Non Tunai Transaksi Bank",
                 "subCaption"=>"Last Year",
                 "startingAngle"=>"120",
                 "showLabels"=>"0",
@@ -850,19 +851,23 @@ class ContohChartController extends ActiveController
             ],
             "data"=>[
 				[
-					"label"=>"Teenage",
+					"label"=>"BCA",
 					"value"=>"1250400"
 				], 
 				[
-					"label"=>"Adult",
+					"label"=>"MANDIRI",
 					"value"=>"1463300"
 				],
 				[
-					"label"=>"Mid-age",
+					"label"=>"PERMATA",
 					"value"=>"1050700"
 				],
 				[
-					"label"=>"Senior",
+					"label"=>"BNI",
+					"value"=>"491000"
+				],
+				[
+					"label"=>"BRI",
 					"value"=>"491000"
 				]
 			]		

@@ -275,8 +275,12 @@ return [
 							'POST bulanan-top-produk' => 'bulanan-top-produk',	
 							'POST mingguan-top-produk' => 'mingguan-top-produk',	
 							'POST harian-top-produk' => 'harian-top-produk',
-							'POST level-buffer-produk' => 'level-buffer-produk'	
-							
+							'POST level-buffer-produk' => 'level-buffer-produk',
+							//=== CHART SALES DETAIL ===
+							'POST detail-sales-bulanan' => 'detail-sales-bulanan',
+							'POST detail-sales-bulanan-tunai' => 'detail-sales-bulanan-tunai',
+							'POST detail-sales-harian' => 'detail-sales-harian',
+							'POST detail-sales-harian-tunai' => 'detail-sales-harian-tunai',
 						]
                 ],
 				[
