@@ -147,7 +147,7 @@ class ContohChartController extends ActiveController
 				// "showtickvalues"=> "1",
 				// "showborder"=> "0"
 				//===>3
-				"caption"=> "Revenue - 2013",
+				"caption"=> "Pengunjung",
 				"manageresize"=> "1",
 				"origw"=> "400",
 				"origh"=> "250",
@@ -165,7 +165,7 @@ class ContohChartController extends ActiveController
 				"gaugeoriginy"=> "206",
 				"gaugeinnerradius"=> "2",
 				"formatnumberscale"=> "1",
-				"numberprefix"=> "$",
+				"numberprefix"=> "",
 				"decmials"=> "2",
 				"tickmarkdecimals"=> "1",
 				"pivotradius"=> "10",
@@ -198,18 +198,18 @@ class ContohChartController extends ActiveController
 					// ]
 					//==>3
 					[
-						"minvalue"=> "1600000",
-						"maxvalue"=> "1930000",
+						"minvalue"=> "160",
+						"maxvalue"=> "193",
 						"code"=> "e44a00"
 					],
 					[
-						"minvalue"=> "1930000",
-						"maxvalue"=> "2170000",
+						"minvalue"=> "193",
+						"maxvalue"=> "217",
 						"code"=> "f8bd19"
 					],
 					[
-						"minvalue"=> "2170000",
-						"maxvalue"=> "2500000",
+						"minvalue"=> "217",
+						"maxvalue"=> "250",
 						"code"=> "6baa01"
 					]
 				]
@@ -837,17 +837,24 @@ class ContohChartController extends ActiveController
 		$pie3d=[
 			"chart"=>[
                 "caption"=>"Non Tunai Transaksi Bank",
-                "subCaption"=>"Last Year",
+                //"subCaption"=>"Last Year",
                 "startingAngle"=>"120",
-                "showLabels"=>"0",
-                "showLegend"=>"1",
+                "showLabels"=>"1",
                 "enableMultiSlicing"=>"0",
                 "slicingDistance"=>"15",
                 //To show the values in percentage
                 "showPercentValues"=>"1",
                 "showPercentInTooltip"=>"0",
                 "plotTooltext"=>'Age group =>$label<br>Total visit =>$datavalue',
-                "theme"=>"fint"
+                "theme"=>"fint",
+				"numberPrefix"=> "Rp ",
+				"formatNumberScale"=> "0",
+				"decimalSeparator"=> ",",
+				"thousandSeparator"=> ".",
+				//=== LEGEND ===
+				"showLegend"=> "1",
+				"legendShadow"=> "1",
+				"legendBorderAlpha"=> "1"
             ],
             "data"=>[
 				[

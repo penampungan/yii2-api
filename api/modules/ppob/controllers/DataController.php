@@ -179,6 +179,7 @@ class DataController extends ActiveController
 		$codeId				= isset($paramsBody['ID_CODE'])!=''?$paramsBody['ID_CODE']:'';
 		$ktgId				= isset($paramsBody['KTG_ID'])!=''?$paramsBody['KTG_ID']:'';
 		$kelompok			= isset($paramsBody['KELOMPOK'])!=''?$paramsBody['KELOMPOK']:'';
+		$typeNm				= isset($paramsBody['TYPE_NM'])!=''?$paramsBody['TYPE_NM']:'';
 		if(strtoupper($kelompok)=='ALL'){
 			$model= PpobMasterHarga::find()->all();
 		}else{
@@ -186,7 +187,8 @@ class DataController extends ActiveController
 			->where(['ID_PRODUK'=>$produkId])
 			->orWhere(['ID_CODE'=>$codeId])
 			->orWhere(['KTG_ID'=>$ktgId])
-			->orWhere(['KELOMPOK'=>$kelompok])->all();
+			->orWhere(['KELOMPOK'=>$kelompok])
+			->orWhere(['TYPE_NM'=>$typeNm])->all();
 		}		
 		return $model;
 	}

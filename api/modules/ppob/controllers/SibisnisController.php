@@ -18,7 +18,7 @@ use yii\web\HttpException;
 
 use api\modules\ppob\models\ApiTableTest;
 
-class TestApiController extends ActiveController
+class SibisnisController extends ActiveController
 {
 
 	public $modelClass = 'api\modules\ppob\models\ApiTableTest';
@@ -92,6 +92,8 @@ class TestApiController extends ActiveController
 	
 	public function actionIndex()
 	{
+		
+		
 		// $model= ApiTableTest::find()->all();
 		// return $model;
 		//return ['a'=>1];
@@ -99,13 +101,33 @@ class TestApiController extends ActiveController
 		return $allDataKelpmpok;
 	}
 	
-	public function actionGetInfoKelompok()
+	public function actionMasterData()
 	{
-		// $model= ApiTableTest::find()->all();
-		// return $model;
-		//return ['a'=>1];
-		$allDataKelpmpok=Yii::$app->apippob->ArrayKelompokAllType();
-		return $allDataKelpmpok;
+		$paramsBody 		= Yii::$app->request->bodyParams;		
+		$function			= isset($paramsBody['function'])!=''?$paramsBody['function']:'';
+		$memberid			= isset($paramsBody['memberid'])!=''?$paramsBody['memberid']:'';
+		$tipe				= isset($paramsBody['tipe'])!=''?$paramsBody['tipe']:'';
+		$kategori_id		= isset($paramsBody['kategori_id'])!=''?$paramsBody['kategori_id']:'';
+		$produk				= isset($paramsBody['produk'])!=''?$paramsBody['produk']:'';
+		$id_pelanggan		= isset($paramsBody['id_pelanggan'])!=''?$paramsBody['id_pelanggan']:'';
+		$reff_id			= isset($paramsBody['reff_id'])!=''?$paramsBody['reff_id']:'';
+		$msisdn				= isset($paramsBody['msisdn'])!=''?$paramsBody['msisdn']:'';
+		
+		if (strtoupper($function)==strtoupper("get-info-kelompok")){			
+			$rsltRespon=Yii::$app->apippob->LabtestSibisnis($function,$memberid,$tipe);
+			return $rsltRespon;
+		}elseif(strtoupper($function)==strtoupper("get-info-produk")){			
+			$rsltRespon=Yii::$app->apippob->LabtestSibisnis($function,$memberid,'',$kategori_id);
+			return $rsltRespon;
+		}elseif(strtoupper($function)==strtoupper("h2h-inquiry")){
+			$rsltRespon=Yii::$app->apippob->LabtestSibisnis($function,$memberid,'','',$produk,$id_pelanggan);
+			return $rsltRespon;
+		}elseif(strtoupper($function)==strtoupper("h2h-bayar")){
+			$rsltRespon=Yii::$app->apippob->LabtestSibisnis($function,$memberid,'','',$produk,'',$reff_id,$msisdn);
+			return $rsltRespon;
+		}else{
+			return ['error'=>'function not found'];
+		};
 	}
 	
 	public function actionUpdate()

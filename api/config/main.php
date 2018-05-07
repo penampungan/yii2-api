@@ -70,6 +70,10 @@ return [
 		'arrayBantuan' =>[
             'class'=>'api\components\ArrayBantuan',
         ],
+		'apippob' =>[
+            'class'=>'api\components\PpobH2h',
+        ],
+		
         // 'errorHandler' => [
             // 'errorAction' => 'site/error',
         // ],
@@ -286,6 +290,7 @@ return [
 				[
                         'class' => 'yii\rest\UrlRule',
                         'controller' =>[
+							'ppob/sibisnis',
 							'ppob/data',
 							'ppob/data-test',
 							'ppob/header',
@@ -311,6 +316,8 @@ return [
 							'POST produk' => 'produk',
 							'POST transaksi' => 'transaksi',
 							'POST saldo' => 'saldo',
+							'POST get-info-kelompok' => 'get-info-kelompok',
+							'POST master-data' => 'master-data',
 						]
                 ],
             ],
@@ -356,10 +363,20 @@ return [
 		'response' => [
 			'format' => yii\web\Response::FORMAT_JSON,
 			'charset' => 'UTF-8',
-			// ...
+			//'class' => 'yii\web\Response',
+            // 'on beforeSend' => function ($event) {
+                // $response = $event->sender;
+                // if ($response->data !== null && Yii::$app->request->get('suppress_response_code')) {
+                    // $response->data = [
+                        // 'success' => $response->isSuccessful,
+                        // 'data' => $response->data,
+                    // ];
+                    // $response->statusCode = 200;
+                // }
+            // },
 		]
     ],
-    // 'params' => $params,
+     'params' => $params,
 ];
 
 

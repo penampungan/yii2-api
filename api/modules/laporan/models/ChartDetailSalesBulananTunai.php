@@ -97,14 +97,27 @@ class ChartDetailSalesBulananTunai extends DynamicModel
 		$varTahun		= date('Y', strtotime($this->TGL));;
 				
 		$chart=[
-			"caption"=> "Pendapatan",
+			"caption"=> "Pembayaran",
 			"subCaption"=> "Periode ".$nmBulan." ".$varTahun,
 			"captionFontSize"=>"12",
 			"subcaptionFontSize"=>"10",
 			"subcaptionFontBold"=>"0",
 			"numberPrefix"=> "$",
-			"paletteColors"=> "#0075c2,#1aaf5d,#f2c500,#f45b00,#8e0000",
-			"bgColor"=> "#ffffff",
+			"paletteColors"=> "#a7e542,#ffe821,#f2c500,#f45b00,#8e0000",
+			//===COLOR MODIFY===
+			//"bgcolor"=> "ABCAD3,B3CCE1",
+			"bgcolor"=> "#ffffff",
+			"canvasborderalpha"=> "0",
+			"canvasbgalpha"=> "0",	
+			"bgalpha"=>"50,30",											//===Gradiasi Background
+			//"canvasbgcolor"=> "F7F0F9",	
+			"plotHighlightEffect"=> "fadeout|color=#f6f5fd, alpha=60",		//== EFFECT HIGLIFGT
+			//"plotgradientcolor"=> "0000FF",
+			//"vdivlinecolor"=> "6281B5",
+			//"plotfillangle"=> "90",			
+			//"divlinecolor"=> "#CCCCCC",
+			"showcanvasborder"=> "0",		
+			
 			"showBorder"=> "0",
 			"use3DLighting"=> "0",
 			"showShadow"=> "0",
@@ -112,16 +125,20 @@ class ChartDetailSalesBulananTunai extends DynamicModel
 			"startingAngle"=> "310",
 			"showLabels"=> "0",
 			"showPercentValues"=> "1",
-			"showLegend"=> "1",
-			"legendShadow"=> "0",
-			"legendBorderAlpha"=> "0",                                
 			"decimals"=> "0",
+			
+			//=== LEGEND ===
+			"showLegend"=> "1",
+			"legendShadow"=> "1",
+			"legendBorderAlpha"=> "1",                                
+			//=== TOOL TIPS ===
 			"toolTipColor"=> "#ffffff",
 			"toolTipBorderThickness"=> "0",
 			"toolTipBgColor"=> "#000000",
 			"toolTipBgAlpha"=> "80",
 			"toolTipBorderRadius"=> "2",
 			"toolTipPadding"=> "5",
+			
 		];
 		return $chart;
 	}	

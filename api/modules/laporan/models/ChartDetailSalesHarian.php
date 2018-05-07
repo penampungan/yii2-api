@@ -72,12 +72,11 @@ class ChartDetailSalesHarian extends DynamicModel
 				WHERE ACCESS_GROUP='".$valAccessGoup."' 
 					  AND STORE_ID='".$this->STORE_ID."'
 					  AND TAHUN=YEAR('".$this->TGL."')
-					  #AND BULAN=MONTH('".$this->TGL."')
-				GROUP BY ACCESS_GROUP,TAHUN,BULAN,DATE(TRANS_DATE)
-				ORDER BY ACCESS_GROUP,TAHUN,BULAN ASC;
+					  AND BULAN=MONTH('".$this->TGL."')
+				GROUP BY ACCESS_GROUP,STORE_ID,TAHUN,BULAN,DATE(TRANS_DATE)
+				ORDER BY ACCESS_GROUP,STORE_ID,TAHUN,BULAN ASC;
 			";	
-		}
-				
+		}				
 		
 		$qrySql= Yii::$app->production_api->createCommand($sql)->queryAll(); 		
 		$dataProvider= new ArrayDataProvider([	
@@ -108,8 +107,7 @@ class ChartDetailSalesHarian extends DynamicModel
 				$dataval1[]=['value'=>$val['MODAL']];
 				$rslt1['data']=$dataval1;
 				$rslt1['renderAs']="area";
-                $rslt1['showValues']="0";
-				
+                $rslt1['showValues']="0";				
 			}
 			$dataset[]=$rslt1;//$rsltDataSet1;	
 			
@@ -121,8 +119,7 @@ class ChartDetailSalesHarian extends DynamicModel
 				//$rslt1['parentYAxis']="S";
                 $rslt1['renderAs']="line";
                 $rslt1['showValues']="0";
-                $rslt1['placeValuesInside']="0";
-				
+                $rslt1['placeValuesInside']="0";				
 			};
 			$dataset[]=$rslt1;
 			
@@ -134,11 +131,11 @@ class ChartDetailSalesHarian extends DynamicModel
 				$rslt1['data']=$dataval1;
 				//$rslt1['parentYAxis']="S";
                 $rslt1['renderAs']="line";
-                $rslt1['showValues']="0";
-				
+                $rslt1['showValues']="0";				
 			};
 			$dataset[]=$rslt1;
 		}else{
+			$dataval1=[];	
 			$dataset[]=[
 					"seriesName"=>'Data-Empty',
 					"data"=>[]			
@@ -185,7 +182,7 @@ class ChartDetailSalesHarian extends DynamicModel
 			"showBorder"=> "0",
 			"showShadow"=> "0",
 			"usePlotGradientColor"=> "0",			
-			"showAxisLines"=> "0",
+			//"showAxisLines"=> "0",
 			"showAlternateHGridColor"=> "0",
 			"divlineThickness"=> "1",
 			"divLineIsDashed"=> "0",
@@ -242,7 +239,7 @@ class ChartDetailSalesHarian extends DynamicModel
 			"divlinecolor"=> "#CCCCCC",
 			"showcanvasborder"=> "0",
 			"linethickness"=> "3",
-			"plotfillalpha"=> "100",
+			"plotfillalpha"=> "50",
 			"plotgradientcolor"=> "",
 			"numVisiblePlot"=> "12",
 			"divlineAlpha"=> "100",
@@ -263,7 +260,8 @@ class ChartDetailSalesHarian extends DynamicModel
 	
 	private function categorieslabel(){
 		
-		for ($x=1;$x<=31; $x++){
+		$lastDayThisMonth = date("t",strtotime($this->TGL));
+		for ($x=1;$x<=$lastDayThisMonth; $x++){
 			$data['category'][]=[ "label"=>(string)$x];
 		}
 		// $categories=[			
